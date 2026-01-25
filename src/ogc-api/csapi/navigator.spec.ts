@@ -456,4 +456,150 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
   });
+
+  describe('Deployments Resource', () => {
+    beforeEach(() => {
+      // Add deployments link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/deployments',
+        href: 'http://example.com/csapi/deployments',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getDeploymentsUrl', () => {
+      it('builds basic deployments URL', () => {
+        const url = navigator.getDeploymentsUrl();
+        expect(url).toBe('http://example.com/csapi/deployments');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getDeploymentsUrl({ limit: 10 });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with bbox parameter', () => {
+        const url = navigator.getDeploymentsUrl({
+          bbox: [-180, -90, 180, 90],
+        });
+        expect(url).toContain('bbox=-180%2C-90%2C180%2C90');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getDeploymentsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with q (text search) parameter', () => {
+        const url = navigator.getDeploymentsUrl({ q: 'coastal' });
+        expect(url).toContain('q=coastal');
+      });
+
+      it('builds URL with system parameter', () => {
+        const url = navigator.getDeploymentsUrl({ system: 'sensor-456' });
+        expect(url).toContain('system=sensor-456');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getDeploymentsUrl({
+          limit: 5,
+          q: 'atlantic',
+          system: 'buoy-789',
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('q=atlantic');
+        expect(url).toContain('system=buoy-789');
+      });
+    });
+
+    describe('getDeploymentUrl', () => {
+      it('builds URL for specific deployment', () => {
+        const url = navigator.getDeploymentUrl('deployment-456');
+        expect(url).toBe('http://example.com/csapi/deployments/deployment-456');
+      });
+
+      it('encodes deployment ID in URL', () => {
+        const url = navigator.getDeploymentUrl('deploy/123');
+        expect(url).toBe(
+          'http://example.com/csapi/deployments/deploy%2F123'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getDeploymentUrl('deployment-456', 'sml');
+        expect(url).toContain('f=sml');
+      });
+    });
+
+    describe('createDeploymentUrl', () => {
+      it('builds URL for creating deployment', () => {
+        const url = navigator.createDeploymentUrl();
+        expect(url).toBe('http://example.com/csapi/deployments');
+      });
+    });
+
+    describe('updateDeploymentUrl', () => {
+      it('builds URL for updating deployment', () => {
+        const url = navigator.updateDeploymentUrl('deployment-456');
+        expect(url).toBe('http://example.com/csapi/deployments/deployment-456');
+      });
+
+      it('encodes deployment ID', () => {
+        const url = navigator.updateDeploymentUrl('deploy/special');
+        expect(url).toBe(
+          'http://example.com/csapi/deployments/deploy%2Fspecial'
+        );
+      });
+    });
+
+    describe('patchDeploymentUrl', () => {
+      it('builds URL for patching deployment', () => {
+        const url = navigator.patchDeploymentUrl('deployment-456');
+        expect(url).toBe('http://example.com/csapi/deployments/deployment-456');
+      });
+
+      it('encodes deployment ID', () => {
+        const url = navigator.patchDeploymentUrl('deploy/test');
+        expect(url).toBe('http://example.com/csapi/deployments/deploy%2Ftest');
+      });
+    });
+
+    describe('deleteDeploymentUrl', () => {
+      it('builds URL for deleting deployment', () => {
+        const url = navigator.deleteDeploymentUrl('deployment-456');
+        expect(url).toBe('http://example.com/csapi/deployments/deployment-456');
+      });
+
+      it('encodes deployment ID', () => {
+        const url = navigator.deleteDeploymentUrl('deploy/old');
+        expect(url).toBe('http://example.com/csapi/deployments/deploy%2Fold');
+      });
+    });
+
+    describe('getDeploymentHistoryUrl', () => {
+      it('builds basic deployment history URL', () => {
+        const url = navigator.getDeploymentHistoryUrl('deployment-456');
+        expect(url).toBe(
+          'http://example.com/csapi/deployments/deployment-456/history'
+        );
+      });
+
+      it('builds history URL with validTime parameter', () => {
+        const url = navigator.getDeploymentHistoryUrl('deployment-456', {
+          validTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('validTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds history URL with limit', () => {
+        const url = navigator.getDeploymentHistoryUrl('deployment-456', {
+          limit: 5,
+        });
+        expect(url).toContain('limit=5');
+      });
+    });
+  });
 });

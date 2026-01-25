@@ -4,7 +4,9 @@ import {
   CSAPIResourceType,
   ControlStreamsQueryOptions,
   DatastreamsQueryOptions,
+  DeploymentsQueryOptions,
   HistoryQueryOptions,
+  ProceduresQueryOptions,
   SamplingFeaturesQueryOptions,
   SystemsQueryOptions,
 } from './model.js';
@@ -356,6 +358,130 @@ export default class CSAPINavigator {
     this._checkResourceAvailable('procedures');
     const url = new URL(
       `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
+  // DEPLOYMENTS RESOURCE (Part 1: Section 8.5)
+  // ========================================
+
+  /**
+   * Build URL to get all deployments in the collection.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployments_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getDeploymentsUrl(options: DeploymentsQueryOptions = {}): string {
+    this._checkResourceAvailable('deployments');
+    const url = new URL(`${this.baseUrl}/deployments`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific deployment by ID.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource
+   *
+   * @param deploymentId Unique identifier of the deployment
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getDeploymentUrl(deploymentId: string, format?: string): string {
+    this._checkResourceAvailable('deployments');
+    return this._buildResourceUrl('deployments', deploymentId, format);
+  }
+
+  /**
+   * Build URL to create a new deployment.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployments_3
+   *
+   * @returns URL string for POST request (body contains deployment description)
+   */
+  createDeploymentUrl(): string {
+    this._checkResourceAvailable('deployments');
+    return `${this.baseUrl}/deployments`;
+  }
+
+  /**
+   * Build URL to fully update a deployment (replace).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource_2
+   *
+   * @param deploymentId Unique identifier of the deployment
+   * @returns URL string for PUT request (body contains full deployment description)
+   */
+  updateDeploymentUrl(deploymentId: string): string {
+    this._checkResourceAvailable('deployments');
+    return `${this.baseUrl}/deployments/${encodeURIComponent(deploymentId)}`;
+  }
+
+  /**
+   * Build URL to partially update a deployment (modify specific fields).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource_2
+   *
+   * @param deploymentId Unique identifier of the deployment
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchDeploymentUrl(deploymentId: string): string {
+    this._checkResourceAvailable('deployments');
+    return `${this.baseUrl}/deployments/${encodeURIComponent(deploymentId)}`;
+  }
+
+  /**
+   * Build URL to delete a deployment.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource_3
+   *
+   * @param deploymentId Unique identifier of the deployment
+   * @returns URL string for DELETE request
+   */
+  deleteDeploymentUrl(deploymentId: string): string {
+    this._checkResourceAvailable('deployments');
+    return `${this.baseUrl}/deployments/${encodeURIComponent(deploymentId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a deployment (all versions).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#req_deployment-history
+   *
+   * @param deploymentId Unique identifier of the deployment
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getDeploymentHistoryUrl(
+    deploymentId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('deployments');
+    const url = new URL(
+      `${this.baseUrl}/deployments/${encodeURIComponent(deploymentId)}/history`
     );
 
     if (options.validTime !== undefined) {

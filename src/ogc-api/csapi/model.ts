@@ -124,3 +124,24 @@ export interface ProceduresQueryOptions {
   /** Filter by controlled property */
   controlledProperty?: string;
 }
+
+/**
+ * Query options for Deployments collection endpoint
+ * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployments_2
+ */
+export interface DeploymentsQueryOptions {
+  /** Maximum number of deployments to return */
+  limit?: number;
+
+  /** Spatial filter: bounding box [west, south, east, north] */
+  bbox?: BoundingBox;
+
+  /** Temporal filter: datetime range */
+  datetime?: DateTimeParameter;
+
+  /** Full-text search query */
+  q?: string;
+
+  /** Filter by parent system ID */
+  system?: string;
+}
