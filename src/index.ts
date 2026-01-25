@@ -42,7 +42,50 @@ export type {
 export { default as OgcApiEndpoint } from './ogc-api/endpoint.js';
 export * from './ogc-api/model.js';
 export { default as CSAPINavigator } from './ogc-api/csapi/navigator.js';
+export { TypedCSAPINavigator } from './ogc-api/csapi/typed-navigator.js';
+export type { TypedFetchOptions } from './ogc-api/csapi/typed-navigator.js';
 export * from './ogc-api/csapi/model.js';
+
+// Export parsers and their types
+export * from './ogc-api/csapi/parsers/index.js';
+
+// Export feature types (selective to avoid conflicts)
+export type {
+  SystemFeature,
+  SystemFeatureCollection,
+  DeploymentFeature,
+  DeploymentFeatureCollection,
+  ProcedureFeature,
+  ProcedureFeatureCollection,
+  SamplingFeature,
+  SamplingFeatureCollection,
+  PropertyFeature,
+  PropertyFeatureCollection,
+  DatastreamFeature,
+  DatastreamFeatureCollection,
+  ControlStreamFeature,
+  ControlStreamFeatureCollection,
+} from './ogc-api/csapi/geojson/index.js';
+
+// Export validation functions
+export {
+  validateSystemFeature,
+  validateSystemFeatureCollection,
+  validateDeploymentFeature,
+  validateDeploymentFeatureCollection,
+  validateProcedureFeature,
+  validateProcedureFeatureCollection,
+  validateSamplingFeature,
+  validateSamplingFeatureCollection,
+  validatePropertyFeature,
+  validatePropertyFeatureCollection,
+  validateDatastreamFeature,
+  validateDatastreamFeatureCollection,
+  validateControlStreamFeature,
+  validateControlStreamFeatureCollection,
+  validateCSAPIFeature,
+} from './ogc-api/csapi/validation/index.js';
+
 export { default as TmsEndpoint } from './tms/endpoint.js';
 export * from './tms/model.js';
 export { default as StacEndpoint } from './stac/endpoint.js';
