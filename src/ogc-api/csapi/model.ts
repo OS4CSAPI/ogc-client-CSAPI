@@ -97,6 +97,17 @@ export interface ControlStreamsQueryOptions {
 }
 
 /**
+ * Query options for Commands (sub-resource of Control Streams)
+ * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_commands_2
+ */
+export interface CommandsQueryOptions {
+  limit?: number;
+  issueTime?: DateTimeParameter;
+  executionTime?: DateTimeParameter;
+  status?: string;
+}
+
+/**
  * Query options for Sampling Features
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_features_2
  */

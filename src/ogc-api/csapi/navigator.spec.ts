@@ -1070,4 +1070,271 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
   });
+
+  describe('Control Streams Resource', () => {
+    beforeEach(() => {
+      // Add controlStreams link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/controlStreams',
+        href: 'http://example.com/csapi/controlStreams',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getControlStreamsUrl', () => {
+      it('builds basic control streams URL', () => {
+        const url = navigator.getControlStreamsUrl();
+        expect(url).toBe('http://example.com/csapi/controlStreams');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getControlStreamsUrl({ limit: 10 });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getControlStreamsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with controlledProperty parameter', () => {
+        const url = navigator.getControlStreamsUrl({
+          controlledProperty: 'valve-position',
+        });
+        expect(url).toContain('controlledProperty=valve-position');
+      });
+
+      it('builds URL with issueTime parameter', () => {
+        const url = navigator.getControlStreamsUrl({
+          issueTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('issueTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with executionTime parameter', () => {
+        const url = navigator.getControlStreamsUrl({
+          executionTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('executionTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getControlStreamsUrl({
+          limit: 5,
+          controlledProperty: 'pump-speed',
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('controlledProperty=pump-speed');
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+    });
+
+    describe('getControlStreamUrl', () => {
+      it('builds URL for specific control stream', () => {
+        const url = navigator.getControlStreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/controlStreams/stream-123');
+      });
+
+      it('encodes control stream ID in URL', () => {
+        const url = navigator.getControlStreamUrl('stream/456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2F456'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getControlStreamUrl('stream-123', 'json');
+        expect(url).toContain('f=json');
+      });
+    });
+
+    describe('createControlStreamUrl', () => {
+      it('builds URL for creating control stream', () => {
+        const url = navigator.createControlStreamUrl();
+        expect(url).toBe('http://example.com/csapi/controlStreams');
+      });
+    });
+
+    describe('updateControlStreamUrl', () => {
+      it('builds URL for updating control stream', () => {
+        const url = navigator.updateControlStreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/controlStreams/stream-123');
+      });
+
+      it('encodes control stream ID', () => {
+        const url = navigator.updateControlStreamUrl('stream/special');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2Fspecial'
+        );
+      });
+    });
+
+    describe('patchControlStreamUrl', () => {
+      it('builds URL for patching control stream', () => {
+        const url = navigator.patchControlStreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/controlStreams/stream-123');
+      });
+
+      it('encodes control stream ID', () => {
+        const url = navigator.patchControlStreamUrl('stream/test');
+        expect(url).toBe('http://example.com/csapi/controlStreams/stream%2Ftest');
+      });
+    });
+
+    describe('deleteControlStreamUrl', () => {
+      it('builds URL for deleting control stream', () => {
+        const url = navigator.deleteControlStreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/controlStreams/stream-123');
+      });
+
+      it('encodes control stream ID', () => {
+        const url = navigator.deleteControlStreamUrl('stream/old');
+        expect(url).toBe('http://example.com/csapi/controlStreams/stream%2Fold');
+      });
+    });
+
+    describe('getControlStreamHistoryUrl', () => {
+      it('builds basic control stream history URL', () => {
+        const url = navigator.getControlStreamHistoryUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/history'
+        );
+      });
+
+      it('builds history URL with validTime parameter', () => {
+        const url = navigator.getControlStreamHistoryUrl('stream-123', {
+          validTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('validTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds history URL with limit', () => {
+        const url = navigator.getControlStreamHistoryUrl('stream-123', {
+          limit: 5,
+        });
+        expect(url).toContain('limit=5');
+      });
+    });
+
+    describe('getControlStreamCommandsUrl', () => {
+      it('builds basic control stream commands URL', () => {
+        const url = navigator.getControlStreamCommandsUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/commands'
+        );
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getControlStreamCommandsUrl('stream-123', {
+          limit: 10,
+        });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with issueTime parameter', () => {
+        const url = navigator.getControlStreamCommandsUrl('stream-123', {
+          issueTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('issueTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with executionTime parameter', () => {
+        const url = navigator.getControlStreamCommandsUrl('stream-123', {
+          executionTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('executionTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with status parameter', () => {
+        const url = navigator.getControlStreamCommandsUrl('stream-123', {
+          status: 'completed',
+        });
+        expect(url).toContain('status=completed');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getControlStreamCommandsUrl('stream-123', {
+          limit: 5,
+          status: 'pending',
+          issueTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('status=pending');
+        expect(url).toContain('issueTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+    });
+
+    describe('issueCommandUrl', () => {
+      it('builds URL for issuing command', () => {
+        const url = navigator.issueCommandUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/commands'
+        );
+      });
+
+      it('encodes control stream ID', () => {
+        const url = navigator.issueCommandUrl('stream/special');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2Fspecial/commands'
+        );
+      });
+    });
+
+    describe('getCommandUrl', () => {
+      it('builds URL for specific command', () => {
+        const url = navigator.getCommandUrl('stream-123', 'cmd-456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/commands/cmd-456'
+        );
+      });
+
+      it('encodes control stream and command IDs', () => {
+        const url = navigator.getCommandUrl('stream/123', 'cmd/456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2F123/commands/cmd%2F456'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getCommandUrl('stream-123', 'cmd-456', 'json');
+        expect(url).toContain('f=json');
+      });
+    });
+
+    describe('updateCommandStatusUrl', () => {
+      it('builds URL for updating command status', () => {
+        const url = navigator.updateCommandStatusUrl('stream-123', 'cmd-456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/commands/cmd-456'
+        );
+      });
+
+      it('encodes control stream and command IDs', () => {
+        const url = navigator.updateCommandStatusUrl('stream/123', 'cmd/456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2F123/commands/cmd%2F456'
+        );
+      });
+    });
+
+    describe('cancelCommandUrl', () => {
+      it('builds URL for canceling command', () => {
+        const url = navigator.cancelCommandUrl('stream-123', 'cmd-456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/commands/cmd-456'
+        );
+      });
+
+      it('encodes control stream and command IDs', () => {
+        const url = navigator.cancelCommandUrl('stream/123', 'cmd/456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2F123/commands/cmd%2F456'
+        );
+      });
+    });
+  });
 });

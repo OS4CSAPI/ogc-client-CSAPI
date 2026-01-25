@@ -2,6 +2,7 @@ import { BoundingBox, DateTimeParameter } from '../../shared/models.js';
 import { OgcApiCollectionInfo } from '../model.js';
 import {
   CSAPIResourceType,
+  CommandsQueryOptions,
   ControlStreamsQueryOptions,
   DatastreamsQueryOptions,
   DeploymentsQueryOptions,
@@ -853,6 +854,229 @@ export default class CSAPINavigator {
   deleteObservationUrl(observationId: string): string {
     this._checkResourceAvailable('observations');
     return `${this.baseUrl}/observations/${encodeURIComponent(observationId)}`;
+  }
+
+  // ========================================
+  // CONTROL STREAMS RESOURCE (Part 2: Section 8.4)
+  // ========================================
+
+  /**
+   * Build URL to get all control streams in the collection.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_streams_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getControlStreamsUrl(options: ControlStreamsQueryOptions = {}): string {
+    this._checkResourceAvailable('controlStreams');
+    const url = new URL(`${this.baseUrl}/controlStreams`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    }
+    if (options.issueTime !== undefined) {
+      url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
+    }
+    if (options.executionTime !== undefined) {
+      url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific control stream by ID.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getControlStreamUrl(controlStreamId: string, format?: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return this._buildResourceUrl('controlStreams', controlStreamId, format);
+  }
+
+  /**
+   * Build URL to create a new control stream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_streams_3
+   *
+   * @returns URL string for POST request (body contains control stream description)
+   */
+  createControlStreamUrl(): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams`;
+  }
+
+  /**
+   * Build URL to fully update a control stream (replace).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource_2
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @returns URL string for PUT request (body contains full control stream description)
+   */
+  updateControlStreamUrl(controlStreamId: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`;
+  }
+
+  /**
+   * Build URL to partially update a control stream (modify specific fields).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource_2
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchControlStreamUrl(controlStreamId: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`;
+  }
+
+  /**
+   * Build URL to delete a control stream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource_3
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @returns URL string for DELETE request
+   */
+  deleteControlStreamUrl(controlStreamId: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a control stream (all versions).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#req_controlstream-history
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getControlStreamHistoryUrl(
+    controlStreamId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('controlStreams');
+    const url = new URL(
+      `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get commands for a specific control stream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_commands_2
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @param options Query parameters for filtering commands
+   * @returns URL string for GET request
+   */
+  getControlStreamCommandsUrl(
+    controlStreamId: string,
+    options: CommandsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('controlStreams');
+    const url = new URL(
+      `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands`
+    );
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.issueTime !== undefined) {
+      url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
+    }
+    if (options.executionTime !== undefined) {
+      url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+    }
+    if (options.status !== undefined) {
+      url.searchParams.set('status', options.status);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to issue a command to a control stream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_commands_3
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @returns URL string for POST request (body contains command data)
+   */
+  issueCommandUrl(controlStreamId: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands`;
+  }
+
+  /**
+   * Build URL to get a specific command by ID.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_resource
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @param commandId Unique identifier of the command
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getCommandUrl(
+    controlStreamId: string,
+    commandId: string,
+    format?: string
+  ): string {
+    this._checkResourceAvailable('controlStreams');
+    let url = `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    if (format) {
+      url += `?f=${encodeURIComponent(format)}`;
+    }
+    return url;
+  }
+
+  /**
+   * Build URL to update the status of a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_resource_2
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @param commandId Unique identifier of the command
+   * @returns URL string for PATCH request (body contains status update)
+   */
+  updateCommandStatusUrl(
+    controlStreamId: string,
+    commandId: string
+  ): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+  }
+
+  /**
+   * Build URL to cancel a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_resource_3
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @param commandId Unique identifier of the command
+   * @returns URL string for DELETE request
+   */
+  cancelCommandUrl(
+    controlStreamId: string,
+    commandId: string
+  ): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
   }
 
   // ========================================
