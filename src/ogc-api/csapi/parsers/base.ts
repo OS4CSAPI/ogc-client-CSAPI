@@ -276,7 +276,7 @@ export class SystemParser extends CSAPIParser<SystemFeature> {
     // Build properties from SensorML metadata
     const properties: Record<string, unknown> = {
       ...extractCommonProperties(sml),
-      featureType: 'system',
+      featureType: 'System',
       systemType: sml.type === 'PhysicalSystem' ? 'platform' : 'sensor',
     };
 

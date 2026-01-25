@@ -128,7 +128,7 @@ export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
     // Build properties from SensorML metadata
     const properties: Record<string, unknown> = {
       ...extractCommonProperties(sml),
-      featureType: 'deployment',
+      featureType: 'Deployment',
       definition: sml.definition,
     };
 
@@ -186,7 +186,7 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
     // Build properties from SensorML metadata
     const properties: Record<string, unknown> = {
       ...extractCommonProperties(sml),
-      featureType: 'procedure',
+      featureType: 'Procedure',
       procedureType: sml.type,
     };
 
@@ -282,7 +282,7 @@ export class PropertyParser extends CSAPIParser<PropertyFeature> {
     // Build properties from SensorML metadata
     const properties: Record<string, unknown> = {
       ...extractCommonProperties(sml),
-      featureType: 'property',
+      featureType: 'Property',
     };
 
     // Add property-specific fields
