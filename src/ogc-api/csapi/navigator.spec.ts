@@ -1337,4 +1337,129 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
   });
+
+  describe('Properties Resource', () => {
+    beforeEach(() => {
+      // Add properties link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/properties',
+        href: 'http://example.com/csapi/properties',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getPropertiesUrl', () => {
+      it('builds basic properties URL', () => {
+        const url = navigator.getPropertiesUrl();
+        expect(url).toBe('http://example.com/csapi/properties');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getPropertiesUrl({ limit: 10 });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with q (text search) parameter', () => {
+        const url = navigator.getPropertiesUrl({ q: 'temperature' });
+        expect(url).toContain('q=temperature');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getPropertiesUrl({
+          limit: 5,
+          q: 'pressure',
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('q=pressure');
+      });
+    });
+
+    describe('getPropertyUrl', () => {
+      it('builds URL for specific property', () => {
+        const url = navigator.getPropertyUrl('prop-123');
+        expect(url).toBe('http://example.com/csapi/properties/prop-123');
+      });
+
+      it('encodes property ID in URL', () => {
+        const url = navigator.getPropertyUrl('prop/456');
+        expect(url).toBe(
+          'http://example.com/csapi/properties/prop%2F456'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getPropertyUrl('prop-123', 'json');
+        expect(url).toContain('f=json');
+      });
+    });
+
+    describe('createPropertyUrl', () => {
+      it('builds URL for creating property', () => {
+        const url = navigator.createPropertyUrl();
+        expect(url).toBe('http://example.com/csapi/properties');
+      });
+    });
+
+    describe('updatePropertyUrl', () => {
+      it('builds URL for updating property', () => {
+        const url = navigator.updatePropertyUrl('prop-123');
+        expect(url).toBe('http://example.com/csapi/properties/prop-123');
+      });
+
+      it('encodes property ID', () => {
+        const url = navigator.updatePropertyUrl('prop/special');
+        expect(url).toBe(
+          'http://example.com/csapi/properties/prop%2Fspecial'
+        );
+      });
+    });
+
+    describe('patchPropertyUrl', () => {
+      it('builds URL for patching property', () => {
+        const url = navigator.patchPropertyUrl('prop-123');
+        expect(url).toBe('http://example.com/csapi/properties/prop-123');
+      });
+
+      it('encodes property ID', () => {
+        const url = navigator.patchPropertyUrl('prop/test');
+        expect(url).toBe('http://example.com/csapi/properties/prop%2Ftest');
+      });
+    });
+
+    describe('deletePropertyUrl', () => {
+      it('builds URL for deleting property', () => {
+        const url = navigator.deletePropertyUrl('prop-123');
+        expect(url).toBe('http://example.com/csapi/properties/prop-123');
+      });
+
+      it('encodes property ID', () => {
+        const url = navigator.deletePropertyUrl('prop/old');
+        expect(url).toBe('http://example.com/csapi/properties/prop%2Fold');
+      });
+    });
+
+    describe('getPropertyHistoryUrl', () => {
+      it('builds basic property history URL', () => {
+        const url = navigator.getPropertyHistoryUrl('prop-123');
+        expect(url).toBe(
+          'http://example.com/csapi/properties/prop-123/history'
+        );
+      });
+
+      it('builds history URL with validTime parameter', () => {
+        const url = navigator.getPropertyHistoryUrl('prop-123', {
+          validTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('validTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds history URL with limit', () => {
+        const url = navigator.getPropertyHistoryUrl('prop-123', {
+          limit: 5,
+        });
+        expect(url).toContain('limit=5');
+      });
+    });
+  });
 });

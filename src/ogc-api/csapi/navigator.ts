@@ -9,6 +9,7 @@ import {
   HistoryQueryOptions,
   ObservationsQueryOptions,
   ProceduresQueryOptions,
+  PropertiesQueryOptions,
   SamplingFeaturesQueryOptions,
   SystemsQueryOptions,
 } from './model.js';
@@ -1077,6 +1078,121 @@ export default class CSAPINavigator {
   ): string {
     this._checkResourceAvailable('controlStreams');
     return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+  }
+
+  // ========================================
+  // PROPERTIES RESOURCE (Part 1: Section 8.7)
+  // ========================================
+
+  /**
+   * Build URL to get all properties in the collection.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_properties
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getPropertiesUrl(options: PropertiesQueryOptions = {}): string {
+    this._checkResourceAvailable('properties');
+    const url = new URL(`${this.baseUrl}/properties`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific property by ID.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_property_resource
+   *
+   * @param propertyId Unique identifier of the property
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getPropertyUrl(propertyId: string, format?: string): string {
+    this._checkResourceAvailable('properties');
+    return this._buildResourceUrl('properties', propertyId, format);
+  }
+
+  /**
+   * Build URL to create a new property.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_properties_2
+   *
+   * @returns URL string for POST request (body contains property definition)
+   */
+  createPropertyUrl(): string {
+    this._checkResourceAvailable('properties');
+    return `${this.baseUrl}/properties`;
+  }
+
+  /**
+   * Build URL to fully update a property (replace).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_property_resource_2
+   *
+   * @param propertyId Unique identifier of the property
+   * @returns URL string for PUT request (body contains full property definition)
+   */
+  updatePropertyUrl(propertyId: string): string {
+    this._checkResourceAvailable('properties');
+    return `${this.baseUrl}/properties/${encodeURIComponent(propertyId)}`;
+  }
+
+  /**
+   * Build URL to partially update a property (modify specific fields).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_property_resource_2
+   *
+   * @param propertyId Unique identifier of the property
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchPropertyUrl(propertyId: string): string {
+    this._checkResourceAvailable('properties');
+    return `${this.baseUrl}/properties/${encodeURIComponent(propertyId)}`;
+  }
+
+  /**
+   * Build URL to delete a property.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_property_resource_3
+   *
+   * @param propertyId Unique identifier of the property
+   * @returns URL string for DELETE request
+   */
+  deletePropertyUrl(propertyId: string): string {
+    this._checkResourceAvailable('properties');
+    return `${this.baseUrl}/properties/${encodeURIComponent(propertyId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a property (all versions).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#req_property-history
+   *
+   * @param propertyId Unique identifier of the property
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getPropertyHistoryUrl(
+    propertyId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('properties');
+    const url = new URL(
+      `${this.baseUrl}/properties/${encodeURIComponent(propertyId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
   }
 
   // ========================================

@@ -119,6 +119,18 @@ export interface SamplingFeaturesQueryOptions {
 }
 
 /**
+ * Query options for Properties
+ * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_properties
+ */
+export interface PropertiesQueryOptions {
+  /** Maximum number of properties to return */
+  limit?: number;
+
+  /** Full-text search query */
+  q?: string;
+}
+
+/**
  * Query options for Procedures collection endpoint
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedures_2
  */
