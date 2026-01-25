@@ -20,11 +20,19 @@ import type {
 } from '../swe-common/index.js';
 
 /**
+ * Validation error
+ */
+export interface ValidationError {
+  message: string;
+  path?: string;
+}
+
+/**
  * Validation result
  */
 export interface ValidationResult {
   valid: boolean;
-  errors?: string[];
+  errors?: ValidationError[];
 }
 
 /**
@@ -43,10 +51,10 @@ function hasDataComponentProperties(obj: unknown): boolean {
  * Validate QuantityComponent
  */
 export function validateQuantity(data: unknown): ValidationResult {
-  const errors: string[] = [];
+  const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
-    errors.push('Missing required DataComponent properties');
+    errors.push({ message: 'Missing required DataComponent properties' });
     return { valid: false, errors };
   }
 
@@ -57,7 +65,7 @@ export function validateQuantity(data: unknown): ValidationResult {
   }
 
   if (!component.uom) {
-    errors.push('Missing required property: uom');
+    errors.push({ message: 'Missing required property: uom' });
   }
 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
@@ -67,10 +75,10 @@ export function validateQuantity(data: unknown): ValidationResult {
  * Validate DataRecordComponent
  */
 export function validateDataRecord(data: unknown): ValidationResult {
-  const errors: string[] = [];
+  const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
-    errors.push('Missing required DataComponent properties');
+    errors.push({ message: 'Missing required DataComponent properties' });
     return { valid: false, errors };
   }
 
@@ -81,9 +89,9 @@ export function validateDataRecord(data: unknown): ValidationResult {
   }
 
   if (!component.fields || !Array.isArray(component.fields)) {
-    errors.push('Missing or invalid property: fields (must be an array)');
+    errors.push({ message: 'Missing or invalid property: fields (must be an array)' });
   } else if (component.fields.length === 0) {
-    errors.push('DataRecord must have at least one field');
+    errors.push({ message: 'DataRecord must have at least one field' });
   }
 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
@@ -93,10 +101,10 @@ export function validateDataRecord(data: unknown): ValidationResult {
  * Validate DataArrayComponent
  */
 export function validateDataArray(data: unknown): ValidationResult {
-  const errors: string[] = [];
+  const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
-    errors.push('Missing required DataComponent properties');
+    errors.push({ message: 'Missing required DataComponent properties' });
     return { valid: false, errors };
   }
 
@@ -107,11 +115,11 @@ export function validateDataArray(data: unknown): ValidationResult {
   }
 
   if (!component.elementCount) {
-    errors.push('Missing required property: elementCount');
+    errors.push({ message: 'Missing required property: elementCount' });
   }
 
   if (!component.elementType) {
-    errors.push('Missing required property: elementType');
+    errors.push({ message: 'Missing required property: elementType' });
   }
 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
@@ -124,7 +132,7 @@ export function validateSWEComponent(data: unknown): ValidationResult {
   if (!hasDataComponentProperties(data)) {
     return {
       valid: false,
-      errors: ['Object is not a valid SWE Common data component'],
+      errors: [{ message: 'Object is not a valid SWE Common data component' }],
     };
   }
 
@@ -196,3 +204,4 @@ export function validateObservationResult(data: unknown): ValidationResult {
   // Otherwise, assume it's a simple value (number, string, boolean)
   return { valid: true };
 }
+

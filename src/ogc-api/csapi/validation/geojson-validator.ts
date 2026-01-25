@@ -85,6 +85,7 @@ export function validateSystemFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
@@ -130,6 +131,7 @@ export function validateDeploymentFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
@@ -179,6 +181,7 @@ export function validateProcedureFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
@@ -224,6 +227,7 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
@@ -277,6 +281,7 @@ export function validateSamplingFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
@@ -322,6 +327,7 @@ export function validatePropertyFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
@@ -371,6 +377,7 @@ export function validateControlStreamFeature(data: unknown): ValidationResult {
 
   if (!hasCSAPIProperties(data.properties)) {
     errors.push('Missing required CSAPI properties (featureType, uid)');
+    return { valid: false, errors };
   }
 
   const props = data.properties as any;
