@@ -106,3 +106,21 @@ export interface SamplingFeaturesQueryOptions {
   datetime?: DateTimeParameter;
   q?: string;
 }
+
+/**
+ * Query options for Procedures collection endpoint
+ * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedures_2
+ */
+export interface ProceduresQueryOptions {
+  /** Maximum number of procedures to return */
+  limit?: number;
+
+  /** Full-text search query */
+  q?: string;
+
+  /** Filter by observed property */
+  observedProperty?: string;
+
+  /** Filter by controlled property */
+  controlledProperty?: string;
+}

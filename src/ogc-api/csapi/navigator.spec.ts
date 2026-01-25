@@ -318,4 +318,142 @@ describe('CSAPINavigator - Systems Resource', () => {
       );
     });
   });
+
+  describe('Procedures Resource', () => {
+    beforeEach(() => {
+      // Add procedures link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+        href: 'http://example.com/csapi/procedures',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getProceduresUrl', () => {
+      it('builds basic procedures URL', () => {
+        const url = navigator.getProceduresUrl();
+        expect(url).toBe('http://example.com/csapi/procedures');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getProceduresUrl({ limit: 10 });
+        expect(url).toBe('http://example.com/csapi/procedures?limit=10');
+      });
+
+      it('builds URL with text search query', () => {
+        const url = navigator.getProceduresUrl({
+          q: 'temperature measurement',
+        });
+        expect(url).toBe('http://example.com/csapi/procedures?q=temperature+measurement');
+      });
+
+      it('builds URL with observedProperty filter', () => {
+        const url = navigator.getProceduresUrl({
+          observedProperty: 'temperature',
+        });
+        expect(url).toBe(
+          'http://example.com/csapi/procedures?observedProperty=temperature'
+        );
+      });
+
+      it('builds URL with controlledProperty filter', () => {
+        const url = navigator.getProceduresUrl({
+          controlledProperty: 'heater-power',
+        });
+        expect(url).toBe(
+          'http://example.com/csapi/procedures?controlledProperty=heater-power'
+        );
+      });
+
+      it('builds URL with multiple filters', () => {
+        const url = navigator.getProceduresUrl({
+          limit: 20,
+          q: 'sensor',
+          observedProperty: 'temperature',
+        });
+        expect(url).toContain('limit=20');
+        expect(url).toContain('q=sensor');
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('throws error if procedures not available', () => {
+        const minimalCollection = {
+          ...mockCollection,
+          links: [mockCollection.links[0]], // only self link
+        } as OgcApiCollectionInfo;
+        const nav = new CSAPINavigator(minimalCollection);
+        expect(() => nav.getProceduresUrl()).toThrow(
+          'Collection does not support procedures resource'
+        );
+      });
+    });
+
+    describe('getProcedureUrl', () => {
+      it('builds single procedure URL', () => {
+        const url = navigator.getProcedureUrl('procedure-123');
+        expect(url).toBe('http://example.com/csapi/procedures/procedure-123');
+      });
+
+      it('builds URL with format parameter', () => {
+        const url = navigator.getProcedureUrl('procedure-123', 'application/sml+json');
+        expect(url).toBe(
+          'http://example.com/csapi/procedures/procedure-123?f=application%2Fsml%2Bjson'
+        );
+      });
+
+      it('properly encodes procedure IDs', () => {
+        const url = navigator.getProcedureUrl('procedure/with/slashes');
+        expect(url).toContain('procedure%2Fwith%2Fslashes');
+      });
+    });
+
+    describe('CRUD URLs', () => {
+      it('builds create URL', () => {
+        const url = navigator.createProcedureUrl();
+        expect(url).toBe('http://example.com/csapi/procedures');
+      });
+
+      it('builds update URL', () => {
+        const url = navigator.updateProcedureUrl('procedure-123');
+        expect(url).toBe('http://example.com/csapi/procedures/procedure-123');
+      });
+
+      it('builds patch URL', () => {
+        const url = navigator.patchProcedureUrl('procedure-123');
+        expect(url).toBe('http://example.com/csapi/procedures/procedure-123');
+      });
+
+      it('builds delete URL', () => {
+        const url = navigator.deleteProcedureUrl('procedure-123');
+        expect(url).toBe('http://example.com/csapi/procedures/procedure-123');
+      });
+    });
+
+    describe('getProcedureHistoryUrl', () => {
+      it('builds history URL', () => {
+        const url = navigator.getProcedureHistoryUrl('procedure-123');
+        expect(url).toBe('http://example.com/csapi/procedures/procedure-123/history');
+      });
+
+      it('builds history URL with validTime filter', () => {
+        const url = navigator.getProcedureHistoryUrl('procedure-123', {
+          validTime: {
+            start: new Date('2024-01-01'),
+            end: new Date('2024-12-31'),
+          },
+        });
+        expect(url).toContain('validTime=');
+        expect(url).toContain('2024-01-01');
+        expect(url).toContain('2024-12-31');
+      });
+
+      it('builds history URL with limit', () => {
+        const url = navigator.getProcedureHistoryUrl('procedure-123', {
+          limit: 5,
+        });
+        expect(url).toContain('limit=5');
+      });
+    });
+  });
 });

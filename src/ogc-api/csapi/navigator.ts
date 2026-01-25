@@ -251,6 +251,127 @@ export default class CSAPINavigator {
   }
 
   // ========================================
+  // PROCEDURES RESOURCE (Part 1: Section 8.4)
+  // ========================================
+
+  /**
+   * Build URL to get all procedures in the collection.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedures_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getProceduresUrl(options: ProceduresQueryOptions = {}): string {
+    this._checkResourceAvailable('procedures');
+    const url = new URL(`${this.baseUrl}/procedures`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific procedure by ID.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource
+   *
+   * @param procedureId Unique identifier of the procedure
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getProcedureUrl(procedureId: string, format?: string): string {
+    this._checkResourceAvailable('procedures');
+    return this._buildResourceUrl('procedures', procedureId, format);
+  }
+
+  /**
+   * Build URL to create a new procedure.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedures_3
+   *
+   * @returns URL string for POST request (body contains procedure description)
+   */
+  createProcedureUrl(): string {
+    this._checkResourceAvailable('procedures');
+    return `${this.baseUrl}/procedures`;
+  }
+
+  /**
+   * Build URL to fully update a procedure (replace).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource_2
+   *
+   * @param procedureId Unique identifier of the procedure
+   * @returns URL string for PUT request (body contains full procedure description)
+   */
+  updateProcedureUrl(procedureId: string): string {
+    this._checkResourceAvailable('procedures');
+    return `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}`;
+  }
+
+  /**
+   * Build URL to partially update a procedure (modify specific fields).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource_2
+   *
+   * @param procedureId Unique identifier of the procedure
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchProcedureUrl(procedureId: string): string {
+    this._checkResourceAvailable('procedures');
+    return `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}`;
+  }
+
+  /**
+   * Build URL to delete a procedure.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource_3
+   *
+   * @param procedureId Unique identifier of the procedure
+   * @returns URL string for DELETE request
+   */
+  deleteProcedureUrl(procedureId: string): string {
+    this._checkResourceAvailable('procedures');
+    return `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a procedure (all versions).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#req_procedure-history
+   *
+   * @param procedureId Unique identifier of the procedure
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getProcedureHistoryUrl(
+    procedureId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('procedures');
+    const url = new URL(
+      `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
   // HELPER METHODS
   // ========================================
 
@@ -415,6 +536,20 @@ export default class CSAPINavigator {
         'executionTime',
         this._serializeDatetime(options.executionTime)
       );
+    return url;
+  }
+
+  private _applyProceduresQuery(
+    url: URL,
+    options: ProceduresQueryOptions
+  ): URL {
+    if (options.limit !== undefined)
+      url.searchParams.set('limit', options.limit.toString());
+    if (options.q !== undefined) url.searchParams.set('q', options.q);
+    if (options.observedProperty !== undefined)
+      url.searchParams.set('observedProperty', options.observedProperty);
+    if (options.controlledProperty !== undefined)
+      url.searchParams.set('controlledProperty', options.controlledProperty);
     return url;
   }
 }
