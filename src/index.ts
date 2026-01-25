@@ -49,6 +49,9 @@ export * from './ogc-api/csapi/model.js';
 // Export parsers and their types
 export * from './ogc-api/csapi/parsers/index.js';
 
+// Export request builders
+export * from './ogc-api/csapi/request-builders.js';
+
 // Export feature types (selective to avoid conflicts)
 export type {
   SystemFeature,
