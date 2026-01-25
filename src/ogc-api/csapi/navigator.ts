@@ -498,6 +498,127 @@ export default class CSAPINavigator {
   }
 
   // ========================================
+  // SAMPLING FEATURES RESOURCE (Part 1: Section 8.6)
+  // ========================================
+
+  /**
+   * Build URL to get all sampling features in the collection.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_features_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getSamplingFeaturesUrl(options: SamplingFeaturesQueryOptions = {}): string {
+    this._checkResourceAvailable('samplingFeatures');
+    const url = new URL(`${this.baseUrl}/samplingFeatures`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific sampling feature by ID.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_feature_resource
+   *
+   * @param samplingFeatureId Unique identifier of the sampling feature
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getSamplingFeatureUrl(samplingFeatureId: string, format?: string): string {
+    this._checkResourceAvailable('samplingFeatures');
+    return this._buildResourceUrl('samplingFeatures', samplingFeatureId, format);
+  }
+
+  /**
+   * Build URL to create a new sampling feature.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_features_3
+   *
+   * @returns URL string for POST request (body contains sampling feature description)
+   */
+  createSamplingFeatureUrl(): string {
+    this._checkResourceAvailable('samplingFeatures');
+    return `${this.baseUrl}/samplingFeatures`;
+  }
+
+  /**
+   * Build URL to fully update a sampling feature (replace).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_feature_resource_2
+   *
+   * @param samplingFeatureId Unique identifier of the sampling feature
+   * @returns URL string for PUT request (body contains full sampling feature description)
+   */
+  updateSamplingFeatureUrl(samplingFeatureId: string): string {
+    this._checkResourceAvailable('samplingFeatures');
+    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`;
+  }
+
+  /**
+   * Build URL to partially update a sampling feature (modify specific fields).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_feature_resource_2
+   *
+   * @param samplingFeatureId Unique identifier of the sampling feature
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchSamplingFeatureUrl(samplingFeatureId: string): string {
+    this._checkResourceAvailable('samplingFeatures');
+    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`;
+  }
+
+  /**
+   * Build URL to delete a sampling feature.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_feature_resource_3
+   *
+   * @param samplingFeatureId Unique identifier of the sampling feature
+   * @returns URL string for DELETE request
+   */
+  deleteSamplingFeatureUrl(samplingFeatureId: string): string {
+    this._checkResourceAvailable('samplingFeatures');
+    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a sampling feature (all versions).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#req_samplingfeature-history
+   *
+   * @param samplingFeatureId Unique identifier of the sampling feature
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getSamplingFeatureHistoryUrl(
+    samplingFeatureId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('samplingFeatures');
+    const url = new URL(
+      `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
   // HELPER METHODS
   // ========================================
 

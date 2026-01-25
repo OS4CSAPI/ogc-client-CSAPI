@@ -602,4 +602,145 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
   });
+
+  describe('Sampling Features Resource', () => {
+    beforeEach(() => {
+      // Add samplingFeatures link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/samplingFeatures',
+        href: 'http://example.com/csapi/samplingFeatures',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getSamplingFeaturesUrl', () => {
+      it('builds basic sampling features URL', () => {
+        const url = navigator.getSamplingFeaturesUrl();
+        expect(url).toBe('http://example.com/csapi/samplingFeatures');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getSamplingFeaturesUrl({ limit: 10 });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with bbox parameter', () => {
+        const url = navigator.getSamplingFeaturesUrl({
+          bbox: [-180, -90, 180, 90],
+        });
+        expect(url).toContain('bbox=-180%2C-90%2C180%2C90');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getSamplingFeaturesUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with q (text search) parameter', () => {
+        const url = navigator.getSamplingFeaturesUrl({ q: 'station' });
+        expect(url).toContain('q=station');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getSamplingFeaturesUrl({
+          limit: 5,
+          q: 'river',
+          bbox: [-10, 40, 10, 50],
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('q=river');
+        expect(url).toContain('bbox=-10%2C40%2C10%2C50');
+      });
+    });
+
+    describe('getSamplingFeatureUrl', () => {
+      it('builds URL for specific sampling feature', () => {
+        const url = navigator.getSamplingFeatureUrl('station-123');
+        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+      });
+
+      it('encodes sampling feature ID in URL', () => {
+        const url = navigator.getSamplingFeatureUrl('station/456');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station%2F456'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getSamplingFeatureUrl('station-123', 'geojson');
+        expect(url).toContain('f=geojson');
+      });
+    });
+
+    describe('createSamplingFeatureUrl', () => {
+      it('builds URL for creating sampling feature', () => {
+        const url = navigator.createSamplingFeatureUrl();
+        expect(url).toBe('http://example.com/csapi/samplingFeatures');
+      });
+    });
+
+    describe('updateSamplingFeatureUrl', () => {
+      it('builds URL for updating sampling feature', () => {
+        const url = navigator.updateSamplingFeatureUrl('station-123');
+        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+      });
+
+      it('encodes sampling feature ID', () => {
+        const url = navigator.updateSamplingFeatureUrl('station/special');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station%2Fspecial'
+        );
+      });
+    });
+
+    describe('patchSamplingFeatureUrl', () => {
+      it('builds URL for patching sampling feature', () => {
+        const url = navigator.patchSamplingFeatureUrl('station-123');
+        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+      });
+
+      it('encodes sampling feature ID', () => {
+        const url = navigator.patchSamplingFeatureUrl('station/test');
+        expect(url).toBe('http://example.com/csapi/samplingFeatures/station%2Ftest');
+      });
+    });
+
+    describe('deleteSamplingFeatureUrl', () => {
+      it('builds URL for deleting sampling feature', () => {
+        const url = navigator.deleteSamplingFeatureUrl('station-123');
+        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+      });
+
+      it('encodes sampling feature ID', () => {
+        const url = navigator.deleteSamplingFeatureUrl('station/old');
+        expect(url).toBe('http://example.com/csapi/samplingFeatures/station%2Fold');
+      });
+    });
+
+    describe('getSamplingFeatureHistoryUrl', () => {
+      it('builds basic sampling feature history URL', () => {
+        const url = navigator.getSamplingFeatureHistoryUrl('station-123');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station-123/history'
+        );
+      });
+
+      it('builds history URL with validTime parameter', () => {
+        const url = navigator.getSamplingFeatureHistoryUrl('station-123', {
+          validTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('validTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds history URL with limit', () => {
+        const url = navigator.getSamplingFeatureHistoryUrl('station-123', {
+          limit: 5,
+        });
+        expect(url).toContain('limit=5');
+      });
+    });
+  });
 });
