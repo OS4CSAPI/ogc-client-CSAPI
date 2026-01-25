@@ -156,6 +156,7 @@ export function parseBaseCollectionInfo(
     ? bulkDownloadLinks[jsonMimeType]
     : null;
   return {
+    links,
     itemFormats: itemFormats,
     bulkDownloadLinks,
     jsonDownloadLink,
