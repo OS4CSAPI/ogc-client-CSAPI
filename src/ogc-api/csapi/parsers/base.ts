@@ -20,6 +20,10 @@ import type { AbstractDataComponent } from '../swe-common';
 import { detectFormat, type FormatDetectionResult } from '../formats';
 import type { Position } from '../sensorml/abstract-physical-process';
 import type { DescribedObject } from '../sensorml/base-types';
+import {
+  validateSystemFeature,
+  type ValidationResult,
+} from '../validation';
 
 /**
  * Helper: Extract geometry from SensorML Position
@@ -296,6 +300,22 @@ export class SystemParser extends CSAPIParser<SystemFeature> {
 
   parseSWE(data: Record<string, unknown>): SystemFeature {
     throw new CSAPIParseError('SWE format not applicable for System resources');
+  }
+
+  validate(
+    data: SystemFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    // Only validate GeoJSON format
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validateSystemFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
   }
 }
 

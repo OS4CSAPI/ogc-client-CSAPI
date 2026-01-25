@@ -265,6 +265,153 @@ export function validateDatastreamFeatureCollection(data: unknown): ValidationRe
 }
 
 /**
+ * Validate SamplingFeature
+ */
+export function validateSamplingFeature(data: unknown): ValidationResult {
+  const errors: string[] = [];
+
+  if (!isFeature(data)) {
+    errors.push('Object is not a valid GeoJSON Feature');
+    return { valid: false, errors };
+  }
+
+  if (!hasCSAPIProperties(data.properties)) {
+    errors.push('Missing required CSAPI properties (featureType, uid)');
+  }
+
+  const props = data.properties as any;
+  if (props.featureType !== 'SamplingFeature') {
+    errors.push(`Expected featureType 'SamplingFeature', got '${props.featureType}'`);
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate SamplingFeatureCollection
+ */
+export function validateSamplingFeatureCollection(data: unknown): ValidationResult {
+  const errors: string[] = [];
+
+  if (!isFeatureCollection(data)) {
+    errors.push('Object is not a valid GeoJSON FeatureCollection');
+    return { valid: false, errors };
+  }
+
+  const features = (data as any).features;
+  features.forEach((feature: unknown, index: number) => {
+    const result = validateSamplingFeature(feature);
+    if (!result.valid) {
+      errors.push(`Feature at index ${index}: ${result.errors?.join(', ')}`);
+    }
+  });
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate PropertyFeature
+ */
+export function validatePropertyFeature(data: unknown): ValidationResult {
+  const errors: string[] = [];
+
+  if (!isFeature(data)) {
+    errors.push('Object is not a valid GeoJSON Feature');
+    return { valid: false, errors };
+  }
+
+  if (!hasCSAPIProperties(data.properties)) {
+    errors.push('Missing required CSAPI properties (featureType, uid)');
+  }
+
+  const props = data.properties as any;
+  if (props.featureType !== 'Property') {
+    errors.push(`Expected featureType 'Property', got '${props.featureType}'`);
+  }
+
+  if (!props.definition) {
+    errors.push('Missing required property: definition');
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate PropertyFeatureCollection
+ */
+export function validatePropertyFeatureCollection(data: unknown): ValidationResult {
+  const errors: string[] = [];
+
+  if (!isFeatureCollection(data)) {
+    errors.push('Object is not a valid GeoJSON FeatureCollection');
+    return { valid: false, errors };
+  }
+
+  const features = (data as any).features;
+  features.forEach((feature: unknown, index: number) => {
+    const result = validatePropertyFeature(feature);
+    if (!result.valid) {
+      errors.push(`Feature at index ${index}: ${result.errors?.join(', ')}`);
+    }
+  });
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate ControlStreamFeature
+ */
+export function validateControlStreamFeature(data: unknown): ValidationResult {
+  const errors: string[] = [];
+
+  if (!isFeature(data)) {
+    errors.push('Object is not a valid GeoJSON Feature');
+    return { valid: false, errors };
+  }
+
+  if (!hasCSAPIProperties(data.properties)) {
+    errors.push('Missing required CSAPI properties (featureType, uid)');
+  }
+
+  const props = data.properties as any;
+  if (props.featureType !== 'ControlStream') {
+    errors.push(`Expected featureType 'ControlStream', got '${props.featureType}'`);
+  }
+
+  if (!props.system) {
+    errors.push('Missing required property: system');
+  }
+
+  if (!props.controlledProperty) {
+    errors.push('Missing required property: controlledProperty');
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate ControlStreamFeatureCollection
+ */
+export function validateControlStreamFeatureCollection(data: unknown): ValidationResult {
+  const errors: string[] = [];
+
+  if (!isFeatureCollection(data)) {
+    errors.push('Object is not a valid GeoJSON FeatureCollection');
+    return { valid: false, errors };
+  }
+
+  const features = (data as any).features;
+  features.forEach((feature: unknown, index: number) => {
+    const result = validateControlStreamFeature(feature);
+    if (!result.valid) {
+      errors.push(`Feature at index ${index}: ${result.errors?.join(', ')}`);
+    }
+  });
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
  * Generic feature validator based on featureType
  */
 export function validateCSAPIFeature(data: unknown): ValidationResult {
@@ -282,8 +429,14 @@ export function validateCSAPIFeature(data: unknown): ValidationResult {
       return validateDeploymentFeature(data);
     case 'Procedure':
       return validateProcedureFeature(data);
+    case 'SamplingFeature':
+      return validateSamplingFeature(data);
+    case 'Property':
+      return validatePropertyFeature(data);
     case 'Datastream':
       return validateDatastreamFeature(data);
+    case 'ControlStream':
+      return validateControlStreamFeature(data);
     default:
       return {
         valid: false,

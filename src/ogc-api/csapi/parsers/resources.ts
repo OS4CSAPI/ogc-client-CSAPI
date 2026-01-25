@@ -23,6 +23,15 @@ import type {
 import type { Deployment, SensorMLProcess, DerivedProperty } from '../sensorml';
 import type { Position } from '../sensorml/abstract-physical-process';
 import type { DescribedObject } from '../sensorml/base-types';
+import {
+  validateDeploymentFeature,
+  validateProcedureFeature,
+  validateSamplingFeature,
+  validatePropertyFeature,
+  validateDatastreamFeature,
+  validateControlStreamFeature,
+  type ValidationResult,
+} from '../validation';
 
 /**
  * Helper: Extract geometry from SensorML Position or location
@@ -139,6 +148,21 @@ export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
   parseSWE(data: Record<string, unknown>): DeploymentFeature {
     throw new CSAPIParseError('SWE format not applicable for Deployment resources');
   }
+
+  validate(
+    data: DeploymentFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validateDeploymentFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
+  }
 }
 
 /**
@@ -189,6 +213,21 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
   parseSWE(data: Record<string, unknown>): ProcedureFeature {
     throw new CSAPIParseError('SWE format not applicable for Procedure resources');
   }
+
+  validate(
+    data: ProcedureFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validateProcedureFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
+  }
 }
 
 /**
@@ -208,6 +247,21 @@ export class SamplingFeatureParser extends CSAPIParser<SamplingFeature> {
 
   parseSWE(data: Record<string, unknown>): SamplingFeature {
     throw new CSAPIParseError('SWE format not applicable for Sampling Features');
+  }
+
+  validate(
+    data: SamplingFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validateSamplingFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
   }
 }
 
@@ -246,6 +300,21 @@ export class PropertyParser extends CSAPIParser<PropertyFeature> {
   parseSWE(data: Record<string, unknown>): PropertyFeature {
     throw new CSAPIParseError('SWE format not applicable for Property resources');
   }
+
+  validate(
+    data: PropertyFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validatePropertyFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
+  }
 }
 
 /**
@@ -266,6 +335,21 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
   parseSWE(data: Record<string, unknown>): DatastreamFeature {
     throw new CSAPIParseError('SWE format not applicable for Datastream resources');
   }
+
+  validate(
+    data: DatastreamFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validateDatastreamFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
+  }
 }
 
 /**
@@ -285,6 +369,21 @@ export class ControlStreamParser extends CSAPIParser<ControlStreamFeature> {
 
   parseSWE(data: Record<string, unknown>): ControlStreamFeature {
     throw new CSAPIParseError('SWE format not applicable for ControlStream resources');
+  }
+
+  validate(
+    data: ControlStreamFeature,
+    format: string
+  ): { valid: boolean; errors?: string[]; warnings?: string[] } {
+    if (format !== 'geojson') {
+      return { valid: true };
+    }
+
+    const result = validateControlStreamFeature(data);
+    return {
+      valid: result.valid,
+      errors: result.errors,
+    };
   }
 }
 
