@@ -5,3 +5,4 @@ coverage
 .ideajest-results.json
 test-output.txt
 test-run.log
+temp-coverage-map.json
