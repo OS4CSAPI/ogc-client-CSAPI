@@ -34,6 +34,8 @@
     "@types/geojson": "^7946.0.10",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.2.5",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "babel-jest": "^29.7.0",
     "browser-cache-mock": "^0.1.7",
     "buffer": "^6.0.3",

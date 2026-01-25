@@ -1,0 +1,222 @@
+/**
+ * Base types and interfaces for SWE Common Data Model
+ * 
+ * @see https://docs.ogc.org/is/24-014/24-014.html (SWE Common Data Model 3.0)
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/
+ */
+
+/**
+ * URI reference to an external definition
+ */
+export type DefinitionURI = string;
+
+/**
+ * Soft-named property pattern used in SWE Common
+ * Properties can have a name attribute
+ */
+export interface SoftNamedProperty {
+  /**
+   * Optional name for the property
+   */
+  name?: string;
+}
+
+/**
+ * Association attribute group for referencing external components
+ */
+export interface AssociationAttributeGroup {
+  /**
+   * Reference to an external component
+   */
+  href?: string;
+  
+  /**
+   * Type of the reference
+   */
+  type?: string;
+  
+  /**
+   * Role of the reference
+   */
+  role?: string;
+  
+  /**
+   * Arc role
+   */
+  arcrole?: string;
+  
+  /**
+   * Title for the reference
+   */
+  title?: string;
+}
+
+/**
+ * Base interface for all SWE identifiable objects
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/AbstractSweIdentifiable.json
+ */
+export interface AbstractSweIdentifiable {
+  /**
+   * Unique identifier for this component (optional)
+   */
+  id?: string;
+  
+  /**
+   * Optional extensions
+   */
+  extension?: unknown;
+}
+
+/**
+ * Base interface for all SWE data components
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/AbstractDataComponent.json
+ */
+export interface AbstractDataComponent extends AbstractSweIdentifiable {
+  /**
+   * Component type discriminator
+   */
+  type: string;
+  
+  /**
+   * URI pointing to a detailed description or definition
+   */
+  definition?: DefinitionURI;
+  
+  /**
+   * Human-readable label
+   */
+  label?: string;
+  
+  /**
+   * Detailed description
+   */
+  description?: string;
+  
+  /**
+   * Flag indicating if component can be updated
+   */
+  updatable?: boolean;
+  
+  /**
+   * Flag indicating if component value is optional
+   */
+  optional?: boolean;
+}
+
+/**
+ * Base interface for simple scalar components
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/AbstractSimpleComponent.json
+ */
+export interface AbstractSimpleComponent extends AbstractDataComponent {
+  /**
+   * Quality information
+   */
+  quality?: unknown;
+  
+  /**
+   * Nil values definition (placeholder values)
+   */
+  nilValues?: NilValues;
+  
+  /**
+   * Reference frame
+   */
+  referenceFrame?: string;
+  
+  /**
+   * Axis ID (for components with direction)
+   */
+  axisID?: string;
+}
+
+/**
+ * Unit of measure reference
+ */
+export interface UnitReference {
+  /**
+   * Unit code (e.g., 'm', 'kg', 'degC')
+   */
+  code?: string;
+  
+  /**
+   * Reference to unit definition
+   */
+  href?: string;
+}
+
+/**
+ * Allowed values constraint
+ */
+export interface AllowedValues {
+  /**
+   * List of explicitly allowed values
+   */
+  value?: (number | string)[];
+  
+  /**
+   * List of allowed intervals [min, max]
+   */
+  interval?: Array<[number, number]>;
+  
+  /**
+   * Significant figures constraint
+   */
+  significantFigures?: number;
+}
+
+/**
+ * Nil value definition for numeric components
+ */
+export interface NilValue {
+  /**
+   * Reason for nil value (e.g., 'missing', 'inapplicable', 'unknown')
+   */
+  reason: string;
+  
+  /**
+   * The special value representing nil
+   */
+  value: number | string;
+}
+
+/**
+ * Collection of nil values
+ */
+export interface NilValues {
+  /**
+   * Array of nil value definitions
+   */
+  nilValue: NilValue[];
+}
+
+/**
+ * Element count specification for arrays
+ */
+export interface ElementCount {
+  /**
+   * Count component defining array size
+   */
+  count?: Count;
+  
+  /**
+   * Explicit size value
+   */
+  value?: number;
+}
+
+/**
+ * Encoded values container
+ */
+export type EncodedValues = string;
+
+/**
+ * Forward declaration for Count (defined in simple-components.ts)
+ */
+export interface Count extends AbstractSimpleComponent {
+  type: 'Count';
+  constraint?: AllowedValues;
+  value?: number;
+}
