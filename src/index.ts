@@ -41,6 +41,8 @@ export type {
 } from './shared/models.js';
 export { default as OgcApiEndpoint } from './ogc-api/endpoint.js';
 export * from './ogc-api/model.js';
+export { default as CSAPINavigator } from './ogc-api/csapi/navigator.js';
+export * from './ogc-api/csapi/model.js';
 export { default as TmsEndpoint } from './tms/endpoint.js';
 export * from './tms/model.js';
 export { default as StacEndpoint } from './stac/endpoint.js';
