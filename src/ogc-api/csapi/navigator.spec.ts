@@ -955,4 +955,119 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
   });
+
+  describe('Observations Resource', () => {
+    beforeEach(() => {
+      // Add observations link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/observations',
+        href: 'http://example.com/csapi/observations',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getObservationsUrl', () => {
+      it('builds basic observations URL', () => {
+        const url = navigator.getObservationsUrl();
+        expect(url).toBe('http://example.com/csapi/observations');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getObservationsUrl({ limit: 100 });
+        expect(url).toContain('limit=100');
+      });
+
+      it('builds URL with bbox parameter', () => {
+        const url = navigator.getObservationsUrl({
+          bbox: [-180, -90, 180, 90],
+        });
+        expect(url).toContain('bbox=-180%2C-90%2C180%2C90');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getObservationsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with phenomenonTime parameter', () => {
+        const url = navigator.getObservationsUrl({
+          phenomenonTime: {
+            start: new Date('2024-01-01'),
+            end: new Date('2024-12-31'),
+          },
+        });
+        expect(url).toContain(
+          'phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F2024-12-31T00%3A00%3A00.000Z'
+        );
+      });
+
+      it('builds URL with resultTime parameter', () => {
+        const url = navigator.getObservationsUrl({
+          resultTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('resultTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with observedProperty parameter', () => {
+        const url = navigator.getObservationsUrl({
+          observedProperty: 'temperature',
+        });
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getObservationsUrl({
+          limit: 50,
+          observedProperty: 'salinity',
+          phenomenonTime: { start: new Date('2024-01-01') },
+          bbox: [-10, 40, 10, 50],
+        });
+        expect(url).toContain('limit=50');
+        expect(url).toContain('observedProperty=salinity');
+        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain('bbox=-10%2C40%2C10%2C50');
+      });
+    });
+
+    describe('getObservationUrl', () => {
+      it('builds URL for specific observation', () => {
+        const url = navigator.getObservationUrl('obs-123');
+        expect(url).toBe('http://example.com/csapi/observations/obs-123');
+      });
+
+      it('encodes observation ID in URL', () => {
+        const url = navigator.getObservationUrl('obs/456');
+        expect(url).toBe(
+          'http://example.com/csapi/observations/obs%2F456'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getObservationUrl('obs-123', 'om-json');
+        expect(url).toContain('f=om-json');
+      });
+    });
+
+    describe('createObservationsUrl', () => {
+      it('builds URL for creating observations', () => {
+        const url = navigator.createObservationsUrl();
+        expect(url).toBe('http://example.com/csapi/observations');
+      });
+    });
+
+    describe('deleteObservationUrl', () => {
+      it('builds URL for deleting observation', () => {
+        const url = navigator.deleteObservationUrl('obs-123');
+        expect(url).toBe('http://example.com/csapi/observations/obs-123');
+      });
+
+      it('encodes observation ID', () => {
+        const url = navigator.deleteObservationUrl('obs/old');
+        expect(url).toBe('http://example.com/csapi/observations/obs%2Fold');
+      });
+    });
+  });
 });

@@ -783,6 +783,79 @@ export default class CSAPINavigator {
   }
 
   // ========================================
+  // OBSERVATIONS RESOURCE (Part 2: Section 8.3)
+  // ========================================
+
+  /**
+   * Build URL to get all observations in the collection.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observations_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getObservationsUrl(options: ObservationsQueryOptions = {}): string {
+    this._checkResourceAvailable('observations');
+    const url = new URL(`${this.baseUrl}/observations`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.phenomenonTime !== undefined) {
+      url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+    }
+    if (options.resultTime !== undefined) {
+      url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific observation by ID.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observation_resource
+   *
+   * @param observationId Unique identifier of the observation
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getObservationUrl(observationId: string, format?: string): string {
+    this._checkResourceAvailable('observations');
+    return this._buildResourceUrl('observations', observationId, format);
+  }
+
+  /**
+   * Build URL to create new observations (batch insert).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observations_3
+   *
+   * @returns URL string for POST request (body contains observation data)
+   */
+  createObservationsUrl(): string {
+    this._checkResourceAvailable('observations');
+    return `${this.baseUrl}/observations`;
+  }
+
+  /**
+   * Build URL to delete an observation.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observation_resource_2
+   *
+   * @param observationId Unique identifier of the observation
+   * @returns URL string for DELETE request
+   */
+  deleteObservationUrl(observationId: string): string {
+    this._checkResourceAvailable('observations');
+    return `${this.baseUrl}/observations/${encodeURIComponent(observationId)}`;
+  }
+
+  // ========================================
   // HELPER METHODS
   // ========================================
 
