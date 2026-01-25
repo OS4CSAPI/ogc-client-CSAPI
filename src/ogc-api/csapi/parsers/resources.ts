@@ -4,7 +4,7 @@
  * Parsers for all CSAPI resource types.
  */
 
-import type { Feature, FeatureCollection } from 'geojson';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import {
   CSAPIParser,
   CSAPIParseError,
@@ -20,6 +20,77 @@ import type {
   DatastreamFeature,
   ControlStreamFeature,
 } from '../geojson';
+import type { Deployment, SensorMLProcess, DerivedProperty } from '../sensorml';
+import type { Position } from '../sensorml/abstract-physical-process';
+import type { DescribedObject } from '../sensorml/base-types';
+
+/**
+ * Helper: Extract geometry from SensorML Position or location
+ */
+function extractGeometry(position?: Position | Geometry): Geometry | undefined {
+  if (!position) return undefined;
+
+  // Check if it's already a GeoJSON Geometry
+  if (
+    typeof position === 'object' &&
+    'type' in position &&
+    (position.type === 'Point' ||
+      position.type === 'LineString' ||
+      position.type === 'Polygon' ||
+      position.type === 'MultiPoint' ||
+      position.type === 'MultiLineString' ||
+      position.type === 'MultiPolygon')
+  ) {
+    return position as Geometry;
+  }
+
+  // Check if it's a Pose
+  if (
+    typeof position === 'object' &&
+    'position' in position &&
+    position.position &&
+    typeof position.position === 'object'
+  ) {
+    const pos = position.position as { lat?: number; lon?: number; h?: number };
+    if (pos.lat !== undefined && pos.lon !== undefined) {
+      return {
+        type: 'Point',
+        coordinates: [
+          pos.lon,
+          pos.lat,
+          pos.h !== undefined ? pos.h : 0,
+        ],
+      };
+    }
+  }
+
+  // For other types (TextComponent, Process, XLink, etc.), return undefined
+  return undefined;
+}
+
+/**
+ * Helper: Convert SensorML DescribedObject properties to GeoJSON properties
+ */
+function extractCommonProperties(
+  sml: DescribedObject
+): Record<string, unknown> {
+  const props: Record<string, unknown> = {};
+
+  if (sml.id) props.id = sml.id;
+  if (sml.uniqueId) props.uniqueId = sml.uniqueId;
+  if (sml.label) props.name = sml.label;
+  if (sml.description) props.description = sml.description;
+  if (sml.keywords) props.keywords = sml.keywords.map(k => k.value);
+  if (sml.identifiers) props.identifiers = sml.identifiers;
+  if (sml.classifiers) props.classifiers = sml.classifiers;
+  if (sml.validTime) props.validTime = sml.validTime;
+  if (sml.contacts) props.contacts = sml.contacts;
+  if (sml.documents) props.documents = sml.documents;
+  if (sml.securityConstraints) props.securityConstraints = sml.securityConstraints;
+  if (sml.legalConstraints) props.legalConstraints = sml.legalConstraints;
+
+  return props;
+}
 
 /**
  * Deployment parser
@@ -33,7 +104,36 @@ export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
   }
 
   parseSensorML(data: Record<string, unknown>): DeploymentFeature {
-    throw new CSAPIParseError('SensorML to GeoJSON conversion not yet implemented');
+    const sml = data as unknown as Deployment;
+
+    // Validate it's a Deployment
+    if (sml.type !== 'Deployment') {
+      throw new CSAPIParseError(
+        `Expected Deployment, got ${sml.type}`
+      );
+    }
+
+    // Extract geometry from location
+    const geometry = extractGeometry(sml.location);
+
+    // Build properties from SensorML metadata
+    const properties: Record<string, unknown> = {
+      ...extractCommonProperties(sml),
+      featureType: 'deployment',
+      definition: sml.definition,
+    };
+
+    // Add deployment-specific fields
+    if (sml.platform) properties.platform = sml.platform;
+    if (sml.deployedSystems) properties.deployedSystems = sml.deployedSystems;
+    if (sml.links) properties.links = sml.links;
+
+    return {
+      type: 'Feature',
+      id: sml.id || sml.uniqueId,
+      geometry: geometry || null,
+      properties,
+    } as unknown as DeploymentFeature;
   }
 
   parseSWE(data: Record<string, unknown>): DeploymentFeature {
@@ -53,7 +153,37 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
   }
 
   parseSensorML(data: Record<string, unknown>): ProcedureFeature {
-    throw new CSAPIParseError('SensorML to GeoJSON conversion not yet implemented');
+    const sml = data as unknown as SensorMLProcess;
+
+    // Procedures can be any process type (SimpleProcess, AggregateProcess, etc.)
+    // Extract position if it's a physical process
+    const geometry = 'position' in sml ? extractGeometry(sml.position as Position) : undefined;
+
+    // Build properties from SensorML metadata
+    const properties: Record<string, unknown> = {
+      ...extractCommonProperties(sml),
+      featureType: 'procedure',
+      procedureType: sml.type,
+    };
+
+    // Add inputs/outputs/parameters
+    if ('inputs' in sml && sml.inputs) properties.inputs = sml.inputs;
+    if ('outputs' in sml && sml.outputs) properties.outputs = sml.outputs;
+    if ('parameters' in sml && sml.parameters) properties.parameters = sml.parameters;
+
+    // Add method if present
+    if ('method' in sml && sml.method) properties.method = sml.method;
+
+    // Add components for aggregate processes
+    if ('components' in sml && sml.components) properties.components = sml.components;
+    if ('connections' in sml && sml.connections) properties.connections = sml.connections;
+
+    return {
+      type: 'Feature',
+      id: sml.id || sml.uniqueId,
+      geometry: geometry || null,
+      properties,
+    } as unknown as ProcedureFeature;
   }
 
   parseSWE(data: Record<string, unknown>): ProcedureFeature {
@@ -93,7 +223,24 @@ export class PropertyParser extends CSAPIParser<PropertyFeature> {
   }
 
   parseSensorML(data: Record<string, unknown>): PropertyFeature {
-    throw new CSAPIParseError('SensorML to GeoJSON conversion not yet implemented');
+    const sml = data as unknown as DerivedProperty;
+
+    // Build properties from SensorML metadata
+    const properties: Record<string, unknown> = {
+      ...extractCommonProperties(sml),
+      featureType: 'property',
+    };
+
+    // Add property-specific fields
+    if (sml.baseProperty) properties.baseProperty = sml.baseProperty;
+    if (sml.statistic) properties.statistic = sml.statistic;
+
+    return {
+      type: 'Feature',
+      id: (sml as DescribedObject).id || (sml as DescribedObject).uniqueId,
+      geometry: null,
+      properties,
+    } as unknown as PropertyFeature;
   }
 
   parseSWE(data: Record<string, unknown>): PropertyFeature {
