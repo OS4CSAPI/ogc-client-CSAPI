@@ -1461,5 +1461,334 @@ describe('CSAPINavigator - Systems Resource', () => {
         expect(url).toContain('limit=5');
       });
     });
+
+    describe('Query parameter serialization', () => {
+      it('serializes datetime with end-only parameter', () => {
+        const url = navigator.getSystemsUrl({
+          datetime: { end: new Date('2024-12-31T23:59:59Z') },
+        });
+        expect(url).toContain('datetime=..%2F2024-12-31T23%3A59%3A59.000Z');
+      });
+
+      it('applies systemKind filter', () => {
+        const url = navigator.getSystemsUrl({
+          systemKind: 'PhysicalSystem',
+        });
+        expect(url).toContain('systemKind=PhysicalSystem');
+      });
+
+      it('applies observedProperty filter for systems', () => {
+        const url = navigator.getSystemsUrl({
+          observedProperty: 'temperature',
+        });
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('applies controlledProperty filter for systems', () => {
+        const url = navigator.getSystemsUrl({
+          controlledProperty: 'valve',
+        });
+        expect(url).toContain('controlledProperty=valve');
+      });
+
+      it('applies parent filter for systems', () => {
+        const url = navigator.getSystemsUrl({
+          parent: 'parent-system-id',
+        });
+        expect(url).toContain('parent=parent-system-id');
+      });
+
+      it('applies procedure filter for systems', () => {
+        const url = navigator.getSystemsUrl({
+          procedure: 'procedure-id',
+        });
+        expect(url).toContain('procedure=procedure-id');
+      });
+
+      it('applies phenomenonTime for datastreams', () => {
+        const url = navigator.getDatastreamsUrl({
+          phenomenonTime: {
+            start: new Date('2024-01-01'),
+            end: new Date('2024-01-31'),
+          },
+        });
+        expect(url).toContain('phenomenonTime=');
+      });
+
+      it('applies issueTime for control streams', () => {
+        const url = navigator.getControlStreamsUrl({
+          issueTime: {
+            start: new Date('2024-01-01'),
+          },
+        });
+        expect(url).toContain('issueTime=');
+      });
+
+      it('applies executionTime for control streams', () => {
+        const url = navigator.getControlStreamsUrl({
+          executionTime: {
+            end: new Date('2024-12-31'),
+          },
+        });
+        expect(url).toContain('executionTime=');
+      });
+
+      it('applies controlledProperty for control streams', () => {
+        const url = navigator.getControlStreamsUrl({
+          controlledProperty: 'actuator',
+        });
+        expect(url).toContain('controlledProperty=actuator');
+      });
+
+      it('applies observedProperty for procedures', () => {
+        // Add procedures resource to collection
+        mockCollection.links.push({
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        });
+        const navigatorWithProcedures = new CSAPINavigator(mockCollection);
+        
+        const url = navigatorWithProcedures.getProceduresUrl({
+          observedProperty: 'humidity',
+        });
+        expect(url).toContain('observedProperty=humidity');
+      });
+
+      it('applies controlledProperty for procedures', () => {
+        // Add procedures resource to collection
+        mockCollection.links.push({
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        });
+        const navigatorWithProcedures = new CSAPINavigator(mockCollection);
+        
+        const url = navigatorWithProcedures.getProceduresUrl({
+          controlledProperty: 'motor',
+        });
+        expect(url).toContain('controlledProperty=motor');
+      });
+
+      it('handles all sampling features query parameters', () => {
+        const url = navigator.getSamplingFeaturesUrl({
+          limit: 25,
+          bbox: [0, 0, 10, 10],
+          datetime: { start: new Date('2024-01-01'), end: new Date('2024-12-31') },
+          q: 'search term',
+        });
+        expect(url).toContain('limit=25');
+        expect(url).toContain('bbox=');
+        expect(url).toContain('datetime=');
+        expect(url).toContain('q=search');
+      });
+
+      it('handles all datastreams query parameters', () => {
+        const url = navigator.getDatastreamsUrl({
+          limit: 30,
+          bbox: [-180, -90, 180, 90],
+          datetime: { start: new Date('2024-01-01') },
+          observedProperty: 'pressure',
+        });
+        expect(url).toContain('limit=30');
+        expect(url).toContain('bbox=');
+        expect(url).toContain('datetime=');
+        expect(url).toContain('observedProperty=pressure');
+      });
+
+      it('handles all control streams query parameters', () => {
+        const url = navigator.getControlStreamsUrl({
+          limit: 15,
+          datetime: { end: new Date('2024-12-31') },
+          controlledProperty: 'switch',
+        });
+        expect(url).toContain('limit=15');
+        expect(url).toContain('datetime=');
+        expect(url).toContain('controlledProperty=switch');
+      });
+    });
+
+    describe('Error handling', () => {
+      it('throws error for invalid datetime parameter', () => {
+        expect(() => {
+          navigator.getSystemsUrl({
+            datetime: {} as any, // Invalid: no start or end
+          });
+        }).toThrow('Invalid DateTimeParameter');
+      });
+    });
+
+    describe('Query method branches - individual parameter coverage', () => {
+      // _applySystemsQuery branches (lines 1289-1307)
+      it('applies limit parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ limit: 50 });
+        expect(url).toContain('limit=50');
+      });
+
+      it('applies bbox parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ bbox: [-180, -90, 180, 90] });
+        expect(url).toContain('bbox=');
+        expect(url).toMatch(/bbox=.*-180/);
+      });
+
+      it('applies datetime parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ datetime: { start: new Date('2024-01-01') } });
+        expect(url).toContain('datetime=');
+      });
+
+      it('applies q parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ q: 'search text' });
+        expect(url).toContain('q=search');
+      });
+
+      it('applies parent parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ parent: 'parent-system-1' });
+        expect(url).toContain('parent=parent-system-1');
+      });
+
+      it('applies procedure parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ procedure: 'proc-1' });
+        expect(url).toContain('procedure=proc-1');
+      });
+
+      it('applies observedProperty parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ observedProperty: 'temperature' });
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('applies controlledProperty parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ controlledProperty: 'valve' });
+        expect(url).toContain('controlledProperty=valve');
+      });
+
+      it('applies systemKind parameter only to systems', () => {
+        const url = navigator.getSystemsUrl({ systemKind: 'physical' });
+        expect(url).toContain('systemKind=physical');
+      });
+
+      // _applySamplingFeaturesQuery branches (lines 1313-1322)
+      it('applies limit parameter only to sampling features', () => {
+        const url = navigator.getSamplingFeaturesUrl({ limit: 100 });
+        expect(url).toContain('limit=100');
+      });
+
+      it('applies bbox parameter only to sampling features', () => {
+        const url = navigator.getSamplingFeaturesUrl({ bbox: [0, 0, 10, 10] });
+        expect(url).toContain('bbox=');
+      });
+
+      it('applies datetime parameter only to sampling features', () => {
+        const url = navigator.getSamplingFeaturesUrl({ datetime: { end: new Date('2024-12-31') } });
+        expect(url).toContain('datetime=');
+      });
+
+      it('applies q parameter only to sampling features', () => {
+        const url = navigator.getSamplingFeaturesUrl({ q: 'test search' });
+        expect(url).toContain('q=test+search');
+      });
+
+      // _applyDatastreamsQuery branches (lines 1327-1342)
+      it('applies limit parameter only to datastreams', () => {
+        const url = navigator.getDatastreamsUrl({ limit: 75 });
+        expect(url).toContain('limit=75');
+      });
+
+      it('applies bbox parameter only to datastreams', () => {
+        const url = navigator.getDatastreamsUrl({ bbox: [-10, -10, 10, 10] });
+        expect(url).toContain('bbox=');
+      });
+
+      it('applies datetime parameter only to datastreams', () => {
+        const url = navigator.getDatastreamsUrl({ datetime: { start: new Date('2024-01-01') } });
+        expect(url).toContain('datetime=');
+      });
+
+      it('applies observedProperty parameter only to datastreams', () => {
+        const url = navigator.getDatastreamsUrl({ observedProperty: 'temperature' });
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('applies phenomenonTime parameter only to datastreams', () => {
+        const url = navigator.getDatastreamsUrl({
+          phenomenonTime: { end: new Date('2024-06-01') },
+        });
+        expect(url).toContain('phenomenonTime=');
+      });
+
+      // _applyControlStreamsQuery branches (lines 1347-1365)
+      it('applies limit parameter only to control streams', () => {
+        const url = navigator.getControlStreamsUrl({ limit: 20 });
+        expect(url).toContain('limit=20');
+      });
+
+      it('applies datetime parameter only to control streams', () => {
+        const url = navigator.getControlStreamsUrl({ datetime: { start: new Date('2024-01-01') } });
+        expect(url).toContain('datetime=');
+      });
+
+      it('applies controlledProperty parameter only to control streams', () => {
+        const url = navigator.getControlStreamsUrl({ controlledProperty: 'valve' });
+        expect(url).toContain('controlledProperty=valve');
+      });
+
+      it('applies issueTime parameter only to control streams', () => {
+        const url = navigator.getControlStreamsUrl({
+          issueTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('issueTime=2024-01-01');
+      });
+
+      it('applies executionTime parameter only to control streams', () => {
+        const url = navigator.getControlStreamsUrl({
+          executionTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('executionTime=2024-01-01');
+      });
+
+      // _applyProceduresQuery branches (lines 1370-1380)
+      it('applies limit parameter only to procedures', () => {
+        mockCollection.links.push({
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        });
+        const navWithProc = new CSAPINavigator(mockCollection);
+        const url = navWithProc.getProceduresUrl({ limit: 30 });
+        expect(url).toContain('limit=30');
+      });
+
+      it('applies q parameter only to procedures', () => {
+        mockCollection.links.push({
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        });
+        const navWithProc = new CSAPINavigator(mockCollection);
+        const url = navWithProc.getProceduresUrl({ q: 'procedure search' });
+        expect(url).toContain('q=procedure');
+      });
+
+      it('applies observedProperty parameter only to procedures', () => {
+        mockCollection.links.push({
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        });
+        const navWithProc = new CSAPINavigator(mockCollection);
+        const url = navWithProc.getProceduresUrl({ observedProperty: 'pressure' });
+        expect(url).toContain('observedProperty=pressure');
+      });
+
+      it('applies controlledProperty parameter only to procedures', () => {
+        mockCollection.links.push({
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        });
+        const navWithProc = new CSAPINavigator(mockCollection);
+        const url = navWithProc.getProceduresUrl({ controlledProperty: 'actuator' });
+        expect(url).toContain('controlledProperty=actuator');
+      });
+    });
   });
 });
