@@ -2,7 +2,8 @@ node_modules
 dist
 coverage
 
-.ideajest-results.json
+.idea
+jest-results.json
 test-output.txt
 test-run.log
 temp-coverage-map.json
