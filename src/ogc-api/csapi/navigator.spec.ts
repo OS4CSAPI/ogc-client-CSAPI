@@ -743,4 +743,216 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
   });
+
+  describe('Datastreams Resource', () => {
+    beforeEach(() => {
+      // Add datastreams link to collection
+      mockCollection.links.push({
+        rel: 'http://www.opengis.net/def/rel/ogc/1.0/datastreams',
+        href: 'http://example.com/csapi/datastreams',
+        type: 'application/json',
+      });
+      navigator = new CSAPINavigator(mockCollection);
+    });
+
+    describe('getDatastreamsUrl', () => {
+      it('builds basic datastreams URL', () => {
+        const url = navigator.getDatastreamsUrl();
+        expect(url).toBe('http://example.com/csapi/datastreams');
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getDatastreamsUrl({ limit: 10 });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with bbox parameter', () => {
+        const url = navigator.getDatastreamsUrl({
+          bbox: [-180, -90, 180, 90],
+        });
+        expect(url).toContain('bbox=-180%2C-90%2C180%2C90');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getDatastreamsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with observedProperty parameter', () => {
+        const url = navigator.getDatastreamsUrl({
+          observedProperty: 'temperature',
+        });
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('builds URL with phenomenonTime parameter', () => {
+        const url = navigator.getDatastreamsUrl({
+          phenomenonTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getDatastreamsUrl({
+          limit: 5,
+          observedProperty: 'pressure',
+          bbox: [-10, 40, 10, 50],
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('observedProperty=pressure');
+        expect(url).toContain('bbox=-10%2C40%2C10%2C50');
+      });
+    });
+
+    describe('getDatastreamUrl', () => {
+      it('builds URL for specific datastream', () => {
+        const url = navigator.getDatastreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/datastreams/stream-123');
+      });
+
+      it('encodes datastream ID in URL', () => {
+        const url = navigator.getDatastreamUrl('stream/456');
+        expect(url).toBe(
+          'http://example.com/csapi/datastreams/stream%2F456'
+        );
+      });
+
+      it('includes format parameter when specified', () => {
+        const url = navigator.getDatastreamUrl('stream-123', 'json');
+        expect(url).toContain('f=json');
+      });
+    });
+
+    describe('createDatastreamUrl', () => {
+      it('builds URL for creating datastream', () => {
+        const url = navigator.createDatastreamUrl();
+        expect(url).toBe('http://example.com/csapi/datastreams');
+      });
+    });
+
+    describe('updateDatastreamUrl', () => {
+      it('builds URL for updating datastream', () => {
+        const url = navigator.updateDatastreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/datastreams/stream-123');
+      });
+
+      it('encodes datastream ID', () => {
+        const url = navigator.updateDatastreamUrl('stream/special');
+        expect(url).toBe(
+          'http://example.com/csapi/datastreams/stream%2Fspecial'
+        );
+      });
+    });
+
+    describe('patchDatastreamUrl', () => {
+      it('builds URL for patching datastream', () => {
+        const url = navigator.patchDatastreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/datastreams/stream-123');
+      });
+
+      it('encodes datastream ID', () => {
+        const url = navigator.patchDatastreamUrl('stream/test');
+        expect(url).toBe('http://example.com/csapi/datastreams/stream%2Ftest');
+      });
+    });
+
+    describe('deleteDatastreamUrl', () => {
+      it('builds URL for deleting datastream', () => {
+        const url = navigator.deleteDatastreamUrl('stream-123');
+        expect(url).toBe('http://example.com/csapi/datastreams/stream-123');
+      });
+
+      it('encodes datastream ID', () => {
+        const url = navigator.deleteDatastreamUrl('stream/old');
+        expect(url).toBe('http://example.com/csapi/datastreams/stream%2Fold');
+      });
+    });
+
+    describe('getDatastreamHistoryUrl', () => {
+      it('builds basic datastream history URL', () => {
+        const url = navigator.getDatastreamHistoryUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/datastreams/stream-123/history'
+        );
+      });
+
+      it('builds history URL with validTime parameter', () => {
+        const url = navigator.getDatastreamHistoryUrl('stream-123', {
+          validTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('validTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds history URL with limit', () => {
+        const url = navigator.getDatastreamHistoryUrl('stream-123', {
+          limit: 5,
+        });
+        expect(url).toContain('limit=5');
+      });
+    });
+
+    describe('getDatastreamObservationsUrl', () => {
+      it('builds basic datastream observations URL', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/datastreams/stream-123/observations'
+        );
+      });
+
+      it('builds URL with limit parameter', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          limit: 10,
+        });
+        expect(url).toContain('limit=10');
+      });
+
+      it('builds URL with bbox parameter', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          bbox: [-180, -90, 180, 90],
+        });
+        expect(url).toContain('bbox=-180%2C-90%2C180%2C90');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          datetime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with phenomenonTime parameter', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          phenomenonTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with resultTime parameter', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          resultTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('resultTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+
+      it('builds URL with observedProperty parameter', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          observedProperty: 'temperature',
+        });
+        expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('builds URL with multiple parameters', () => {
+        const url = navigator.getDatastreamObservationsUrl('stream-123', {
+          limit: 5,
+          observedProperty: 'humidity',
+          phenomenonTime: { start: new Date('2024-01-01') },
+        });
+        expect(url).toContain('limit=5');
+        expect(url).toContain('observedProperty=humidity');
+        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+      });
+    });
+  });
 });

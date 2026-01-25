@@ -6,6 +6,7 @@ import {
   DatastreamsQueryOptions,
   DeploymentsQueryOptions,
   HistoryQueryOptions,
+  ObservationsQueryOptions,
   ProceduresQueryOptions,
   SamplingFeaturesQueryOptions,
   SystemsQueryOptions,
@@ -613,6 +614,169 @@ export default class CSAPINavigator {
     }
     if (options.limit !== undefined) {
       url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
+  // DATASTREAMS RESOURCE (Part 2: Section 8.2)
+  // ========================================
+
+  /**
+   * Build URL to get all datastreams in the collection.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastreams_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getDatastreamsUrl(options: DatastreamsQueryOptions = {}): string {
+    this._checkResourceAvailable('datastreams');
+    const url = new URL(`${this.baseUrl}/datastreams`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.phenomenonTime !== undefined) {
+      url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific datastream by ID.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getDatastreamUrl(datastreamId: string, format?: string): string {
+    this._checkResourceAvailable('datastreams');
+    return this._buildResourceUrl('datastreams', datastreamId, format);
+  }
+
+  /**
+   * Build URL to create a new datastream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastreams_3
+   *
+   * @returns URL string for POST request (body contains datastream description)
+   */
+  createDatastreamUrl(): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams`;
+  }
+
+  /**
+   * Build URL to fully update a datastream (replace).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource_2
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @returns URL string for PUT request (body contains full datastream description)
+   */
+  updateDatastreamUrl(datastreamId: string): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}`;
+  }
+
+  /**
+   * Build URL to partially update a datastream (modify specific fields).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource_2
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchDatastreamUrl(datastreamId: string): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}`;
+  }
+
+  /**
+   * Build URL to delete a datastream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource_3
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @returns URL string for DELETE request
+   */
+  deleteDatastreamUrl(datastreamId: string): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a datastream (all versions).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#req_datastream-history
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getDatastreamHistoryUrl(
+    datastreamId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('datastreams');
+    const url = new URL(
+      `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get observations for a specific datastream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observations_3
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @param options Query parameters for filtering observations
+   * @returns URL string for GET request
+   */
+  getDatastreamObservationsUrl(
+    datastreamId: string,
+    options: ObservationsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('datastreams');
+    const url = new URL(
+      `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/observations`
+    );
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.phenomenonTime !== undefined) {
+      url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+    }
+    if (options.resultTime !== undefined) {
+      url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
     }
 
     return url.toString();
