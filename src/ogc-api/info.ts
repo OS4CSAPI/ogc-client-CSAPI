@@ -103,6 +103,19 @@ export function checkHasEnvironmentalDataRetrieval([conformance]: [
   );
 }
 
+export function checkHasConnectedSystems([conformance]: [
+  ConformanceClass[]
+]): boolean {
+  return (
+    conformance.indexOf(
+      'http://www.opengis.net/spec/ogcapi-connected-systems-1/1.0/conf/core'
+    ) > -1 ||
+    conformance.indexOf(
+      'http://www.opengis.net/spec/ogcapi-cs-part1/1.0/conf/core'
+    ) > -1
+  );
+}
+
 /**
  * This does not include queryables and sortables!
  */
@@ -233,6 +246,7 @@ export function parseCollections(doc: OgcApiDocument): Array<{
   hasVectorTiles?: boolean;
   hasMapTiles?: boolean;
   hasDataQueries?: boolean;
+  hasCSAPIFeatures?: boolean;
 }> {
   return doc.collections.map((collection) => {
     const result: {
@@ -242,6 +256,7 @@ export function parseCollections(doc: OgcApiDocument): Array<{
       hasVectorTiles?: boolean;
       hasMapTiles?: boolean;
       hasDataQueries?: boolean;
+      hasCSAPIFeatures?: boolean;
     } = {
       name: collection.id as string,
     };
@@ -270,6 +285,19 @@ export function parseCollections(doc: OgcApiDocument): Array<{
 
     if (collection.data_queries) {
       result.hasDataQueries = true;
+    }
+
+    // Check for CSAPI link relations
+    if (
+      collection.links.some(
+        (link) =>
+          link.rel.includes('systems') ||
+          link.rel.includes('procedures') ||
+          link.rel.includes('deployments') ||
+          link.rel.includes('datastreams')
+      )
+    ) {
+      result.hasCSAPIFeatures = true;
     }
 
     return result;

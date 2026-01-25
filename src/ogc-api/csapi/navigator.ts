@@ -1,0 +1,420 @@
+import { BoundingBox, DateTimeParameter } from '../../shared/models.js';
+import { OgcApiCollectionInfo } from '../model.js';
+import {
+  CSAPIResourceType,
+  ControlStreamsQueryOptions,
+  DatastreamsQueryOptions,
+  HistoryQueryOptions,
+  SamplingFeaturesQueryOptions,
+  SystemsQueryOptions,
+} from './model.js';
+
+/**
+ * Navigator for OGC API - Connected Systems resources.
+ * Provides URL construction for CRUD operations on Systems, Deployments,
+ * Procedures, Sampling Features, Properties, Datastreams, Observations,
+ * Commands, and Control Streams.
+ *
+ * @see https://docs.ogc.org/is/23-001r2/23-001r2.html (Part 1)
+ * @see https://docs.ogc.org/is/23-002r1/23-002r1.html (Part 2)
+ */
+export default class CSAPINavigator {
+  private collection: OgcApiCollectionInfo;
+  private baseUrl: string;
+
+  // Capabilities extracted from collection metadata
+  public supportedFormats: Set<string>;
+  public supportedCrs: string[];
+  public availableResources: Set<CSAPIResourceType>;
+
+  constructor(collection: OgcApiCollectionInfo) {
+    this.collection = collection;
+    this.baseUrl = this._extractBaseUrl(collection);
+    this.supportedFormats = this._extractFormats(collection);
+    this.supportedCrs = (collection.crs as string[]) || [];
+    this.availableResources = this._extractAvailableResources(collection);
+  }
+
+  // ========================================
+  // SYSTEMS RESOURCE (Part 1: Section 8.3)
+  // ========================================
+
+  /**
+   * Build URL to get all systems in the collection.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_systems_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getSystemsUrl(options: SystemsQueryOptions = {}): string {
+    this._checkResourceAvailable('systems');
+    const url = new URL(`${this.baseUrl}/systems`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+    if (options.parent !== undefined) {
+      url.searchParams.set('parent', options.parent);
+    }
+    if (options.procedure !== undefined) {
+      url.searchParams.set('procedure', options.procedure);
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    }
+    if (options.systemKind !== undefined) {
+      url.searchParams.set('systemKind', options.systemKind);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific system by ID.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource
+   *
+   * @param systemId Unique identifier of the system
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getSystemUrl(systemId: string, format?: string): string {
+    this._checkResourceAvailable('systems');
+    return this._buildResourceUrl('systems', systemId, format);
+  }
+
+  /**
+   * Build URL to create a new system.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_systems_3
+   *
+   * @returns URL string for POST request (body contains system description)
+   */
+  createSystemUrl(): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems`;
+  }
+
+  /**
+   * Build URL to fully update a system (replace).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource_2
+   *
+   * @param systemId Unique identifier of the system
+   * @returns URL string for PUT request (body contains full system description)
+   */
+  updateSystemUrl(systemId: string): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}`;
+  }
+
+  /**
+   * Build URL to partially update a system (modify specific fields).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource_2
+   *
+   * @param systemId Unique identifier of the system
+   * @returns URL string for PATCH request (body contains partial updates)
+   */
+  patchSystemUrl(systemId: string): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}`;
+  }
+
+  /**
+   * Build URL to delete a system.
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource_3
+   *
+   * @param systemId Unique identifier of the system
+   * @returns URL string for DELETE request
+   */
+  deleteSystemUrl(systemId: string): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}`;
+  }
+
+  /**
+   * Build URL to get the history of a system (all versions).
+   * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#req_system-history
+   *
+   * @param systemId Unique identifier of the system
+   * @param options Query parameters for filtering history
+   * @returns URL string for GET request
+   */
+  getSystemHistoryUrl(
+    systemId: string,
+    options: HistoryQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/history`
+    );
+
+    if (options.validTime !== undefined) {
+      url.searchParams.set(
+        'validTime',
+        this._serializeDatetime(options.validTime)
+      );
+    }
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
+  // SUB-RESOURCES OF SYSTEMS
+  // ========================================
+
+  /**
+   * Build URL to get all subsystems of a parent system.
+   *
+   * @param parentSystemId ID of the parent system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSubsystemsUrl(
+    parentSystemId: string,
+    options: SystemsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(parentSystemId)}/subsystems`
+    );
+    return this._applySystemsQuery(url, options).toString();
+  }
+
+  /**
+   * Build URL to get all sampling features associated with a system.
+   *
+   * @param systemId ID of the system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSystemSamplingFeaturesUrl(
+    systemId: string,
+    options: SamplingFeaturesQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    this._checkResourceAvailable('samplingFeatures');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/samplingFeatures`
+    );
+    return this._applySamplingFeaturesQuery(url, options).toString();
+  }
+
+  /**
+   * Build URL to get all datastreams of a system.
+   *
+   * @param systemId ID of the system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSystemDatastreamsUrl(
+    systemId: string,
+    options: DatastreamsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    this._checkResourceAvailable('datastreams');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/datastreams`
+    );
+    return this._applyDatastreamsQuery(url, options).toString();
+  }
+
+  /**
+   * Build URL to get all control streams of a system.
+   *
+   * @param systemId ID of the system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSystemControlStreamsUrl(
+    systemId: string,
+    options: ControlStreamsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    this._checkResourceAvailable('controlStreams');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/controlStreams`
+    );
+    return this._applyControlStreamsQuery(url, options).toString();
+  }
+
+  // ========================================
+  // HELPER METHODS
+  // ========================================
+
+  private _extractBaseUrl(collection: OgcApiCollectionInfo): string {
+    // Extract base URL from self link
+    const selfLink = collection.links.find((l) => l.rel === 'self');
+    if (!selfLink) {
+      throw new Error('Collection does not have a self link');
+    }
+    // Remove /collections/{id} suffix to get base
+    return selfLink.href.replace(/\/collections\/[^/]+$/, '');
+  }
+
+  private _extractFormats(collection: OgcApiCollectionInfo): Set<string> {
+    const formats = new Set<string>();
+    // Look for formats in links and itemFormats
+    collection.links
+      .filter((l) => l.type)
+      .forEach((l) => formats.add(l.type));
+    if (collection.itemFormats) {
+      collection.itemFormats.forEach((f) => formats.add(f));
+    }
+    return formats;
+  }
+
+  private _extractAvailableResources(
+    collection: OgcApiCollectionInfo
+  ): Set<CSAPIResourceType> {
+    const resources = new Set<CSAPIResourceType>();
+    // Check for CSAPI-specific link relations
+    collection.links.forEach((link) => {
+      const rel = link.rel.toLowerCase();
+      if (rel.includes('systems')) resources.add('systems');
+      if (rel.includes('procedures')) resources.add('procedures');
+      if (rel.includes('deployments')) resources.add('deployments');
+      if (rel.includes('samplingfeatures'))
+        resources.add('samplingFeatures');
+      if (rel.includes('properties')) resources.add('properties');
+      if (rel.includes('datastreams')) resources.add('datastreams');
+      if (rel.includes('observations')) resources.add('observations');
+      if (rel.includes('commands')) resources.add('commands');
+      if (rel.includes('controlstreams')) resources.add('controlStreams');
+    });
+
+    return resources;
+  }
+
+  private _checkResourceAvailable(resource: CSAPIResourceType): void {
+    if (!this.availableResources.has(resource)) {
+      throw new Error(`Collection does not support ${resource} resource`);
+    }
+  }
+
+  private _buildResourceUrl(
+    resource: string,
+    id: string,
+    format?: string
+  ): string {
+    const url = `${this.baseUrl}/${resource}/${encodeURIComponent(id)}`;
+    if (format) {
+      return `${url}?f=${encodeURIComponent(format)}`;
+    }
+    return url;
+  }
+
+  private _serializeDatetime(param: DateTimeParameter): string {
+    // Use existing DateTimeParameter serialization from shared/models
+    if (param instanceof Date) {
+      return param.toISOString();
+    }
+    if ('start' in param && 'end' in param) {
+      return `${param.start.toISOString()}/${param.end.toISOString()}`;
+    }
+    if ('start' in param) {
+      return `${param.start.toISOString()}/..`;
+    }
+    if ('end' in param) {
+      return `../${param.end.toISOString()}`;
+    }
+    throw new Error('Invalid DateTimeParameter');
+  }
+
+  private _serializeBbox(bbox: BoundingBox): string {
+    return `${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]}`;
+  }
+
+  private _applySystemsQuery(
+    url: URL,
+    options: SystemsQueryOptions
+  ): URL {
+    if (options.limit !== undefined)
+      url.searchParams.set('limit', options.limit.toString());
+    if (options.bbox !== undefined)
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    if (options.datetime !== undefined)
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    if (options.q !== undefined) url.searchParams.set('q', options.q);
+    if (options.parent !== undefined)
+      url.searchParams.set('parent', options.parent);
+    if (options.procedure !== undefined)
+      url.searchParams.set('procedure', options.procedure);
+    if (options.observedProperty !== undefined)
+      url.searchParams.set('observedProperty', options.observedProperty);
+    if (options.controlledProperty !== undefined)
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    if (options.systemKind !== undefined)
+      url.searchParams.set('systemKind', options.systemKind);
+    return url;
+  }
+
+  private _applySamplingFeaturesQuery(
+    url: URL,
+    options: SamplingFeaturesQueryOptions
+  ): URL {
+    if (options.limit !== undefined)
+      url.searchParams.set('limit', options.limit.toString());
+    if (options.bbox !== undefined)
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    if (options.datetime !== undefined)
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    if (options.q !== undefined) url.searchParams.set('q', options.q);
+    return url;
+  }
+
+  private _applyDatastreamsQuery(
+    url: URL,
+    options: DatastreamsQueryOptions
+  ): URL {
+    if (options.limit !== undefined)
+      url.searchParams.set('limit', options.limit.toString());
+    if (options.bbox !== undefined)
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    if (options.datetime !== undefined)
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    if (options.observedProperty !== undefined)
+      url.searchParams.set('observedProperty', options.observedProperty);
+    if (options.phenomenonTime !== undefined)
+      url.searchParams.set(
+        'phenomenonTime',
+        this._serializeDatetime(options.phenomenonTime)
+      );
+    return url;
+  }
+
+  private _applyControlStreamsQuery(
+    url: URL,
+    options: ControlStreamsQueryOptions
+  ): URL {
+    if (options.limit !== undefined)
+      url.searchParams.set('limit', options.limit.toString());
+    if (options.datetime !== undefined)
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    if (options.controlledProperty !== undefined)
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    if (options.issueTime !== undefined)
+      url.searchParams.set(
+        'issueTime',
+        this._serializeDatetime(options.issueTime)
+      );
+    if (options.executionTime !== undefined)
+      url.searchParams.set(
+        'executionTime',
+        this._serializeDatetime(options.executionTime)
+      );
+    return url;
+  }
+}

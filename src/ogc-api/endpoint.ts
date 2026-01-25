@@ -1,4 +1,5 @@
 import {
+  checkHasConnectedSystems,
   checkHasEnvironmentalDataRetrieval,
   checkHasFeatures,
   checkHasRecords,
@@ -48,6 +49,7 @@ import {
 } from '../shared/mime-type.js';
 import { getBaseUrl, getChildPath } from '../shared/url-utils.js';
 import EDRQueryBuilder from './edr/url_builder.js';
+import CSAPINavigator from './csapi/navigator.js';
 
 /**
  * Represents an OGC API endpoint advertising various collections and services.
@@ -61,6 +63,8 @@ export default class OgcApiEndpoint {
   private tileMatrixSetsFull_: Promise<TileMatrixSet[]>;
   private styles_: Promise<OgcApiStylesDocument>;
   private collection_id_to_edr_builder_: Map<string, EDRQueryBuilder> =
+    new Map();
+  private collection_id_to_csapi_navigator_: Map<string, CSAPINavigator> =
     new Map();
 
   private get root(): Promise<OgcApiDocument> {
@@ -171,6 +175,7 @@ ${e.message}`);
       hasVectorTiles?: boolean;
       hasMapTiles?: boolean;
       hasDataQueries?: boolean;
+      hasCSAPIFeatures?: boolean;
     }[]
   > {
     return this.data.then((dataDocument) =>
@@ -291,6 +296,47 @@ ${e.message}`);
     const collection = await this.getCollectionInfo(collection_id);
     const result = new EDRQueryBuilder(collection);
     cache.set(collection_id, result);
+    return result;
+  }
+
+  /**
+   * A Promise which resolves to a boolean indicating whether the endpoint supports OGC API - Connected Systems.
+   */
+  get hasConnectedSystems(): Promise<boolean> {
+    return Promise.all([this.conformanceClasses]).then(
+      checkHasConnectedSystems
+    );
+  }
+
+  /**
+   * A Promise which resolves to an array of CSAPI-enabled collection identifiers as strings.
+   */
+  get csapiCollections(): Promise<string[]> {
+    return Promise.all([this.data, this.hasConnectedSystems])
+      .then(([data, hasCSAPI]) => (hasCSAPI ? data : { collections: [] }))
+      .then(parseCollections)
+      .then((collections) => collections.filter((c) => c.hasCSAPIFeatures))
+      .then((collections) => collections.map((collection) => collection.name));
+  }
+
+  /**
+   * Returns a CSAPINavigator for constructing Connected Systems API URLs for the specified collection.
+   * @param collectionId The collection identifier
+   * @returns A Promise resolving to a CSAPINavigator instance
+   */
+  public async csapi(collectionId: string): Promise<CSAPINavigator> {
+    if (!(await this.hasConnectedSystems)) {
+      throw new EndpointError(
+        'Endpoint does not support OGC API - Connected Systems'
+      );
+    }
+    const cache = this.collection_id_to_csapi_navigator_;
+    if (cache.has(collectionId)) {
+      return cache.get(collectionId);
+    }
+    const collection = await this.getCollectionInfo(collectionId);
+    const result = new CSAPINavigator(collection);
+    cache.set(collectionId, result);
     return result;
   }
 

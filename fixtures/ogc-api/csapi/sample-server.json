@@ -1,0 +1,36 @@
+{
+  "title": "Sample CSAPI Server",
+  "description": "A test OGC API - Connected Systems server",
+  "links": [
+    {
+      "rel": "self",
+      "type": "application/json",
+      "title": "This document",
+      "href": "http://example.com/csapi"
+    },
+    {
+      "rel": "conformance",
+      "type": "application/json",
+      "title": "Conformance declaration",
+      "href": "http://example.com/csapi/conformance"
+    },
+    {
+      "rel": "data",
+      "type": "application/json",
+      "title": "Collections",
+      "href": "http://example.com/csapi/collections"
+    },
+    {
+      "rel": "service-doc",
+      "type": "text/html",
+      "title": "Service documentation",
+      "href": "http://example.com/csapi/api"
+    },
+    {
+      "rel": "service-desc",
+      "type": "application/openapi+json",
+      "title": "OpenAPI definition",
+      "href": "http://example.com/csapi/api.json"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "sensors",
+  "title": "Sensor Systems",
+  "description": "Collection of weather sensor systems and their datastreams",
+  "extent": {
+    "spatial": {
+      "bbox": [[-180, -90, 180, 90]],
+      "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+    },
+    "temporal": {
+      "interval": [["2020-01-01T00:00:00Z", null]],
+      "trs": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+    }
+  },
+  "links": [
+    {
+      "rel": "self",
+      "type": "application/json",
+      "href": "http://example.com/csapi/collections/sensors"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/systems",
+      "type": "application/json",
+      "title": "Systems in this collection",
+      "href": "http://example.com/csapi/systems"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/procedures",
+      "type": "application/json",
+      "title": "Procedures",
+      "href": "http://example.com/csapi/procedures"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/deployments",
+      "type": "application/json",
+      "title": "Deployments",
+      "href": "http://example.com/csapi/deployments"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/samplingFeatures",
+      "type": "application/json",
+      "title": "Sampling Features",
+      "href": "http://example.com/csapi/samplingFeatures"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/datastreams",
+      "type": "application/json",
+      "title": "Datastreams",
+      "href": "http://example.com/csapi/datastreams"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/observations",
+      "type": "application/json",
+      "title": "Observations",
+      "href": "http://example.com/csapi/observations"
+    },
+    {
+      "rel": "http://www.opengis.net/def/rel/ogc/1.0/controlStreams",
+      "type": "application/json",
+      "title": "Control Streams",
+      "href": "http://example.com/csapi/controlStreams"
+    }
+  ],
+  "itemFormats": ["application/json", "application/sml+json", "application/geo+json"],
+  "crs": ["http://www.opengis.net/def/crs/OGC/1.3/CRS84"]
+}

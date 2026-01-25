@@ -1,0 +1,10 @@
+{
+  "conformsTo": [
+    "http://www.opengis.net/spec/ogcapi-common-1/1.0/conf/core",
+    "http://www.opengis.net/spec/ogcapi-common-2/1.0/conf/collections",
+    "http://www.opengis.net/spec/ogcapi-connected-systems-1/1.0/conf/core",
+    "http://www.opengis.net/spec/ogcapi-cs-part1/1.0/conf/core",
+    "http://www.opengis.net/spec/ogcapi-cs-part1/1.0/conf/system-features",
+    "http://www.opengis.net/spec/ogcapi-cs-part2/1.0/conf/datastream-schema"
+  ]
+}
