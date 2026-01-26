@@ -193,6 +193,29 @@ describe('CSAPINavigator - Systems Resource', () => {
       expect(url).toContain('observedProperty=temperature');
     });
 
+    it('builds URL with select parameter (property path filtering)', () => {
+      const url = navigator.getSystemsUrl({
+        select: 'id,name,properties.manufacturer',
+      });
+      expect(url).toBe(
+        'http://example.com/csapi/systems?select=id%2Cname%2Cproperties.manufacturer'
+      );
+    });
+
+    it('builds URL with "now" temporal value', () => {
+      const url = navigator.getSystemsUrl({
+        datetime: 'now',
+      });
+      expect(url).toBe('http://example.com/csapi/systems?datetime=now');
+    });
+
+    it('builds URL with "latest" temporal value', () => {
+      const url = navigator.getSystemsUrl({
+        datetime: 'latest',
+      });
+      expect(url).toBe('http://example.com/csapi/systems?datetime=latest');
+    });
+
     it('throws error if systems not available', () => {
       const minimalCollection = {
         ...mockCollection,
@@ -248,6 +271,16 @@ describe('CSAPINavigator - Systems Resource', () => {
     it('builds delete URL', () => {
       const url = navigator.deleteSystemUrl('sensor-123');
       expect(url).toBe('http://example.com/csapi/systems/sensor-123');
+    });
+
+    it('builds delete URL with cascade parameter', () => {
+      const url = navigator.deleteSystemUrl('sensor-123', true);
+      expect(url).toBe('http://example.com/csapi/systems/sensor-123?cascade=true');
+    });
+
+    it('builds delete URL with cascade=false', () => {
+      const url = navigator.deleteSystemUrl('sensor-123', false);
+      expect(url).toBe('http://example.com/csapi/systems/sensor-123?cascade=false');
     });
 
     it('encodes system IDs in all CRUD URLs', () => {

@@ -58,6 +58,9 @@ export interface SystemsQueryOptions {
 
   /** Filter by system kind/type */
   systemKind?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -94,6 +97,9 @@ export interface DatastreamsQueryOptions {
 
   /** Temporal filter: phenomenon time range */
   phenomenonTime?: DateTimeParameter;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -130,6 +136,9 @@ export interface ObservationsQueryOptions {
 
   /** Spatial filter: WKT geometry */
   geom?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -154,6 +163,9 @@ export interface ControlStreamsQueryOptions {
 
   /** Temporal filter: execution time range */
   executionTime?: DateTimeParameter;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -175,6 +187,9 @@ export interface CommandsQueryOptions {
 
   /** Filter by command status */
   status?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -208,6 +223,9 @@ export interface SamplingFeaturesQueryOptions {
 
   /** Filter by controlled property */
   controlledProperty?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -229,6 +247,9 @@ export interface PropertiesQueryOptions {
 
   /** Filter by object type(s) */
   objectType?: string | string[];
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -253,6 +274,9 @@ export interface ProceduresQueryOptions {
 
   /** Filter by controlled property */
   controlledProperty?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -292,6 +316,9 @@ export interface DeploymentsQueryOptions {
 
   /** Filter by controlled property */
   controlledProperty?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }
 
 /**
@@ -316,4 +343,7 @@ export interface SystemEventsQueryOptions {
 
   /** Filter by system ID */
   system?: string;
+
+  /** Property path filtering: comma-separated list of property paths */
+  select?: string;
 }

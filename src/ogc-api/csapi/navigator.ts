@@ -158,11 +158,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource_3
    *
    * @param systemId Unique identifier of the system
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteSystemUrl(systemId: string): string {
+  deleteSystemUrl(systemId: string, cascade?: boolean): string {
     this._checkResourceAvailable('systems');
-    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}`;
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -405,11 +412,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource_3
    *
    * @param procedureId Unique identifier of the procedure
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteProcedureUrl(procedureId: string): string {
+  deleteProcedureUrl(procedureId: string, cascade?: boolean): string {
     this._checkResourceAvailable('procedures');
-    return `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}`;
+    const url = new URL(
+      `${this.baseUrl}/procedures/${encodeURIComponent(procedureId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -556,11 +570,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource_3
    *
    * @param deploymentId Unique identifier of the deployment
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteDeploymentUrl(deploymentId: string): string {
+  deleteDeploymentUrl(deploymentId: string, cascade?: boolean): string {
     this._checkResourceAvailable('deployments');
-    return `${this.baseUrl}/deployments/${encodeURIComponent(deploymentId)}`;
+    const url = new URL(
+      `${this.baseUrl}/deployments/${encodeURIComponent(deploymentId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -750,11 +771,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_feature_resource_3
    *
    * @param samplingFeatureId Unique identifier of the sampling feature
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteSamplingFeatureUrl(samplingFeatureId: string): string {
+  deleteSamplingFeatureUrl(samplingFeatureId: string, cascade?: boolean): string {
     this._checkResourceAvailable('samplingFeatures');
-    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`;
+    const url = new URL(
+      `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -880,11 +908,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource_3
    *
    * @param datastreamId Unique identifier of the datastream
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteDatastreamUrl(datastreamId: string): string {
+  deleteDatastreamUrl(datastreamId: string, cascade?: boolean): string {
     this._checkResourceAvailable('datastreams');
-    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}`;
+    const url = new URL(
+      `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -1064,11 +1099,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observation_resource_2
    *
    * @param observationId Unique identifier of the observation
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteObservationUrl(observationId: string): string {
+  deleteObservationUrl(observationId: string, cascade?: boolean): string {
     this._checkResourceAvailable('observations');
-    return `${this.baseUrl}/observations/${encodeURIComponent(observationId)}`;
+    const url = new URL(
+      `${this.baseUrl}/observations/${encodeURIComponent(observationId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   // ========================================
@@ -1164,11 +1206,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource_3
    *
    * @param controlStreamId Unique identifier of the control stream
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteControlStreamUrl(controlStreamId: string): string {
+  deleteControlStreamUrl(controlStreamId: string, cascade?: boolean): string {
     this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`;
+    const url = new URL(
+      `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -1418,11 +1467,18 @@ export default class CSAPINavigator {
    * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_property_resource_3
    *
    * @param propertyId Unique identifier of the property
+   * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deletePropertyUrl(propertyId: string): string {
+  deletePropertyUrl(propertyId: string, cascade?: boolean): string {
     this._checkResourceAvailable('properties');
-    return `${this.baseUrl}/properties/${encodeURIComponent(propertyId)}`;
+    const url = new URL(
+      `${this.baseUrl}/properties/${encodeURIComponent(propertyId)}`
+    );
+    if (cascade !== undefined) {
+      url.searchParams.set('cascade', cascade.toString());
+    }
+    return url.toString();
   }
 
   /**
@@ -1654,6 +1710,11 @@ export default class CSAPINavigator {
   }
 
   private _serializeDatetime(param: DateTimeParameter): string {
+    // Handle special temporal values
+    if (param === 'now' || param === 'latest') {
+      return param;
+    }
+    
     // Use existing DateTimeParameter serialization from shared/models
     if (param instanceof Date) {
       return param.toISOString();
@@ -1695,6 +1756,8 @@ export default class CSAPINavigator {
       url.searchParams.set('controlledProperty', options.controlledProperty);
     if (options.systemKind !== undefined)
       url.searchParams.set('systemKind', options.systemKind);
+    if (options.select !== undefined)
+      url.searchParams.set('select', options.select);
     return url;
   }
 
@@ -1709,6 +1772,8 @@ export default class CSAPINavigator {
     if (options.datetime !== undefined)
       url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
     if (options.q !== undefined) url.searchParams.set('q', options.q);
+    if (options.select !== undefined)
+      url.searchParams.set('select', options.select);
     return url;
   }
 
@@ -1729,6 +1794,8 @@ export default class CSAPINavigator {
         'phenomenonTime',
         this._serializeDatetime(options.phenomenonTime)
       );
+    if (options.select !== undefined)
+      url.searchParams.set('select', options.select);
     return url;
   }
 
@@ -1752,6 +1819,8 @@ export default class CSAPINavigator {
         'executionTime',
         this._serializeDatetime(options.executionTime)
       );
+    if (options.select !== undefined)
+      url.searchParams.set('select', options.select);
     return url;
   }
 
@@ -1788,6 +1857,8 @@ export default class CSAPINavigator {
       url.searchParams.set('observedProperty', options.observedProperty);
     if (options.controlledProperty !== undefined)
       url.searchParams.set('controlledProperty', options.controlledProperty);
+    if (options.select !== undefined)
+      url.searchParams.set('select', options.select);
     return url;
   }
 
@@ -1802,6 +1873,8 @@ export default class CSAPINavigator {
       url.searchParams.set('observedProperty', options.observedProperty);
     if (options.controlledProperty !== undefined)
       url.searchParams.set('controlledProperty', options.controlledProperty);
+    if (options.select !== undefined)
+      url.searchParams.set('select', options.select);
     return url;
   }
 }

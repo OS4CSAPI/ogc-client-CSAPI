@@ -88,8 +88,18 @@ export type MetadataURL = {
 export type FieldName = string;
 export type FieldSort = ['D' | 'A', FieldName];
 
+/**
+ * Date/time parameter supporting ISO 8601 timestamps, ranges, and special values.
+ * Special temporal values:
+ * - "now": Current time at the server
+ * - "latest": Latest available data time
+ * 
+ * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#rc_datetime-now-latest
+ */
 export type DateTimeParameter =
   | Date
   | { start: Date }
   | { end: Date }
-  | { start: Date; end: Date };
+  | { start: Date; end: Date }
+  | 'now'
+  | 'latest';
