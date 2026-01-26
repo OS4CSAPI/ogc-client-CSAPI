@@ -2,6 +2,7 @@
  * SWE Common validation
  * 
  * Basic validation for SWE Common data components using type guards.
+ * Includes deep constraint validation for AllowedValues, patterns, and intervals.
  * For full JSON schema validation, schemas can be downloaded from
  * https://schemas.opengis.net/sweCommon/3.0/json/
  * 
@@ -17,7 +18,24 @@ import type {
   DataRecordComponent,
   DataArrayComponent,
   QuantityComponent,
+  CountComponent,
+  TextComponent,
+  CategoryComponent,
+  TimeComponent,
 } from '../swe-common/index.js';
+import type {
+  QuantityRangeComponent,
+  CountRangeComponent,
+  TimeRangeComponent,
+} from '../swe-common/types/range-components.js';
+import {
+  validateQuantityConstraint,
+  validateCountConstraint,
+  validateTextConstraint,
+  validateCategoryConstraint,
+  validateTimeConstraint,
+  validateRangeConstraint,
+} from './constraint-validator.js';
 
 /**
  * Validation error
@@ -49,8 +67,11 @@ function hasDataComponentProperties(obj: unknown): boolean {
 
 /**
  * Validate QuantityComponent
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateQuantity(data: unknown): ValidationResult {
+export function validateQuantity(data: unknown, validateConstraints = true): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -61,11 +82,19 @@ export function validateQuantity(data: unknown): ValidationResult {
   const component = data as any;
 
   if (component.type !== 'Quantity') {
-    errors.push(`Expected type 'Quantity', got '${component.type}'`);
+    errors.push({ message: `Expected type 'Quantity', got '${component.type}'` });
   }
 
   if (!component.uom) {
     errors.push({ message: 'Missing required property: uom' });
+  }
+
+  // Perform deep constraint validation if value is present
+  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
+    const constraintResult = validateQuantityConstraint(component as QuantityComponent, component.value);
+    if (!constraintResult.valid && constraintResult.errors) {
+      errors.push(...constraintResult.errors);
+    }
   }
 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
@@ -111,7 +140,7 @@ export function validateDataArray(data: unknown): ValidationResult {
   const component = data as any;
 
   if (component.type !== 'DataArray') {
-    errors.push(`Expected type 'DataArray', got '${component.type}'`);
+    errors.push({ message: `Expected type 'DataArray', got '${component.type}'` });
   }
 
   if (!component.elementCount) {
@@ -126,9 +155,182 @@ export function validateDataArray(data: unknown): ValidationResult {
 }
 
 /**
- * Generic SWE Common component validator based on type
+ * Validate CountComponent
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateSWEComponent(data: unknown): ValidationResult {
+export function validateCount(data: unknown, validateConstraints = true): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (!hasDataComponentProperties(data)) {
+    errors.push({ message: 'Missing required DataComponent properties' });
+    return { valid: false, errors };
+  }
+
+  const component = data as any;
+
+  if (component.type !== 'Count') {
+    errors.push({ message: `Expected type 'Count', got '${component.type}'` });
+  }
+
+  // Perform deep constraint validation if value is present
+  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
+    const constraintResult = validateCountConstraint(component as CountComponent, component.value);
+    if (!constraintResult.valid && constraintResult.errors) {
+      errors.push(...constraintResult.errors);
+    }
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate TextComponent
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
+ */
+export function validateText(data: unknown, validateConstraints = true): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (!hasDataComponentProperties(data)) {
+    errors.push({ message: 'Missing required DataComponent properties' });
+    return { valid: false, errors };
+  }
+
+  const component = data as any;
+
+  if (component.type !== 'Text') {
+    errors.push({ message: `Expected type 'Text', got '${component.type}'` });
+  }
+
+  // Perform deep constraint validation if value is present
+  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
+    const constraintResult = validateTextConstraint(component as TextComponent, component.value);
+    if (!constraintResult.valid && constraintResult.errors) {
+      errors.push(...constraintResult.errors);
+    }
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate CategoryComponent
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
+ */
+export function validateCategory(data: unknown, validateConstraints = true): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (!hasDataComponentProperties(data)) {
+    errors.push({ message: 'Missing required DataComponent properties' });
+    return { valid: false, errors };
+  }
+
+  const component = data as any;
+
+  if (component.type !== 'Category') {
+    errors.push({ message: `Expected type 'Category', got '${component.type}'` });
+  }
+
+  // Perform deep constraint validation if value is present
+  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
+    const constraintResult = validateCategoryConstraint(component as CategoryComponent, component.value);
+    if (!constraintResult.valid && constraintResult.errors) {
+      errors.push(...constraintResult.errors);
+    }
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate TimeComponent
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
+ */
+export function validateTime(data: unknown, validateConstraints = true): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (!hasDataComponentProperties(data)) {
+    errors.push({ message: 'Missing required DataComponent properties' });
+    return { valid: false, errors };
+  }
+
+  const component = data as any;
+
+  if (component.type !== 'Time') {
+    errors.push({ message: `Expected type 'Time', got '${component.type}'` });
+  }
+
+  if (!component.uom) {
+    errors.push({ message: 'Missing required property: uom' });
+  }
+
+  // Perform deep constraint validation if value is present
+  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
+    const constraintResult = validateTimeConstraint(component as TimeComponent, component.value);
+    if (!constraintResult.valid && constraintResult.errors) {
+      errors.push(...constraintResult.errors);
+    }
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Validate Range Component (QuantityRange, CountRange, TimeRange, CategoryRange)
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
+ */
+export function validateRangeComponent(data: unknown, validateConstraints = true): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (!hasDataComponentProperties(data)) {
+    errors.push({ message: 'Missing required DataComponent properties' });
+    return { valid: false, errors };
+  }
+
+  const component = data as any;
+
+  const validRangeTypes = ['QuantityRange', 'CountRange', 'TimeRange', 'CategoryRange'];
+  if (!validRangeTypes.includes(component.type)) {
+    errors.push({ message: `Expected range type, got '${component.type}'` });
+  }
+
+  // Quantity and Time ranges require UOM
+  if ((component.type === 'QuantityRange' || component.type === 'TimeRange') && !component.uom) {
+    errors.push({ message: 'Missing required property: uom' });
+  }
+
+  // Perform deep constraint validation if value is present
+  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
+    if (component.type === 'QuantityRange' || component.type === 'CountRange' || component.type === 'TimeRange') {
+      const constraintResult = validateRangeConstraint(
+        component as QuantityRangeComponent | CountRangeComponent | TimeRangeComponent,
+        component.value
+      );
+      if (!constraintResult.valid && constraintResult.errors) {
+        errors.push(...constraintResult.errors);
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+}
+
+/**
+ * Generic SWE Common component validator based on type
+ * 
+ * @param data - The component to validate
+ * @param validateConstraints - Whether to perform deep constraint validation (default: true)
+ */
+export function validateSWEComponent(data: unknown, validateConstraints = true): ValidationResult {
   if (!hasDataComponentProperties(data)) {
     return {
       valid: false,
@@ -163,20 +365,33 @@ export function validateSWEComponent(data: unknown): ValidationResult {
   if (!validTypes.includes(type)) {
     return {
       valid: false,
-      errors: [`Unknown or unsupported component type: ${type}`],
+      errors: [{ message: `Unknown or unsupported component type: ${type}` }],
     };
   }
 
-  // Type-specific validation for common types
+  // Type-specific validation with constraint checking
   switch (type) {
     case 'Quantity':
-      return validateQuantity(data);
+      return validateQuantity(data, validateConstraints);
+    case 'Count':
+      return validateCount(data, validateConstraints);
+    case 'Text':
+      return validateText(data, validateConstraints);
+    case 'Category':
+      return validateCategory(data, validateConstraints);
+    case 'Time':
+      return validateTime(data, validateConstraints);
+    case 'QuantityRange':
+    case 'CountRange':
+    case 'TimeRange':
+    case 'CategoryRange':
+      return validateRangeComponent(data, validateConstraints);
     case 'DataRecord':
       return validateDataRecord(data);
     case 'DataArray':
       return validateDataArray(data);
     default:
-      // Basic validation passed
+      // Basic validation passed for other types
       return { valid: true };
   }
 }

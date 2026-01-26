@@ -244,3 +244,15 @@ export function isJSONEncoding(encoding: unknown): encoding is JSONEncoding {
     encoding.type === 'JSONEncoding'
   );
 }
+
+/**
+ * Type guard for any encoding type
+ */
+export function isEncoding(encoding: unknown): encoding is Encoding {
+  return (
+    isBinaryEncoding(encoding) ||
+    isTextEncoding(encoding) ||
+    isXMLEncoding(encoding) ||
+    isJSONEncoding(encoding)
+  );
+}
