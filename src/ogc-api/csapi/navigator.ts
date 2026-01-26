@@ -501,6 +501,92 @@ export default class CSAPINavigator {
   }
 
   // ========================================
+  // SUB-RESOURCES OF DEPLOYMENTS
+  // ========================================
+
+  /**
+   * Build URL to get all subdeployments of a parent deployment.
+   * @see OpenAPI spec: /deployments/{deploymentId}/subdeployments
+   *
+   * @param parentDeploymentId ID of the parent deployment
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSubdeploymentsUrl(
+    parentDeploymentId: string,
+    options: DeploymentsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('deployments');
+    const url = new URL(
+      `${this.baseUrl}/deployments/${encodeURIComponent(parentDeploymentId)}/subdeployments`
+    );
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to create a new subdeployment under a parent deployment.
+   * @see OpenAPI spec: POST /deployments/{deploymentId}/subdeployments
+   *
+   * @param parentDeploymentId ID of the parent deployment
+   * @returns URL string for POST request (body contains subdeployment description)
+   */
+  createSubdeploymentUrl(parentDeploymentId: string): string {
+    this._checkResourceAvailable('deployments');
+    return `${this.baseUrl}/deployments/${encodeURIComponent(parentDeploymentId)}/subdeployments`;
+  }
+
+  /**
+   * Build URL to get all deployments associated with a specific system.
+   * @see OpenAPI spec: /systems/{systemId}/deployments
+   *
+   * @param systemId ID of the system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSystemDeploymentsUrl(
+    systemId: string,
+    options: DeploymentsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    this._checkResourceAvailable('deployments');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/deployments`
+    );
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.bbox !== undefined) {
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
   // SAMPLING FEATURES RESOURCE (Part 1: Section 8.6)
   // ========================================
 

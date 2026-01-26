@@ -601,6 +601,114 @@ describe('CSAPINavigator - Systems Resource', () => {
         expect(url).toContain('limit=5');
       });
     });
+
+    describe('getSubdeploymentsUrl', () => {
+      it('builds basic subdeployments URL', () => {
+        const url = navigator.getSubdeploymentsUrl('deployment-parent');
+        expect(url).toBe(
+          'http://example.com/csapi/deployments/deployment-parent/subdeployments'
+        );
+      });
+
+      it('builds URL with query parameters', () => {
+        const url = navigator.getSubdeploymentsUrl('deployment-parent', {
+          limit: 10,
+          bbox: [-180, -90, 180, 90],
+          q: 'search',
+        });
+        expect(url).toContain('limit=10');
+        expect(url).toContain('bbox=-180%2C-90%2C180%2C90');
+        expect(url).toContain('q=search');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getSubdeploymentsUrl('deployment-parent', {
+          datetime: new Date('2024-01-01'),
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z');
+      });
+
+      it('builds URL with system filter', () => {
+        const url = navigator.getSubdeploymentsUrl('deployment-parent', {
+          system: 'system-123',
+        });
+        expect(url).toContain('system=system-123');
+      });
+    });
+
+    describe('createSubdeploymentUrl', () => {
+      it('builds subdeployment creation URL', () => {
+        const url = navigator.createSubdeploymentUrl('deployment-parent');
+        expect(url).toBe(
+          'http://example.com/csapi/deployments/deployment-parent/subdeployments'
+        );
+      });
+
+      it('URL encodes parent deployment ID', () => {
+        const url = navigator.createSubdeploymentUrl('deployment/with/slashes');
+        expect(url).toBe(
+          'http://example.com/csapi/deployments/deployment%2Fwith%2Fslashes/subdeployments'
+        );
+      });
+    });
+
+    describe('getSystemDeploymentsUrl', () => {
+      it('builds basic system deployments URL', () => {
+        const url = navigator.getSystemDeploymentsUrl('system-123');
+        expect(url).toBe(
+          'http://example.com/csapi/systems/system-123/deployments'
+        );
+      });
+
+      it('builds URL with query parameters', () => {
+        const url = navigator.getSystemDeploymentsUrl('system-123', {
+          limit: 20,
+          bbox: [0, 0, 10, 10],
+          q: 'active',
+        });
+        expect(url).toContain('limit=20');
+        expect(url).toContain('bbox=0%2C0%2C10%2C10');
+        expect(url).toContain('q=active');
+      });
+
+      it('builds URL with datetime parameter', () => {
+        const url = navigator.getSystemDeploymentsUrl('system-123', {
+          datetime: { start: new Date('2024-01-01'), end: new Date('2024-12-31') },
+        });
+        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F2024-12-31T00%3A00%3A00.000Z');
+      });
+
+      it('URL encodes system ID', () => {
+        const url = navigator.getSystemDeploymentsUrl('system/with spaces');
+        expect(url).toBe(
+          'http://example.com/csapi/systems/system%2Fwith%20spaces/deployments'
+        );
+      });
+
+      it('throws error if systems resource not available', () => {
+        // Remove systems link
+        mockCollection.links = mockCollection.links.filter(
+          (l) => !l.rel.includes('systems')
+        );
+        navigator = new CSAPINavigator(mockCollection);
+        
+        expect(() => navigator.getSystemDeploymentsUrl('system-123')).toThrow(
+          'Collection does not support systems resource'
+        );
+      });
+
+      it('throws error if deployments resource not available', () => {
+        // Remove deployments link
+        mockCollection.links = mockCollection.links.filter(
+          (l) => !l.rel.includes('deployments')
+        );
+        navigator = new CSAPINavigator(mockCollection);
+        
+        expect(() => navigator.getSystemDeploymentsUrl('system-123')).toThrow(
+          'Collection does not support deployments resource'
+        );
+      });
+    });
   });
 
   describe('Sampling Features Resource', () => {
