@@ -160,7 +160,7 @@ describe('SWE Common Validators', () => {
           description: 'Air temperature',
           uom: { code: 'Cel' },
           constraint: {
-            interval: [-40, 50],
+            intervals: [[-40, 50]],
           },
         };
 
@@ -262,8 +262,10 @@ describe('SWE Common Validators', () => {
       it('should validate Count with constraint', () => {
         const count = {
           type: 'Count',
+          definition: 'http://example.org/count',
+          label: 'Count',
           constraint: {
-            interval: [0, 100],
+            intervals: [[0, 100]],
           },
         };
 

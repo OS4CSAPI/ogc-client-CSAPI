@@ -10,6 +10,8 @@
 import type {
   AbstractSimpleComponent,
   AllowedValues,
+  AllowedTokens,
+  AllowedTimes,
   DefinitionURI,
   NilValues,
   UnitReference,
@@ -44,9 +46,9 @@ export interface TextComponent extends AbstractSimpleComponent {
   type: 'Text';
   
   /**
-   * Constraint on allowed values
+   * Constraint on allowed token values
    */
-  constraint?: AllowedValues;
+  constraint?: AllowedTokens;
   
   /**
    * Current value
@@ -158,9 +160,9 @@ export interface TimeComponent extends AbstractSimpleComponent {
   uom?: UnitReference;
   
   /**
-   * Constraint on allowed values
+   * Constraint on allowed time values
    */
-  constraint?: AllowedValues;
+  constraint?: AllowedTimes;
   
   /**
    * Time reference system

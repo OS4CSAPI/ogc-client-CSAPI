@@ -81,6 +81,7 @@ export interface VectorCoordinate extends SoftNamedProperty {
  * with a specific reference frame and coordinate system.
  * 
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Vector.json
+ * @required referenceFrame - Required by JSON Schema
  */
 export interface VectorComponent extends AbstractDataComponent {
   /**
@@ -89,9 +90,9 @@ export interface VectorComponent extends AbstractDataComponent {
   type: 'Vector';
   
   /**
-   * Reference frame for the vector (e.g., WGS84, local frame)
+   * Reference frame for the vector (e.g., WGS84, local frame) (REQUIRED)
    */
-  referenceFrame?: string;
+  referenceFrame: string;
   
   /**
    * Local frame identifier

@@ -12,13 +12,18 @@ export type DefinitionURI = string;
 
 /**
  * Soft-named property pattern used in SWE Common
- * Properties can have a name attribute
+ * Properties MUST have a name attribute
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/basicTypes.json#/$defs/SoftNamedProperty
+ * @required name - Required by JSON Schema
  */
 export interface SoftNamedProperty {
   /**
-   * Optional name for the property
+   * Name for the property (REQUIRED)
+   * 
+   * Must match pattern: ^[A-Za-z][A-Za-z0-9_\-]*$
    */
-  name?: string;
+  name: string;
 }
 
 /**
@@ -72,6 +77,8 @@ export interface AbstractSweIdentifiable {
  * Base interface for all SWE data components
  * 
  * @see https://schemas.opengis.net/sweCommon/3.0/json/AbstractDataComponent.json
+ * @required definition - Required by JSON Schema
+ * @required label - Required by JSON Schema
  */
 export interface AbstractDataComponent extends AbstractSweIdentifiable {
   /**
@@ -80,14 +87,14 @@ export interface AbstractDataComponent extends AbstractSweIdentifiable {
   type: string;
   
   /**
-   * URI pointing to a detailed description or definition
+   * URI pointing to a detailed description or definition (REQUIRED)
    */
-  definition?: DefinitionURI;
+  definition: DefinitionURI;
   
   /**
-   * Human-readable label
+   * Human-readable label (REQUIRED)
    */
-  label?: string;
+  label: string;
   
   /**
    * Detailed description
@@ -134,6 +141,9 @@ export interface AbstractSimpleComponent extends AbstractDataComponent {
 
 /**
  * Unit of measure reference
+ * Must specify either 'code' or 'href', or both
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/basicTypes.json#/$defs/UnitReference
  */
 export interface UnitReference {
   /**
@@ -145,24 +155,76 @@ export interface UnitReference {
    * Reference to unit definition
    */
   href?: string;
+  
+  /**
+   * Symbol for the unit (e.g., 'm', 'kg')
+   */
+  symbol?: string;
+  
+  /**
+   * Human-readable label for the unit
+   */
+  label?: string;
 }
 
 /**
  * Allowed values constraint
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/basicTypes.json#/$defs/AllowedValues
+ * @note Property names changed from singular to plural to match JSON Schema
  */
 export interface AllowedValues {
   /**
-   * List of explicitly allowed values
+   * List of explicitly allowed values (renamed from 'value' to match JSON Schema)
    */
-  value?: (number | string)[];
+  values?: (number | string)[];
   
   /**
-   * List of allowed intervals [min, max]
+   * List of allowed intervals [min, max] (renamed from 'interval' to match JSON Schema)
    */
-  interval?: Array<[number, number]>;
+  intervals?: Array<[number, number]>;
   
   /**
    * Significant figures constraint
+   */
+  significantFigures?: number;
+}
+
+/**
+ * Allowed tokens constraint for text components
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/basicTypes.json#/$defs/AllowedTokens
+ */
+export interface AllowedTokens {
+  /**
+   * List of explicitly allowed token values
+   */
+  values?: string[];
+  
+  /**
+   * Regular expression pattern that values must match
+   */
+  pattern?: string;
+}
+
+/**
+ * Allowed times constraint for time components
+ * 
+ * @see https://schemas.opengis.net/sweCommon/3.0/json/basicTypes.json#/$defs/AllowedTimes
+ */
+export interface AllowedTimes {
+  /**
+   * List of explicitly allowed time values (ISO 8601 format)
+   */
+  values?: string[];
+  
+  /**
+   * List of allowed time intervals [start, end] (ISO 8601 format)
+   */
+  intervals?: Array<[string, string]>;
+  
+  /**
+   * Significant figures for time representation
    */
   significantFigures?: number;
 }
