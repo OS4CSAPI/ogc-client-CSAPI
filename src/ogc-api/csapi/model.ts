@@ -12,7 +12,8 @@ export type CSAPIResourceType =
   | 'datastreams'
   | 'observations'
   | 'commands'
-  | 'controlStreams';
+  | 'controlStreams'
+  | 'systemEvents';
 
 /**
  * Query options for Systems collection endpoint
@@ -120,6 +121,15 @@ export interface ObservationsQueryOptions {
 
   /** Filter by observed property */
   observedProperty?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
+  /** Filter by sender ID */
+  sender?: string;
+
+  /** Spatial filter: WKT geometry */
+  geom?: string;
 }
 
 /**
@@ -282,4 +292,28 @@ export interface DeploymentsQueryOptions {
 
   /** Filter by controlled property */
   controlledProperty?: string;
+}
+
+/**
+ * Query options for System Events
+ * @see https://docs.ogc.org/is/23-002/23-002.html#_system_events_2
+ */
+export interface SystemEventsQueryOptions {
+  /** Maximum number of system events to return */
+  limit?: number;
+
+  /** Temporal filter: datetime range */
+  datetime?: DateTimeParameter;
+
+  /** Filter by system event ID(s) */
+  id?: string | string[];
+
+  /** Temporal filter: event time range */
+  eventTime?: DateTimeParameter;
+
+  /** Filter by event type */
+  eventType?: string | string[];
+
+  /** Filter by system ID */
+  system?: string;
 }

@@ -1041,6 +1041,22 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
     });
 
+    describe('getDatastreamSchemaUrl', () => {
+      it('builds URL for datastream schema', () => {
+        const url = navigator.getDatastreamSchemaUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/datastreams/stream-123/schema'
+        );
+      });
+
+      it('encodes datastream ID in schema URL', () => {
+        const url = navigator.getDatastreamSchemaUrl('stream/456');
+        expect(url).toBe(
+          'http://example.com/csapi/datastreams/stream%2F456/schema'
+        );
+      });
+    });
+
     describe('getDatastreamObservationsUrl', () => {
       it('builds basic datastream observations URL', () => {
         const url = navigator.getDatastreamObservationsUrl('stream-123');
@@ -1164,6 +1180,34 @@ describe('CSAPINavigator - Systems Resource', () => {
           observedProperty: 'temperature',
         });
         expect(url).toContain('observedProperty=temperature');
+      });
+
+      it('builds URL with foi parameter (single)', () => {
+        const url = navigator.getObservationsUrl({
+          foi: 'sampling-point-1',
+        });
+        expect(url).toContain('foi=sampling-point-1');
+      });
+
+      it('builds URL with foi parameter (array)', () => {
+        const url = navigator.getObservationsUrl({
+          foi: ['sampling-point-1', 'sampling-point-2'],
+        });
+        expect(url).toContain('foi=sampling-point-1%2Csampling-point-2');
+      });
+
+      it('builds URL with sender parameter', () => {
+        const url = navigator.getObservationsUrl({
+          sender: 'sensor-network-123',
+        });
+        expect(url).toContain('sender=sensor-network-123');
+      });
+
+      it('builds URL with geom parameter', () => {
+        const url = navigator.getObservationsUrl({
+          geom: 'POINT(10 50)',
+        });
+        expect(url).toContain('geom=POINT(10%2050)');
       });
 
       it('builds URL with multiple parameters', () => {
@@ -1365,6 +1409,22 @@ describe('CSAPINavigator - Systems Resource', () => {
           limit: 5,
         });
         expect(url).toContain('limit=5');
+      });
+    });
+
+    describe('getControlStreamSchemaUrl', () => {
+      it('builds URL for control stream schema', () => {
+        const url = navigator.getControlStreamSchemaUrl('stream-123');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream-123/schema'
+        );
+      });
+
+      it('encodes control stream ID in schema URL', () => {
+        const url = navigator.getControlStreamSchemaUrl('stream/456');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2F456/schema'
+        );
       });
     });
 
@@ -1936,6 +1996,181 @@ describe('CSAPINavigator - Systems Resource', () => {
         const navWithProc = new CSAPINavigator(mockCollection);
         const url = navWithProc.getProceduresUrl({ controlledProperty: 'actuator' });
         expect(url).toContain('controlledProperty=actuator');
+      });
+    });
+
+    describe('System Events', () => {
+      let navigator: CSAPINavigator;
+
+      beforeEach(() => {
+        const mockCollection = {
+          id: 'csapi',
+          title: 'CSAPI Collection',
+          links: [
+            {
+              rel: 'self',
+              href: 'http://example.com/collections/csapi',
+              type: 'application/json',
+            },
+            {
+              rel: 'http://www.opengis.net/def/rel/ogc/1.0/systems',
+              href: 'http://example.com/csapi/systems',
+              type: 'application/json',
+            },
+            {
+              rel: 'http://www.opengis.net/def/rel/ogc/1.0/systemEvents',
+              href: 'http://example.com/csapi/systemEvents',
+              type: 'application/json',
+            },
+          ],
+        } as OgcApiCollectionInfo;
+        navigator = new CSAPINavigator(mockCollection);
+      });
+
+      describe('getSystemEventsUrl', () => {
+        it('builds basic system events URL', () => {
+          const url = navigator.getSystemEventsUrl();
+          expect(url).toBe('http://example.com/csapi/systemEvents');
+        });
+
+        it('builds URL with limit parameter', () => {
+          const url = navigator.getSystemEventsUrl({ limit: 50 });
+          expect(url).toContain('limit=50');
+        });
+
+        it('builds URL with datetime parameter', () => {
+          const url = navigator.getSystemEventsUrl({
+            datetime: { start: new Date('2024-01-01') },
+          });
+          expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        });
+
+        it('builds URL with eventTime parameter', () => {
+          const url = navigator.getSystemEventsUrl({
+            eventTime: { start: new Date('2024-01-01') },
+          });
+          expect(url).toContain('eventTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        });
+
+        it('builds URL with eventType parameter (single)', () => {
+          const url = navigator.getSystemEventsUrl({
+            eventType: 'online',
+          });
+          expect(url).toContain('eventType=online');
+        });
+
+        it('builds URL with eventType parameter (array)', () => {
+          const url = navigator.getSystemEventsUrl({
+            eventType: ['online', 'offline'],
+          });
+          expect(url).toContain('eventType=online%2Coffline');
+        });
+
+        it('builds URL with system parameter', () => {
+          const url = navigator.getSystemEventsUrl({
+            system: 'system-123',
+          });
+          expect(url).toContain('system=system-123');
+        });
+      });
+
+      describe('getSystemEventUrl', () => {
+        it('builds URL for specific system event', () => {
+          const url = navigator.getSystemEventUrl('event-123');
+          expect(url).toBe('http://example.com/csapi/systemEvents/event-123');
+        });
+
+        it('encodes system event ID in URL', () => {
+          const url = navigator.getSystemEventUrl('event/456');
+          expect(url).toBe('http://example.com/csapi/systemEvents/event%2F456');
+        });
+      });
+
+      describe('getSystemSystemEventsUrl', () => {
+        it('builds URL for system-specific events', () => {
+          const url = navigator.getSystemSystemEventsUrl('system-123');
+          expect(url).toBe(
+            'http://example.com/csapi/systems/system-123/systemEvents'
+          );
+        });
+
+        it('builds URL with query parameters', () => {
+          const url = navigator.getSystemSystemEventsUrl('system-123', {
+            limit: 10,
+            eventType: 'alert',
+          });
+          expect(url).toContain('limit=10');
+          expect(url).toContain('eventType=alert');
+        });
+      });
+
+      describe('createSystemEventUrl', () => {
+        it('builds URL for creating system event', () => {
+          const url = navigator.createSystemEventUrl();
+          expect(url).toBe('http://example.com/csapi/systemEvents');
+        });
+      });
+    });
+
+    describe('Feasibility', () => {
+      let navigator: CSAPINavigator;
+
+      beforeEach(() => {
+        const mockCollection = {
+          id: 'csapi',
+          title: 'CSAPI Collection',
+          links: [
+            {
+              rel: 'self',
+              href: 'http://example.com/collections/csapi',
+              type: 'application/json',
+            },
+            {
+              rel: 'http://www.opengis.net/def/rel/ogc/1.0/systems',
+              href: 'http://example.com/csapi/systems',
+              type: 'application/json',
+            },
+          ],
+        } as OgcApiCollectionInfo;
+        navigator = new CSAPINavigator(mockCollection);
+      });
+
+      describe('requestFeasibilityUrl', () => {
+        it('builds URL for requesting feasibility analysis', () => {
+          const url = navigator.requestFeasibilityUrl('system-123');
+          expect(url).toBe(
+            'http://example.com/csapi/systems/system-123/feasibility'
+          );
+        });
+
+        it('encodes system ID in feasibility URL', () => {
+          const url = navigator.requestFeasibilityUrl('system/456');
+          expect(url).toBe(
+            'http://example.com/csapi/systems/system%2F456/feasibility'
+          );
+        });
+      });
+
+      describe('getFeasibilityResultUrl', () => {
+        it('builds URL for getting feasibility result', () => {
+          const url = navigator.getFeasibilityResultUrl(
+            'system-123',
+            'request-456'
+          );
+          expect(url).toBe(
+            'http://example.com/csapi/systems/system-123/feasibility/request-456'
+          );
+        });
+
+        it('encodes system and request IDs in URL', () => {
+          const url = navigator.getFeasibilityResultUrl(
+            'system/123',
+            'request/456'
+          );
+          expect(url).toBe(
+            'http://example.com/csapi/systems/system%2F123/feasibility/request%2F456'
+          );
+        });
       });
     });
   });

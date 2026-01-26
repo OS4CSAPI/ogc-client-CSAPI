@@ -11,6 +11,7 @@ import {
   ProceduresQueryOptions,
   PropertiesQueryOptions,
   SamplingFeaturesQueryOptions,
+  SystemEventsQueryOptions,
   SystemsQueryOptions,
 } from './model.js';
 
@@ -644,40 +645,6 @@ export default class CSAPINavigator {
     return `${this.baseUrl}/deployments/${encodeURIComponent(parentDeploymentId)}/subdeployments`;
   }
 
-  /**
-   * Build URL to get all deployments associated with a specific system.
-   * @see OpenAPI spec: /systems/{systemId}/deployments
-   *
-   * @param systemId ID of the system
-   * @param options Query parameters
-   * @returns URL string for GET request
-   */
-  getSystemDeploymentsUrl(
-    systemId: string,
-    options: DeploymentsQueryOptions = {}
-  ): string {
-    this._checkResourceAvailable('systems');
-    this._checkResourceAvailable('deployments');
-    const url = new URL(
-      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/deployments`
-    );
-
-    if (options.limit !== undefined) {
-      url.searchParams.set('limit', options.limit.toString());
-    }
-    if (options.bbox !== undefined) {
-      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
-    }
-    if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
-    }
-    if (options.q !== undefined) {
-      url.searchParams.set('q', options.q);
-    }
-
-    return url.toString();
-  }
-
   // ========================================
   // SAMPLING FEATURES RESOURCE (Part 1: Section 8.6)
   // ========================================
@@ -951,6 +918,18 @@ export default class CSAPINavigator {
   }
 
   /**
+   * Build URL to get the schema of a datastream (observation schema).
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_datastream_schema
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @returns URL string for GET request
+   */
+  getDatastreamSchemaUrl(datastreamId: string): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/schema`;
+  }
+
+  /**
    * Build URL to get observations for a specific datastream.
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observations_3
    *
@@ -984,6 +963,18 @@ export default class CSAPINavigator {
     }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
+    if (options.sender !== undefined) {
+      url.searchParams.set('sender', options.sender);
+    }
+    if (options.geom !== undefined) {
+      url.searchParams.set('geom', options.geom);
     }
 
     return url.toString();
@@ -1027,6 +1018,18 @@ export default class CSAPINavigator {
     }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
+    if (options.sender !== undefined) {
+      url.searchParams.set('sender', options.sender);
+    }
+    if (options.geom !== undefined) {
+      url.searchParams.set('geom', options.geom);
     }
 
     return url.toString();
@@ -1196,6 +1199,18 @@ export default class CSAPINavigator {
     }
 
     return url.toString();
+  }
+
+  /**
+   * Build URL to get the schema of a control stream (command schema).
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_control_stream_schema
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @returns URL string for GET request
+   */
+  getControlStreamSchemaUrl(controlStreamId: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/schema`;
   }
 
   /**
@@ -1438,6 +1453,138 @@ export default class CSAPINavigator {
     }
 
     return url.toString();
+  }
+
+  // ========================================
+  // SYSTEM EVENTS RESOURCE (Part 2: Section 12)
+  // ========================================
+
+  /**
+   * Build URL to get all system events in the collection.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_system_events_2
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getSystemEventsUrl(options: SystemEventsQueryOptions = {}): string {
+    this._checkResourceAvailable('systemEvents');
+    const url = new URL(`${this.baseUrl}/systemEvents`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.eventTime !== undefined) {
+      url.searchParams.set('eventTime', this._serializeDatetime(options.eventTime));
+    }
+    if (options.eventType !== undefined) {
+      url.searchParams.set(
+        'eventType',
+        Array.isArray(options.eventType) ? options.eventType.join(',') : options.eventType
+      );
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to get a specific system event by ID.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_system_event_resource
+   *
+   * @param systemEventId Unique identifier of the system event
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getSystemEventUrl(systemEventId: string, format?: string): string {
+    this._checkResourceAvailable('systemEvents');
+    return this._buildResourceUrl('systemEvents', systemEventId, format);
+  }
+
+  /**
+   * Build URL to get system events for a specific system.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_system_system_events
+   *
+   * @param systemId Unique identifier of the system
+   * @param options Query parameters for filtering system events
+   * @returns URL string for GET request
+   */
+  getSystemSystemEventsUrl(
+    systemId: string,
+    options: SystemEventsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/systemEvents`
+    );
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.eventTime !== undefined) {
+      url.searchParams.set('eventTime', this._serializeDatetime(options.eventTime));
+    }
+    if (options.eventType !== undefined) {
+      url.searchParams.set(
+        'eventType',
+        Array.isArray(options.eventType) ? options.eventType.join(',') : options.eventType
+      );
+    }
+
+    return url.toString();
+  }
+
+  /**
+   * Build URL to create a new system event.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_create_system_event
+   *
+   * @returns URL string for POST request (body contains system event data)
+   */
+  createSystemEventUrl(): string {
+    this._checkResourceAvailable('systemEvents');
+    return `${this.baseUrl}/systemEvents`;
+  }
+
+  // ========================================
+  // FEASIBILITY RESOURCE (Part 2: Section 11)
+  // ========================================
+
+  /**
+   * Build URL to request a feasibility analysis for a system.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_feasibility
+   *
+   * @param systemId Unique identifier of the system
+   * @returns URL string for POST request (body contains feasibility request)
+   */
+  requestFeasibilityUrl(systemId: string): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/feasibility`;
+  }
+
+  /**
+   * Build URL to get a feasibility result.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_feasibility_result
+   *
+   * @param systemId Unique identifier of the system
+   * @param requestId Unique identifier of the feasibility request
+   * @returns URL string for GET request
+   */
+  getFeasibilityResultUrl(systemId: string, requestId: string): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/feasibility/${encodeURIComponent(requestId)}`;
   }
 
   // ========================================
