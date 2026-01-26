@@ -31,8 +31,20 @@ export interface SystemsQueryOptions {
   /** Full-text search query */
   q?: string;
 
+  /** Filter by system ID(s) */
+  id?: string | string[];
+
+  /** Spatial filter: WKT geometry */
+  geom?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
   /** Filter by parent system ID */
   parent?: string;
+
+  /** Include subsystems recursively */
+  recursive?: boolean;
 
   /** Filter by procedure ID */
   procedure?: string;
@@ -64,10 +76,22 @@ export interface HistoryQueryOptions {
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastreams_2
  */
 export interface DatastreamsQueryOptions {
+  /** Maximum number of datastreams to return */
   limit?: number;
+
+  /** Spatial filter: bounding box [west, south, east, north] */
   bbox?: BoundingBox;
+
+  /** Temporal filter: datetime range */
   datetime?: DateTimeParameter;
+
+  /** Filter by datastream ID(s) */
+  id?: string | string[];
+
+  /** Filter by observed property */
   observedProperty?: string;
+
+  /** Temporal filter: phenomenon time range */
   phenomenonTime?: DateTimeParameter;
 }
 
@@ -76,11 +100,25 @@ export interface DatastreamsQueryOptions {
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observations_2
  */
 export interface ObservationsQueryOptions {
+  /** Maximum number of observations to return */
   limit?: number;
+
+  /** Spatial filter: bounding box [west, south, east, north] */
   bbox?: BoundingBox;
+
+  /** Temporal filter: datetime range */
   datetime?: DateTimeParameter;
+
+  /** Filter by observation ID(s) */
+  id?: string | string[];
+
+  /** Temporal filter: phenomenon time range */
   phenomenonTime?: DateTimeParameter;
+
+  /** Temporal filter: result time range */
   resultTime?: DateTimeParameter;
+
+  /** Filter by observed property */
   observedProperty?: string;
 }
 
@@ -89,10 +127,22 @@ export interface ObservationsQueryOptions {
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_streams_2
  */
 export interface ControlStreamsQueryOptions {
+  /** Maximum number of control streams to return */
   limit?: number;
+
+  /** Temporal filter: datetime range */
   datetime?: DateTimeParameter;
+
+  /** Filter by control stream ID(s) */
+  id?: string | string[];
+
+  /** Filter by controlled property */
   controlledProperty?: string;
+
+  /** Temporal filter: issue time range */
   issueTime?: DateTimeParameter;
+
+  /** Temporal filter: execution time range */
   executionTime?: DateTimeParameter;
 }
 
@@ -101,9 +151,19 @@ export interface ControlStreamsQueryOptions {
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_commands_2
  */
 export interface CommandsQueryOptions {
+  /** Maximum number of commands to return */
   limit?: number;
+
+  /** Filter by command ID(s) */
+  id?: string | string[];
+
+  /** Temporal filter: issue time range */
   issueTime?: DateTimeParameter;
+
+  /** Temporal filter: execution time range */
   executionTime?: DateTimeParameter;
+
+  /** Filter by command status */
   status?: string;
 }
 
@@ -112,10 +172,32 @@ export interface CommandsQueryOptions {
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_sampling_features_2
  */
 export interface SamplingFeaturesQueryOptions {
+  /** Maximum number of sampling features to return */
   limit?: number;
+
+  /** Spatial filter: bounding box [west, south, east, north] */
   bbox?: BoundingBox;
+
+  /** Temporal filter: datetime range */
   datetime?: DateTimeParameter;
+
+  /** Full-text search query */
   q?: string;
+
+  /** Filter by sampling feature ID(s) */
+  id?: string | string[];
+
+  /** Spatial filter: WKT geometry */
+  geom?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
+  /** Filter by observed property */
+  observedProperty?: string;
+
+  /** Filter by controlled property */
+  controlledProperty?: string;
 }
 
 /**
@@ -128,6 +210,15 @@ export interface PropertiesQueryOptions {
 
   /** Full-text search query */
   q?: string;
+
+  /** Filter by property ID(s) */
+  id?: string | string[];
+
+  /** Filter by base property ID(s) */
+  baseProperty?: string | string[];
+
+  /** Filter by object type(s) */
+  objectType?: string | string[];
 }
 
 /**
@@ -140,6 +231,12 @@ export interface ProceduresQueryOptions {
 
   /** Full-text search query */
   q?: string;
+
+  /** Filter by procedure ID(s) */
+  id?: string | string[];
+
+  /** Temporal filter: datetime range */
+  datetime?: DateTimeParameter;
 
   /** Filter by observed property */
   observedProperty?: string;
@@ -165,6 +262,24 @@ export interface DeploymentsQueryOptions {
   /** Full-text search query */
   q?: string;
 
+  /** Filter by deployment ID(s) */
+  id?: string | string[];
+
+  /** Spatial filter: WKT geometry */
+  geom?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
+  /** Filter by parent deployment ID(s) */
+  parent?: string | string[];
+
   /** Filter by parent system ID */
   system?: string;
+
+  /** Filter by observed property */
+  observedProperty?: string;
+
+  /** Filter by controlled property */
+  controlledProperty?: string;
 }

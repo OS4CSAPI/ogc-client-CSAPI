@@ -67,8 +67,26 @@ export default class CSAPINavigator {
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
     }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.geom !== undefined) {
+      url.searchParams.set('geom', options.geom);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
     if (options.parent !== undefined) {
       url.searchParams.set('parent', options.parent);
+    }
+    if (options.recursive !== undefined) {
+      url.searchParams.set('recursive', options.recursive.toString());
     }
     if (options.procedure !== undefined) {
       url.searchParams.set('procedure', options.procedure);
@@ -276,6 +294,15 @@ export default class CSAPINavigator {
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
     }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.datetime !== undefined) {
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
     }
@@ -403,8 +430,35 @@ export default class CSAPINavigator {
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
     }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.geom !== undefined) {
+      url.searchParams.set('geom', options.geom);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
+    if (options.parent !== undefined) {
+      url.searchParams.set(
+        'parent',
+        Array.isArray(options.parent) ? options.parent.join(',') : options.parent
+      );
+    }
     if (options.system !== undefined) {
       url.searchParams.set('system', options.system);
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
     }
 
     return url.toString();
@@ -613,6 +667,27 @@ export default class CSAPINavigator {
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
     }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.geom !== undefined) {
+      url.searchParams.set('geom', options.geom);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
+    if (options.observedProperty !== undefined) {
+      url.searchParams.set('observedProperty', options.observedProperty);
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    }
 
     return url.toString();
   }
@@ -730,6 +805,12 @@ export default class CSAPINavigator {
     }
     if (options.datetime !== undefined) {
       url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
     }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
@@ -894,6 +975,12 @@ export default class CSAPINavigator {
     if (options.datetime !== undefined) {
       url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
     }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
     if (options.phenomenonTime !== undefined) {
       url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
     }
@@ -963,6 +1050,12 @@ export default class CSAPINavigator {
     }
     if (options.datetime !== undefined) {
       url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
     }
     if (options.controlledProperty !== undefined) {
       url.searchParams.set('controlledProperty', options.controlledProperty);
@@ -1087,6 +1180,12 @@ export default class CSAPINavigator {
     if (options.limit !== undefined) {
       url.searchParams.set('limit', options.limit.toString());
     }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
     if (options.issueTime !== undefined) {
       url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
     }
@@ -1186,6 +1285,28 @@ export default class CSAPINavigator {
     }
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
+    }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.baseProperty !== undefined) {
+      url.searchParams.set(
+        'baseProperty',
+        Array.isArray(options.baseProperty)
+          ? options.baseProperty.join(',')
+          : options.baseProperty
+      );
+    }
+    if (options.objectType !== undefined) {
+      url.searchParams.set(
+        'objectType',
+        Array.isArray(options.objectType)
+          ? options.objectType.join(',')
+          : options.objectType
+      );
     }
 
     return url.toString();
