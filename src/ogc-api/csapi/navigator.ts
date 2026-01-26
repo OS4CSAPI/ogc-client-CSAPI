@@ -845,11 +845,29 @@ export default class CSAPINavigator {
         Array.isArray(options.id) ? options.id.join(',') : options.id
       );
     }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
     }
     if (options.phenomenonTime !== undefined) {
       url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+    }
+    if (options.resultTime !== undefined) {
+      url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
+    }
+    if (options.select !== undefined) {
+      url.searchParams.set('select', options.select);
     }
 
     return url.toString();
@@ -965,6 +983,18 @@ export default class CSAPINavigator {
   }
 
   /**
+   * Build URL to update the schema of a datastream.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_datastream_schema_update
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @returns URL string for PUT request (body contains updated schema)
+   */
+  updateDatastreamSchemaUrl(datastreamId: string): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/schema`;
+  }
+
+  /**
    * Build URL to get observations for a specific datastream.
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observations_3
    *
@@ -1051,6 +1081,12 @@ export default class CSAPINavigator {
     if (options.resultTime !== undefined) {
       url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
     }
+    if (options.dataStream !== undefined) {
+      url.searchParams.set('dataStream', options.dataStream);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
     }
@@ -1065,6 +1101,9 @@ export default class CSAPINavigator {
     }
     if (options.geom !== undefined) {
       url.searchParams.set('geom', options.geom);
+    }
+    if (options.select !== undefined) {
+      url.searchParams.set('select', options.select);
     }
 
     return url.toString();
@@ -1092,6 +1131,30 @@ export default class CSAPINavigator {
   createObservationsUrl(): string {
     this._checkResourceAvailable('observations');
     return `${this.baseUrl}/observations`;
+  }
+
+  /**
+   * Build URL to create an observation for a specific datastream.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_observations
+   *
+   * @param datastreamId Unique identifier of the datastream
+   * @returns URL string for POST request (body contains observation data)
+   */
+  createDatastreamObservationUrl(datastreamId: string): string {
+    this._checkResourceAvailable('datastreams');
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/observations`;
+  }
+
+  /**
+   * Build URL to update an observation.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_observation_resource_update
+   *
+   * @param observationId Unique identifier of the observation
+   * @returns URL string for PUT request (body contains updated observation)
+   */
+  updateObservationUrl(observationId: string): string {
+    this._checkResourceAvailable('observations');
+    return `${this.baseUrl}/observations/${encodeURIComponent(observationId)}`;
   }
 
   /**
@@ -1140,6 +1203,18 @@ export default class CSAPINavigator {
         Array.isArray(options.id) ? options.id.join(',') : options.id
       );
     }
+    if (options.q !== undefined) {
+      url.searchParams.set('q', options.q);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
     if (options.controlledProperty !== undefined) {
       url.searchParams.set('controlledProperty', options.controlledProperty);
     }
@@ -1148,6 +1223,9 @@ export default class CSAPINavigator {
     }
     if (options.executionTime !== undefined) {
       url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+    }
+    if (options.select !== undefined) {
+      url.searchParams.set('select', options.select);
     }
 
     return url.toString();
@@ -1263,6 +1341,18 @@ export default class CSAPINavigator {
   }
 
   /**
+   * Build URL to update the schema of a control stream.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_control_stream_schema_update
+   *
+   * @param controlStreamId Unique identifier of the control stream
+   * @returns URL string for PUT request (body contains updated schema)
+   */
+  updateControlStreamSchemaUrl(controlStreamId: string): string {
+    this._checkResourceAvailable('controlStreams');
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/schema`;
+  }
+
+  /**
    * Build URL to get commands for a specific control stream.
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_commands_2
    *
@@ -1294,8 +1384,29 @@ export default class CSAPINavigator {
     if (options.executionTime !== undefined) {
       url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
     }
-    if (options.status !== undefined) {
-      url.searchParams.set('status', options.status);
+    if (options.sender !== undefined) {
+      url.searchParams.set('sender', options.sender);
+    }
+    if (options.controlStream !== undefined) {
+      url.searchParams.set('controlStream', options.controlStream);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    }
+    if (options.statusCode !== undefined) {
+      url.searchParams.set('statusCode', options.statusCode);
+    }
+    if (options.select !== undefined) {
+      url.searchParams.set('select', options.select);
     }
 
     return url.toString();
@@ -1315,20 +1426,27 @@ export default class CSAPINavigator {
 
   /**
    * Build URL to get a specific command by ID.
+   * Supports both top-level /commands/{id} and /controlstreams/{id}/commands/{id} patterns.
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_resource
    *
-   * @param controlStreamId Unique identifier of the control stream
    * @param commandId Unique identifier of the command
+   * @param controlStreamId Optional unique identifier of the control stream (for scoped access)
    * @param format Optional format (defaults to JSON)
    * @returns URL string for GET request
    */
   getCommandUrl(
-    controlStreamId: string,
     commandId: string,
+    controlStreamId?: string,
     format?: string
   ): string {
-    this._checkResourceAvailable('controlStreams');
-    let url = `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    let url: string;
+    if (controlStreamId) {
+      this._checkResourceAvailable('controlStreams');
+      url = `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    } else {
+      this._checkResourceAvailable('commands');
+      url = `${this.baseUrl}/commands/${encodeURIComponent(commandId)}`;
+    }
     if (format) {
       url += `?f=${encodeURIComponent(format)}`;
     }
@@ -1336,35 +1454,257 @@ export default class CSAPINavigator {
   }
 
   /**
-   * Build URL to update the status of a command.
+   * Build URL to update the status of a command (PATCH operation).
+   * Supports both top-level /commands/{id} and /controlstreams/{id}/commands/{id} patterns.
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_resource_2
    *
-   * @param controlStreamId Unique identifier of the control stream
    * @param commandId Unique identifier of the command
+   * @param controlStreamId Optional unique identifier of the control stream (for scoped access)
    * @returns URL string for PATCH request (body contains status update)
    */
   updateCommandStatusUrl(
-    controlStreamId: string,
-    commandId: string
+    commandId: string,
+    controlStreamId?: string
   ): string {
-    this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    if (controlStreamId) {
+      this._checkResourceAvailable('controlStreams');
+      return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    } else {
+      this._checkResourceAvailable('commands');
+      return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}`;
+    }
   }
 
   /**
    * Build URL to cancel a command.
+   * Supports both top-level /commands/{id} and /controlstreams/{id}/commands/{id} patterns.
    * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_resource_3
    *
-   * @param controlStreamId Unique identifier of the control stream
    * @param commandId Unique identifier of the command
+   * @param controlStreamId Optional unique identifier of the control stream (for scoped access)
    * @returns URL string for DELETE request
    */
   cancelCommandUrl(
-    controlStreamId: string,
-    commandId: string
+    commandId: string,
+    controlStreamId?: string
   ): string {
-    this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    if (controlStreamId) {
+      this._checkResourceAvailable('controlStreams');
+      return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+    } else {
+      this._checkResourceAvailable('commands');
+      return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}`;
+    }
+  }
+
+  // ========================================
+  // COMMANDS RESOURCE (Part 2: Top-Level)
+  // ========================================
+
+  /**
+   * Build URL to get all commands (across all control streams).
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_commands_top_level
+   *
+   * @param options Query parameters for filtering/pagination
+   * @returns URL string for GET request
+   */
+  getCommandsUrl(options: CommandsQueryOptions = {}): string {
+    this._checkResourceAvailable('commands');
+    const url = new URL(`${this.baseUrl}/commands`);
+
+    if (options.limit !== undefined) {
+      url.searchParams.set('limit', options.limit.toString());
+    }
+    if (options.id !== undefined) {
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    }
+    if (options.issueTime !== undefined) {
+      url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
+    }
+    if (options.executionTime !== undefined) {
+      url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+    }
+    if (options.sender !== undefined) {
+      url.searchParams.set('sender', options.sender);
+    }
+    if (options.controlStream !== undefined) {
+      url.searchParams.set('controlStream', options.controlStream);
+    }
+    if (options.system !== undefined) {
+      url.searchParams.set('system', options.system);
+    }
+    if (options.foi !== undefined) {
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    }
+    if (options.controlledProperty !== undefined) {
+      url.searchParams.set('controlledProperty', options.controlledProperty);
+    }
+    if (options.statusCode !== undefined) {
+      url.searchParams.set('statusCode', options.statusCode);
+    }
+    if (options.select !== undefined) {
+      url.searchParams.set('select', options.select);
+    }
+
+    return url.toString();
+  }
+
+  // ========================================
+  // COMMAND STATUS SUB-RESOURCE (Part 2: Section 8.4.3)
+  // ========================================
+
+  /**
+   * Build URL to get all status reports for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_status
+   *
+   * @param commandId Unique identifier of the command
+   * @returns URL string for GET request
+   */
+  getCommandStatusUrl(commandId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status`;
+  }
+
+  /**
+   * Build URL to create a new status report for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_status_create
+   *
+   * @param commandId Unique identifier of the command
+   * @returns URL string for POST request (body contains status report)
+   */
+  createCommandStatusUrl(commandId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status`;
+  }
+
+  /**
+   * Build URL to get a specific status report for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_status_resource
+   *
+   * @param commandId Unique identifier of the command
+   * @param statusId Unique identifier of the status report
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getCommandStatusReportUrl(
+    commandId: string,
+    statusId: string,
+    format?: string
+  ): string {
+    this._checkResourceAvailable('commands');
+    let url = `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status/${encodeURIComponent(statusId)}`;
+    if (format) {
+      url += `?f=${encodeURIComponent(format)}`;
+    }
+    return url;
+  }
+
+  /**
+   * Build URL to update a specific status report for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_status_update
+   *
+   * @param commandId Unique identifier of the command
+   * @param statusId Unique identifier of the status report
+   * @returns URL string for PUT request (body contains updated status report)
+   */
+  updateCommandStatusReportUrl(commandId: string, statusId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status/${encodeURIComponent(statusId)}`;
+  }
+
+  /**
+   * Build URL to delete a specific status report for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_status_delete
+   *
+   * @param commandId Unique identifier of the command
+   * @param statusId Unique identifier of the status report
+   * @returns URL string for DELETE request
+   */
+  deleteCommandStatusUrl(commandId: string, statusId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status/${encodeURIComponent(statusId)}`;
+  }
+
+  // ========================================
+  // COMMAND RESULT SUB-RESOURCE (Part 2: Section 8.4.4)
+  // ========================================
+
+  /**
+   * Build URL to get all results for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_result
+   *
+   * @param commandId Unique identifier of the command
+   * @returns URL string for GET request
+   */
+  getCommandResultsUrl(commandId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result`;
+  }
+
+  /**
+   * Build URL to create a new result for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_result_create
+   *
+   * @param commandId Unique identifier of the command
+   * @returns URL string for POST request (body contains result data)
+   */
+  createCommandResultUrl(commandId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result`;
+  }
+
+  /**
+   * Build URL to get a specific result for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_result_resource
+   *
+   * @param commandId Unique identifier of the command
+   * @param resultId Unique identifier of the result
+   * @param format Optional format (defaults to JSON)
+   * @returns URL string for GET request
+   */
+  getCommandResultUrl(
+    commandId: string,
+    resultId: string,
+    format?: string
+  ): string {
+    this._checkResourceAvailable('commands');
+    let url = `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result/${encodeURIComponent(resultId)}`;
+    if (format) {
+      url += `?f=${encodeURIComponent(format)}`;
+    }
+    return url;
+  }
+
+  /**
+   * Build URL to update a specific result for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_result_update
+   *
+   * @param commandId Unique identifier of the command
+   * @param resultId Unique identifier of the result
+   * @returns URL string for PUT request (body contains updated result)
+   */
+  updateCommandResultUrl(commandId: string, resultId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result/${encodeURIComponent(resultId)}`;
+  }
+
+  /**
+   * Build URL to delete a specific result for a command.
+   * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_command_result_delete
+   *
+   * @param commandId Unique identifier of the command
+   * @param resultId Unique identifier of the result
+   * @returns URL string for DELETE request
+   */
+  deleteCommandResultUrl(commandId: string, resultId: string): string {
+    this._checkResourceAvailable('commands');
+    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result/${encodeURIComponent(resultId)}`;
   }
 
   // ========================================
@@ -1550,6 +1890,9 @@ export default class CSAPINavigator {
     if (options.system !== undefined) {
       url.searchParams.set('system', options.system);
     }
+    if (options.select !== undefined) {
+      url.searchParams.set('select', options.select);
+    }
 
     return url.toString();
   }
@@ -1612,6 +1955,42 @@ export default class CSAPINavigator {
   createSystemEventUrl(): string {
     this._checkResourceAvailable('systemEvents');
     return `${this.baseUrl}/systemEvents`;
+  }
+
+  /**
+   * Build URL to create a system event for a specific system.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_create_system_system_event
+   *
+   * @param systemId Unique identifier of the system
+   * @returns URL string for POST request (body contains system event data)
+   */
+  createSystemSystemEventUrl(systemId: string): string {
+    this._checkResourceAvailable('systems');
+    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/systemEvents`;
+  }
+
+  /**
+   * Build URL to update a system event.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_system_event_update
+   *
+   * @param systemEventId Unique identifier of the system event
+   * @returns URL string for PUT request (body contains updated system event)
+   */
+  updateSystemEventUrl(systemEventId: string): string {
+    this._checkResourceAvailable('systemEvents');
+    return `${this.baseUrl}/systemEvents/${encodeURIComponent(systemEventId)}`;
+  }
+
+  /**
+   * Build URL to delete a system event.
+   * @see https://docs.ogc.org/is/23-002/23-002.html#_system_event_delete
+   *
+   * @param systemEventId Unique identifier of the system event
+   * @returns URL string for DELETE request
+   */
+  deleteSystemEventUrl(systemEventId: string): string {
+    this._checkResourceAvailable('systemEvents');
+    return `${this.baseUrl}/systemEvents/${encodeURIComponent(systemEventId)}`;
   }
 
   // ========================================

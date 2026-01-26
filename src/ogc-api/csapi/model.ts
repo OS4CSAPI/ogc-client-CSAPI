@@ -92,11 +92,23 @@ export interface DatastreamsQueryOptions {
   /** Filter by datastream ID(s) */
   id?: string | string[];
 
+  /** Full-text search query */
+  q?: string;
+
+  /** Filter by system ID */
+  system?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
   /** Filter by observed property */
   observedProperty?: string;
 
   /** Temporal filter: phenomenon time range */
   phenomenonTime?: DateTimeParameter;
+
+  /** Temporal filter: result time range */
+  resultTime?: DateTimeParameter;
 
   /** Property path filtering: comma-separated list of property paths */
   select?: string;
@@ -124,6 +136,12 @@ export interface ObservationsQueryOptions {
 
   /** Temporal filter: result time range */
   resultTime?: DateTimeParameter;
+
+  /** Filter by datastream ID */
+  dataStream?: string;
+
+  /** Filter by system ID */
+  system?: string;
 
   /** Filter by observed property */
   observedProperty?: string;
@@ -155,6 +173,15 @@ export interface ControlStreamsQueryOptions {
   /** Filter by control stream ID(s) */
   id?: string | string[];
 
+  /** Full-text search query */
+  q?: string;
+
+  /** Filter by system ID */
+  system?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
   /** Filter by controlled property */
   controlledProperty?: string;
 
@@ -185,8 +212,23 @@ export interface CommandsQueryOptions {
   /** Temporal filter: execution time range */
   executionTime?: DateTimeParameter;
 
-  /** Filter by command status */
-  status?: string;
+  /** Filter by sender ID */
+  sender?: string;
+
+  /** Filter by control stream ID */
+  controlStream?: string;
+
+  /** Filter by system ID */
+  system?: string;
+
+  /** Filter by feature of interest ID(s) */
+  foi?: string | string[];
+
+  /** Filter by controlled property */
+  controlledProperty?: string;
+
+  /** Filter by command status code */
+  statusCode?: string;
 
   /** Property path filtering: comma-separated list of property paths */
   select?: string;
