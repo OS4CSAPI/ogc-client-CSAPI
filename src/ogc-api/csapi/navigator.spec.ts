@@ -35,6 +35,16 @@ describe('CSAPINavigator - Systems Resource', () => {
           href: 'http://example.com/csapi/controlStreams',
           type: 'application/json',
         },
+        {
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/deployments',
+          href: 'http://example.com/csapi/deployments',
+          type: 'application/json',
+        },
+        {
+          rel: 'http://www.opengis.net/def/rel/ogc/1.0/procedures',
+          href: 'http://example.com/csapi/procedures',
+          type: 'application/json',
+        },
       ],
       itemFormats: ['application/sml+json', 'application/json'],
       crs: ['http://www.opengis.net/def/crs/OGC/1.3/CRS84'],
@@ -304,6 +314,36 @@ describe('CSAPINavigator - Systems Resource', () => {
     it('builds system control streams URL', () => {
       const url = navigator.getSystemControlStreamsUrl('sensor-123');
       expect(url).toBe('http://example.com/csapi/systems/sensor-123/controlStreams');
+    });
+
+    it('builds system deployments URL', () => {
+      const url = navigator.getSystemDeploymentsUrl('sensor-123');
+      expect(url).toBe('http://example.com/csapi/systems/sensor-123/deployments');
+    });
+
+    it('builds system deployments URL with query options', () => {
+      const url = navigator.getSystemDeploymentsUrl('sensor-123', {
+        limit: 5,
+        datetime: new Date('2024-01-01'),
+      });
+      expect(url).toContain('systems/sensor-123/deployments');
+      expect(url).toContain('limit=5');
+      expect(url).toContain('datetime=2024-01-01');
+    });
+
+    it('builds system procedures URL', () => {
+      const url = navigator.getSystemProceduresUrl('sensor-123');
+      expect(url).toBe('http://example.com/csapi/systems/sensor-123/procedures');
+    });
+
+    it('builds system procedures URL with query options', () => {
+      const url = navigator.getSystemProceduresUrl('sensor-123', {
+        limit: 10,
+        q: 'measurement',
+      });
+      expect(url).toContain('systems/sensor-123/procedures');
+      expect(url).toContain('limit=10');
+      expect(url).toContain('q=measurement');
     });
 
     it('throws error for sub-resources if not available', () => {

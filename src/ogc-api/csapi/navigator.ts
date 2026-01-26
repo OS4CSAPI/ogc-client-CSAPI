@@ -273,6 +273,44 @@ export default class CSAPINavigator {
     return this._applyControlStreamsQuery(url, options).toString();
   }
 
+  /**
+   * Build URL to get all deployments associated with a system.
+   *
+   * @param systemId ID of the system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSystemDeploymentsUrl(
+    systemId: string,
+    options: DeploymentsQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    this._checkResourceAvailable('deployments');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/deployments`
+    );
+    return this._applyDeploymentsQuery(url, options).toString();
+  }
+
+  /**
+   * Build URL to get all procedures associated with a system.
+   *
+   * @param systemId ID of the system
+   * @param options Query parameters
+   * @returns URL string for GET request
+   */
+  getSystemProceduresUrl(
+    systemId: string,
+    options: ProceduresQueryOptions = {}
+  ): string {
+    this._checkResourceAvailable('systems');
+    this._checkResourceAvailable('procedures');
+    const url = new URL(
+      `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/procedures`
+    );
+    return this._applyProceduresQuery(url, options).toString();
+  }
+
   // ========================================
   // PROCEDURES RESOURCE (Part 1: Section 8.4)
   // ========================================
@@ -1567,6 +1605,42 @@ export default class CSAPINavigator {
         'executionTime',
         this._serializeDatetime(options.executionTime)
       );
+    return url;
+  }
+
+  private _applyDeploymentsQuery(
+    url: URL,
+    options: DeploymentsQueryOptions
+  ): URL {
+    if (options.limit !== undefined)
+      url.searchParams.set('limit', options.limit.toString());
+    if (options.bbox !== undefined)
+      url.searchParams.set('bbox', this._serializeBbox(options.bbox));
+    if (options.datetime !== undefined)
+      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+    if (options.q !== undefined) url.searchParams.set('q', options.q);
+    if (options.id !== undefined)
+      url.searchParams.set(
+        'id',
+        Array.isArray(options.id) ? options.id.join(',') : options.id
+      );
+    if (options.geom !== undefined) url.searchParams.set('geom', options.geom);
+    if (options.foi !== undefined)
+      url.searchParams.set(
+        'foi',
+        Array.isArray(options.foi) ? options.foi.join(',') : options.foi
+      );
+    if (options.parent !== undefined)
+      url.searchParams.set(
+        'parent',
+        Array.isArray(options.parent) ? options.parent.join(',') : options.parent
+      );
+    if (options.system !== undefined)
+      url.searchParams.set('system', options.system);
+    if (options.observedProperty !== undefined)
+      url.searchParams.set('observedProperty', options.observedProperty);
+    if (options.controlledProperty !== undefined)
+      url.searchParams.set('controlledProperty', options.controlledProperty);
     return url;
   }
 
