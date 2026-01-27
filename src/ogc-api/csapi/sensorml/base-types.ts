@@ -10,6 +10,7 @@
  */
 
 import type { GeoJsonProperties } from 'geojson';
+import type { Event } from './event';
 
 /**
  * Web link structure used for references between SensorML objects
@@ -118,7 +119,17 @@ export interface DescribedObject {
   uniqueId?: string;
   label?: string;
   description?: string;
-  keywords?: Keyword[];
+  /**
+   * Language code (e.g., 'en', 'fr') - ISO 639-1 two-letter code
+   * From OGC 23-000 JSON Schema
+   */
+  lang?: string;
+  /**
+   * Keywords can be simple strings (per JSON schema) or enhanced Keyword objects
+   * Schema-compliant: string[]
+   * Enhanced: Keyword[] (with label and value)
+   */
+  keywords?: string[] | Keyword[];
   identifiers?: Identifier[];
   classifiers?: Classifier[];
   validTime?: ValidTime | string[];
@@ -126,6 +137,13 @@ export interface DescribedObject {
   legalConstraints?: Constraint[];
   contacts?: Contact[];
   documents?: Document[];
+  /**
+   * History of events that affected this object
+   * From OGC 23-000 JSON Schema
+   */
+  history?: Event[];
+  capabilities?: CapabilityList[];
+  characteristics?: CharacteristicList[];
 }
 
 /**
@@ -151,4 +169,38 @@ export interface Configuration {
  */
 export interface Mode extends DescribedObject {
   configuration?: Configuration;
+}
+
+/**
+ * Capability (from Clause 8.2.8)
+ * Describes a capability or performance characteristic
+ */
+export interface Capability {
+  name: string;
+  value: unknown; // AbstractDataComponent from SWE Common
+}
+
+/**
+ * CapabilityList (from Clause 8.2.8)
+ * List of capabilities for a system or process
+ */
+export interface CapabilityList {
+  capabilities: Capability[];
+}
+
+/**
+ * Characteristic (from Clause 8.2.7)
+ * Describes a physical or functional characteristic
+ */
+export interface Characteristic {
+  name: string;
+  value: unknown; // AbstractDataComponent from SWE Common
+}
+
+/**
+ * CharacteristicList (from Clause 8.2.7)
+ * List of characteristics for a system or process
+ */
+export interface CharacteristicList {
+  characteristics: Characteristic[];
 }

@@ -11,6 +11,7 @@
 
 export * from './geojson-validator.js';
 export * from './swe-validator.js';
+export * from './sensorml-validator.js';
 
 // Re-export ValidationResult type for convenience
 export type { ValidationResult } from './geojson-validator.js';

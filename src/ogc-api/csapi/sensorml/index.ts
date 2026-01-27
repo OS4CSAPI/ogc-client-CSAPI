@@ -33,6 +33,18 @@ export * from './deployment';
 // Derived property
 export * from './derived-property';
 
+// Event
+export * from './event';
+
+// Link
+export * from './link';
+
+// Feature
+export * from './feature';
+
+// Observation
+export * from './observation';
+
 // Union types for convenience
 import type { SimpleProcess } from './simple-process';
 import type { AggregateProcess } from './aggregate-process';

@@ -89,7 +89,12 @@ function extractCommonProperties(
   if (sml.uniqueId) props.uniqueId = sml.uniqueId;
   if (sml.label) props.name = sml.label;
   if (sml.description) props.description = sml.description;
-  if (sml.keywords) props.keywords = sml.keywords.map(k => k.value);
+  // Handle both string[] (schema-compliant) and Keyword[] (enhanced) formats
+  if (sml.keywords) {
+    props.keywords = Array.isArray(sml.keywords) && sml.keywords.length > 0 && typeof sml.keywords[0] === 'string'
+      ? sml.keywords as string[]
+      : (sml.keywords as any[]).map(k => typeof k === 'object' && k.value ? k.value : k);
+  }
   if (sml.identifiers) props.identifiers = sml.identifiers;
   if (sml.classifiers) props.classifiers = sml.classifiers;
   if (sml.validTime) props.validTime = sml.validTime;

@@ -22,11 +22,13 @@ import type { Position } from '../sensorml/abstract-physical-process';
 import type { DescribedObject } from '../sensorml/base-types';
 import {
   validateSystemFeature,
+  validateSensorMLProcess,
   type ValidationResult,
 } from '../validation';
 
 /**
  * Helper: Extract geometry from SensorML Position
+ * Supports all Position type variants from OGC 23-000 Clause 8.5.1
  */
 function extractGeometry(position?: Position): Geometry | undefined {
   if (!position) return undefined;
@@ -40,14 +42,23 @@ function extractGeometry(position?: Position): Geometry | undefined {
     return position as Point;
   }
 
-  // Check if it's a Pose
+  // Check if it's a Pose (GeoPose with position and orientation)
   if (
     typeof position === 'object' &&
     'position' in position &&
     position.position &&
     typeof position.position === 'object'
   ) {
-    const pos = position.position as { lat?: number; lon?: number; h?: number };
+    const pos = position.position as { 
+      lat?: number; 
+      lon?: number; 
+      h?: number;
+      x?: number;
+      y?: number;
+      z?: number;
+    };
+    
+    // GeoPose Basic-YPR (lat/lon/h)
     if (pos.lat !== undefined && pos.lon !== undefined) {
       return {
         type: 'Point',
@@ -58,10 +69,118 @@ function extractGeometry(position?: Position): Geometry | undefined {
         ],
       } as Point;
     }
+    
+    // GeoPose with Cartesian coordinates (x/y/z)
+    if (pos.x !== undefined && pos.y !== undefined) {
+      return {
+        type: 'Point',
+        coordinates: [pos.x, pos.y, pos.z || 0],
+      } as Point;
+    }
   }
 
-  // For other types (TextComponent, Process, XLink, etc.), return undefined
-  // These would need additional resolution steps
+  // Check if it's a VectorComponent (SWE Common vector with coordinate values)
+  if (
+    typeof position === 'object' &&
+    'type' in position &&
+    position.type === 'Vector'
+  ) {
+    const vector = position as any;
+    if (vector.coordinates && Array.isArray(vector.coordinates)) {
+      const coords = vector.coordinates.map((c: any) => c.value || 0);
+      if (coords.length >= 2) {
+        return {
+          type: 'Point',
+          coordinates: coords.slice(0, 3),
+        } as Point;
+      }
+    }
+  }
+
+  // Check if it's a DataRecordComponent (SWE Common data record with lat/lon)
+  if (
+    typeof position === 'object' &&
+    'type' in position &&
+    position.type === 'DataRecord'
+  ) {
+    const record = position as any;
+    if (record.fields) {
+      const lat = record.fields.find((f: any) => 
+        f.name === 'lat' || f.name === 'latitude'
+      )?.value;
+      const lon = record.fields.find((f: any) => 
+        f.name === 'lon' || f.name === 'longitude' || f.name === 'long'
+      )?.value;
+      const alt = record.fields.find((f: any) => 
+        f.name === 'alt' || f.name === 'altitude' || f.name === 'h'
+      )?.value;
+      
+      if (lat !== undefined && lon !== undefined) {
+        return {
+          type: 'Point',
+          coordinates: [lon, lat, alt !== undefined ? alt : 0],
+        } as Point;
+      }
+    }
+  }
+
+  // Check if it's a TextComponent (textual description)
+  if (
+    typeof position === 'object' &&
+    'type' in position &&
+    position.type === 'Text' &&
+    'value' in position
+  ) {
+    // TextComponent positions cannot be directly converted to geometry
+    // Would require geocoding service or pattern matching
+    // Return undefined for now
+    return undefined;
+  }
+
+  // Check if it's an XLink (reference to external position)
+  if (
+    typeof position === 'object' &&
+    'href' in position &&
+    typeof position.href === 'string'
+  ) {
+    // XLink positions require fetching external resource
+    // Not implemented in synchronous parser
+    return undefined;
+  }
+
+  // Check if it's an AbstractProcess (position computed by process)
+  if (
+    typeof position === 'object' &&
+    'type' in position &&
+    typeof position.type === 'string' &&
+    (position.type.includes('Process') || position.type.includes('Component') || position.type.includes('System'))
+  ) {
+    // Process-based positions would require executing the process
+    // Not feasible in synchronous parser
+    return undefined;
+  }
+
+  // Check if it's a DataArrayComponent (trajectory or time series)
+  if (
+    typeof position === 'object' &&
+    'type' in position &&
+    position.type === 'DataArray'
+  ) {
+    const array = position as any;
+    // For trajectory, extract the latest/current position
+    if (array.values && Array.isArray(array.values) && array.values.length > 0) {
+      const lastValue = array.values[array.values.length - 1];
+      if (Array.isArray(lastValue) && lastValue.length >= 2) {
+        return {
+          type: 'Point',
+          coordinates: lastValue.slice(0, 3),
+        } as Point;
+      }
+    }
+    return undefined;
+  }
+
+  // For any other types, return undefined
   return undefined;
 }
 
@@ -77,7 +196,12 @@ function extractCommonProperties(
   if (sml.uniqueId) props.uniqueId = sml.uniqueId;
   if (sml.label) props.name = sml.label;
   if (sml.description) props.description = sml.description;
-  if (sml.keywords) props.keywords = sml.keywords.map(k => k.value);
+  // Handle both string[] (schema-compliant) and Keyword[] (enhanced) formats
+  if (sml.keywords) {
+    props.keywords = Array.isArray(sml.keywords) && sml.keywords.length > 0 && typeof sml.keywords[0] === 'string'
+      ? sml.keywords as string[]
+      : (sml.keywords as any[]).map(k => typeof k === 'object' && k.value ? k.value : k);
+  }
   if (sml.identifiers) props.identifiers = sml.identifiers;
   if (sml.classifiers) props.classifiers = sml.classifiers;
   if (sml.validTime) props.validTime = sml.validTime;
@@ -243,6 +367,15 @@ export abstract class CSAPIParser<T> {
   ): { valid: boolean; errors?: string[]; warnings?: string[] } {
     // Default: no validation
     return { valid: true };
+  }
+  
+  /**
+   * Validate SensorML data
+   */
+  async validateSensorML(
+    data: SensorMLProcess
+  ): Promise<{ valid: boolean; errors?: string[]; warnings?: string[] }> {
+    return await validateSensorMLProcess(data);
   }
 }
 
