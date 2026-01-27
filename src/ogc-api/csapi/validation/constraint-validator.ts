@@ -100,14 +100,9 @@ export function validateCountConstraint(
   component: CountComponent | CountRangeComponent,
   value: number
 ): ValidationResult {
-  if (!component.constraint) {
-    return { valid: true };
-  }
-
   const errors: ValidationError[] = [];
-  const { intervals, values: allowedValues } = component.constraint;
 
-  // Check that value is an integer
+  // Check that value is an integer (always validate this)
   if (!Number.isInteger(value)) {
     errors.push({
       path: 'value',
@@ -115,6 +110,12 @@ export function validateCountConstraint(
     });
     return { valid: false, errors };
   }
+
+  if (!component.constraint) {
+    return { valid: true };
+  }
+
+  const { intervals, values: allowedValues } = component.constraint;
 
   // Check interval constraints
   if (intervals && intervals.length > 0) {
@@ -234,7 +235,7 @@ export function validateTimeConstraint(
   }
 
   const errors: ValidationError[] = [];
-  const { interval, value: allowedValues } = component.constraint;
+  const { intervals, values: allowedValues, significantFigures } = component.constraint;
 
   // Convert value to comparable format (timestamp)
   let timestamp: number;
@@ -260,8 +261,8 @@ export function validateTimeConstraint(
   }
 
   // Check interval constraints
-  if (interval && interval.length > 0) {
-    const inAnyInterval = interval.some(([min, max]) => {
+  if (intervals && intervals.length > 0) {
+    const inAnyInterval = intervals.some(([min, max]) => {
       const minTimestamp = typeof min === 'number' ? min : new Date(min).getTime();
       const maxTimestamp = typeof max === 'number' ? max : new Date(max).getTime();
       return timestamp >= minTimestamp && timestamp <= maxTimestamp;

@@ -9,11 +9,15 @@ describe('SWE Common Validators', () => {
       it('should validate valid DataRecord', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
           fields: [
             {
               name: 'temperature',
               component: {
                 type: 'Quantity',
+                definition: 'http://example.org/temperature',
+                label: 'Temperature',
                 uom: { code: 'Cel' },
               },
             },
@@ -27,11 +31,15 @@ describe('SWE Common Validators', () => {
       it('should validate DataRecord with multiple fields', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
           fields: [
             {
               name: 'temperature',
               component: {
                 type: 'Quantity',
+                definition: 'http://example.org/temperature',
+                label: 'Temperature',
                 uom: { code: 'Cel' },
               },
             },
@@ -39,6 +47,8 @@ describe('SWE Common Validators', () => {
               name: 'humidity',
               component: {
                 type: 'Quantity',
+                definition: 'http://example.org/humidity',
+                label: 'Humidity',
                 uom: { code: '%' },
               },
             },
@@ -52,6 +62,8 @@ describe('SWE Common Validators', () => {
       it('should reject DataRecord with missing fields', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
         };
 
         const result = validateSWEComponent(dataRecord as any);
@@ -61,6 +73,8 @@ describe('SWE Common Validators', () => {
       it('should reject DataRecord with empty fields array', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
           fields: [],
         };
 
@@ -73,9 +87,13 @@ describe('SWE Common Validators', () => {
       it('should validate valid DataArray', () => {
         const dataArray = {
           type: 'DataArray',
+          definition: 'http://example.org/dataarray',
+          label: 'Data Array',
           elementCount: 10,
           elementType: {
             type: 'Quantity',
+            definition: 'http://example.org/distance',
+            label: 'Distance',
             uom: { code: 'm' },
           },
         };
@@ -87,6 +105,8 @@ describe('SWE Common Validators', () => {
       it('should reject DataArray without elementType', () => {
         const dataArray = {
           type: 'DataArray',
+          definition: 'http://example.org/dataarray',
+          label: 'Data Array',
           elementCount: 10,
         };
 
@@ -99,11 +119,16 @@ describe('SWE Common Validators', () => {
       it('should validate valid Vector', () => {
         const vector = {
           type: 'Vector',
+          definition: 'http://example.org/vector',
+          label: 'Vector',
+          referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4979',
           coordinates: [
             {
               name: 'x',
               component: {
                 type: 'Quantity',
+                definition: 'http://example.org/x',
+                label: 'X',
                 uom: { code: 'm' },
               },
             },
@@ -111,6 +136,8 @@ describe('SWE Common Validators', () => {
               name: 'y',
               component: {
                 type: 'Quantity',
+                definition: 'http://example.org/y',
+                label: 'Y',
                 uom: { code: 'm' },
               },
             },
@@ -124,12 +151,16 @@ describe('SWE Common Validators', () => {
       it('should validate Vector with referenceFrame', () => {
         const vector = {
           type: 'Vector',
+          definition: 'http://example.org/location',
+          label: 'Location',
           referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4979',
           coordinates: [
             {
               name: 'lat',
               component: {
                 type: 'Quantity',
+                definition: 'http://example.org/latitude',
+                label: 'Latitude',
                 uom: { code: 'deg' },
               },
             },
@@ -145,6 +176,8 @@ describe('SWE Common Validators', () => {
       it('should validate valid Quantity', () => {
         const quantity = {
           type: 'Quantity',
+          definition: 'http://example.org/temperature',
+          label: 'Temperature',
           uom: { code: 'Cel' },
         };
 
@@ -182,6 +215,8 @@ describe('SWE Common Validators', () => {
       it('should validate valid Category', () => {
         const category = {
           type: 'Category',
+          definition: 'http://example.org/category',
+          label: 'Category',
           codeSpace: 'http://example.org/codes',
         };
 
@@ -192,6 +227,8 @@ describe('SWE Common Validators', () => {
       it('should validate Category with constraint', () => {
         const category = {
           type: 'Category',
+          definition: 'http://example.org/colors',
+          label: 'Colors',
           codeSpace: 'http://example.org/codes',
           constraint: {
             values: ['red', 'green', 'blue'],
@@ -205,6 +242,8 @@ describe('SWE Common Validators', () => {
       it('should accept Category without codeSpace (basic validation only)', () => {
         const category = {
           type: 'Category',
+          definition: 'http://example.org/category',
+          label: 'Category',
         };
 
         const result = validateSWEComponent(category as any);
@@ -217,6 +256,8 @@ describe('SWE Common Validators', () => {
       it('should validate valid Text', () => {
         const text = {
           type: 'Text',
+          definition: 'http://example.org/text',
+          label: 'Text',
         };
 
         const result = validateSWEComponent(text);
@@ -242,6 +283,8 @@ describe('SWE Common Validators', () => {
       it('should validate valid Boolean', () => {
         const boolean = {
           type: 'Boolean',
+          definition: 'http://example.org/boolean',
+          label: 'Boolean',
         };
 
         const result = validateSWEComponent(boolean);
@@ -253,6 +296,8 @@ describe('SWE Common Validators', () => {
       it('should validate valid Count', () => {
         const count = {
           type: 'Count',
+          definition: 'http://example.org/count',
+          label: 'Count',
         };
 
         const result = validateSWEComponent(count);
@@ -278,6 +323,8 @@ describe('SWE Common Validators', () => {
       it('should validate valid Time', () => {
         const time = {
           type: 'Time',
+          definition: 'http://example.org/time',
+          label: 'Time',
           uom: { code: 's' },
         };
 
@@ -288,6 +335,8 @@ describe('SWE Common Validators', () => {
       it('should validate Time with referenceTime', () => {
         const time = {
           type: 'Time',
+          definition: 'http://example.org/time',
+          label: 'Time',
           uom: { code: 's' },
           referenceTime: '1970-01-01T00:00:00Z',
         };
@@ -301,16 +350,23 @@ describe('SWE Common Validators', () => {
       it('should validate nested DataRecord', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
           fields: [
             {
               name: 'location',
               component: {
                 type: 'Vector',
+                definition: 'http://example.org/location',
+                label: 'Location',
+                referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4979',
                 coordinates: [
                   {
                     name: 'x',
                     component: {
                       type: 'Quantity',
+                      definition: 'http://example.org/x',
+                      label: 'X',
                       uom: { code: 'm' },
                     },
                   },
@@ -327,14 +383,20 @@ describe('SWE Common Validators', () => {
       it('should validate DataArray with DataRecord elements', () => {
         const dataArray = {
           type: 'DataArray',
+          definition: 'http://example.org/dataarray',
+          label: 'Data Array',
           elementCount: 10,
           elementType: {
             type: 'DataRecord',
+            definition: 'http://example.org/datarecord',
+            label: 'Data Record',
             fields: [
               {
                 name: 'temp',
                 component: {
                   type: 'Quantity',
+                  definition: 'http://example.org/temperature',
+                  label: 'Temperature',
                   uom: { code: 'Cel' },
                 },
               },
@@ -404,7 +466,9 @@ describe('SWE Common Validators', () => {
       it('should reject DataRecord with wrong type', () => {
         const dataRecord = {
           type: 'Quantity',
-          fields: [{ name: 'field1', type: 'Quantity', uom: { code: 'm' } }],
+          definition: 'http://example.org/quantity',
+          label: 'Quantity',
+          fields: [{ name: 'field1', type: 'Quantity', definition: 'http://example.org/field1', label: 'Field 1', uom: { code: 'm' } }],
         };
 
         const result = validateSWEComponent(dataRecord as any);
@@ -414,6 +478,8 @@ describe('SWE Common Validators', () => {
       it('should reject DataRecord with empty fields array', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
           fields: [],
         };
 
@@ -425,6 +491,8 @@ describe('SWE Common Validators', () => {
       it('should reject DataRecord with non-array fields', () => {
         const dataRecord = {
           type: 'DataRecord',
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
           fields: 'not-an-array',
         };
 
@@ -442,8 +510,10 @@ describe('SWE Common Validators', () => {
       it('should reject DataArray with wrong type', () => {
         const dataArray = {
           type: 'DataRecord',
-          elementCount: { type: 'Count', value: 10 },
-          elementType: { type: 'Quantity', uom: { code: 'm' } },
+          definition: 'http://example.org/datarecord',
+          label: 'Data Record',
+          elementCount: { type: 'Count', definition: 'http://example.org/count', label: 'Count', value: 10 },
+          elementType: { type: 'Quantity', definition: 'http://example.org/distance', label: 'Distance', uom: { code: 'm' } },
         };
 
         const result = validateSWEComponent(dataArray as any);
@@ -453,7 +523,9 @@ describe('SWE Common Validators', () => {
       it('should reject DataArray missing elementCount', () => {
         const dataArray = {
           type: 'DataArray',
-          elementType: { type: 'Quantity', uom: { code: 'm' } },
+          definition: 'http://example.org/dataarray',
+          label: 'Data Array',
+          elementType: { type: 'Quantity', definition: 'http://example.org/distance', label: 'Distance', uom: { code: 'm' } },
         };
 
         const result = validateSWEComponent(dataArray as any);
@@ -494,6 +566,7 @@ describe('SWE Common Validators', () => {
       const sweResult = {
         type: 'Quantity',
         definition: 'http://example.com/temp',
+        label: 'Temperature',
         uom: { code: 'degC' },
       };
 

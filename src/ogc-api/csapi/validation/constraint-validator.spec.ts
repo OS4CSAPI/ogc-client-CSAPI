@@ -73,9 +73,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when value is not in allowed values list', () => {
       const component = {
         type: 'Quantity' as const,
+        definition: 'http://example.com/distance',
+        label: 'Distance',
         uom: { code: 'm' },
         constraint: {
-          value: [1, 2, 3, 5, 10],
+          values: [1, 2, 3, 5, 10],
         },
         value: 7,
       };
@@ -103,9 +105,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should integrate with validateQuantity function', () => {
       const component = {
         type: 'Quantity',
+        definition: 'http://example.com/temperature',
+        label: 'Temperature',
         uom: { code: 'Cel' },
         constraint: {
-          interval: [[0, 100]],
+          intervals: [[0, 100]],
         },
         value: 150,
       };
@@ -163,8 +167,10 @@ describe('SWE Common Constraint Validation', () => {
     it('should integrate with validateCount function', () => {
       const component = {
         type: 'Count',
+        definition: 'http://example.com/count',
+        label: 'Count',
         constraint: {
-          interval: [[0, 10]],
+          intervals: [[0, 10]],
         },
         value: 20,
       };
@@ -178,6 +184,8 @@ describe('SWE Common Constraint Validation', () => {
     it('should pass validation when value matches pattern', () => {
       const component = {
         type: 'Text' as const,
+        definition: 'http://example.com/code',
+        label: 'Code',
         constraint: {
           pattern: '^[A-Z]{3}[0-9]{4}$',
         },
@@ -191,6 +199,8 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when value does not match pattern', () => {
       const component = {
         type: 'Text' as const,
+        definition: 'http://example.com/code',
+        label: 'Code',
         constraint: {
           pattern: '^[A-Z]{3}[0-9]{4}$',
         },
@@ -205,8 +215,10 @@ describe('SWE Common Constraint Validation', () => {
     it('should pass validation when value is in allowed tokens', () => {
       const component = {
         type: 'Text' as const,
+        definition: 'http://example.com/color',
+        label: 'Color',
         constraint: {
-          value: ['red', 'green', 'blue'],
+          values: ['red', 'green', 'blue'],
         },
         value: 'green',
       };
@@ -218,8 +230,10 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when value is not in allowed tokens', () => {
       const component = {
         type: 'Text' as const,
+        definition: 'http://example.com/color',
+        label: 'Color',
         constraint: {
-          value: ['red', 'green', 'blue'],
+          values: ['red', 'green', 'blue'],
         },
         value: 'yellow',
       };
@@ -232,6 +246,8 @@ describe('SWE Common Constraint Validation', () => {
     it('should integrate with validateText function', () => {
       const component = {
         type: 'Text',
+        definition: 'http://example.com/text',
+        label: 'Text',
         constraint: {
           pattern: '^[A-Z]+$',
         },
@@ -247,8 +263,10 @@ describe('SWE Common Constraint Validation', () => {
     it('should pass validation when value is in allowed tokens', () => {
       const component = {
         type: 'Category' as const,
+        definition: 'http://example.com/weather',
+        label: 'Weather',
         constraint: {
-          value: ['sunny', 'cloudy', 'rainy', 'snowy'],
+          values: ['sunny', 'cloudy', 'rainy', 'snowy'],
         },
         value: 'sunny',
       };
@@ -260,8 +278,10 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when value is not in allowed tokens', () => {
       const component = {
         type: 'Category' as const,
+        definition: 'http://example.com/weather',
+        label: 'Weather',
         constraint: {
-          value: ['sunny', 'cloudy', 'rainy', 'snowy'],
+          values: ['sunny', 'cloudy', 'rainy', 'snowy'],
         },
         value: 'foggy',
       };
@@ -274,8 +294,10 @@ describe('SWE Common Constraint Validation', () => {
     it('should integrate with validateCategory function', () => {
       const component = {
         type: 'Category',
+        definition: 'http://example.com/category',
+        label: 'Category',
         constraint: {
-          value: ['A', 'B', 'C'],
+          values: ['A', 'B', 'C'],
         },
         value: 'D',
       };
@@ -289,9 +311,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should pass validation when value is within time interval', () => {
       const component = {
         type: 'Time' as const,
+        definition: 'http://example.com/time',
+        label: 'Time',
         uom: { code: 'ISO-8601' },
         constraint: {
-          interval: [['2024-01-01', '2024-12-31'] as [string, string]],
+          intervals: [['2024-01-01', '2024-12-31'] as [string, string]],
         },
         value: '2024-06-15',
       };
@@ -303,9 +327,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when value is outside time interval', () => {
       const component = {
         type: 'Time' as const,
+        definition: 'http://example.com/time',
+        label: 'Time',
         uom: { code: 'ISO-8601' },
         constraint: {
-          interval: [['2024-01-01', '2024-12-31'] as [string, string]],
+          intervals: [['2024-01-01', '2024-12-31'] as [string, string]],
         },
         value: '2025-01-01',
       };
@@ -318,9 +344,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should handle numeric timestamps', () => {
       const component = {
         type: 'Time' as const,
+        definition: 'http://example.com/time',
+        label: 'Time',
         uom: { code: 'ms' },
         constraint: {
-          interval: [[0, 1000000] as [number, number]],
+          intervals: [[0, 1000000] as [number, number]],
         },
         value: 500000,
       };
@@ -332,9 +360,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should integrate with validateTime function', () => {
       const component = {
         type: 'Time',
+        definition: 'http://example.com/time',
+        label: 'Time',
         uom: { code: 'ISO-8601' },
         constraint: {
-          interval: [['2024-01-01', '2024-12-31']],
+          intervals: [['2024-01-01', '2024-12-31']],
         },
         value: '2025-01-01',
       };
@@ -348,9 +378,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should validate QuantityRange with both endpoints in range', () => {
       const component = {
         type: 'QuantityRange' as const,
+        definition: 'http://example.com/temperature-range',
+        label: 'Temperature Range',
         uom: { code: 'Cel' },
         constraint: {
-          interval: [[-50, 150] as [number, number]],
+          intervals: [[-50, 150] as [number, number]],
         },
         value: [0, 100] as [number, number],
       };
@@ -362,9 +394,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when range endpoint is outside constraint', () => {
       const component = {
         type: 'QuantityRange' as const,
+        definition: 'http://example.com/temperature-range',
+        label: 'Temperature Range',
         uom: { code: 'Cel' },
         constraint: {
-          interval: [[-50, 150] as [number, number]],
+          intervals: [[-50, 150] as [number, number]],
         },
         value: [0, 200] as [number, number],
       };
@@ -377,6 +411,8 @@ describe('SWE Common Constraint Validation', () => {
     it('should fail validation when min > max', () => {
       const component = {
         type: 'QuantityRange' as const,
+        definition: 'http://example.com/temperature-range',
+        label: 'Temperature Range',
         uom: { code: 'Cel' },
         value: [100, 0] as [number, number],
       };
@@ -390,9 +426,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should integrate with validateRangeComponent function', () => {
       const component = {
         type: 'QuantityRange',
+        definition: 'http://example.com/temperature-range',
+        label: 'Temperature Range',
         uom: { code: 'Cel' },
         constraint: {
-          interval: [[0, 100]],
+          intervals: [[0, 100]],
         },
         value: [50, 150],
       };
@@ -406,9 +444,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should skip constraint validation when validateConstraints=false', () => {
       const component = {
         type: 'Quantity',
+        definition: 'http://example.com/temperature',
+        label: 'Temperature',
         uom: { code: 'Cel' },
         constraint: {
-          interval: [[0, 100]],
+          intervals: [[0, 100]],
         },
         value: 150, // Outside range
       };
@@ -420,9 +460,11 @@ describe('SWE Common Constraint Validation', () => {
     it('should perform constraint validation by default', () => {
       const component = {
         type: 'Quantity',
+        definition: 'http://example.com/temperature',
+        label: 'Temperature',
         uom: { code: 'Cel' },
         constraint: {
-          interval: [[0, 100]],
+          intervals: [[0, 100]],
         },
         value: 150,
       };
