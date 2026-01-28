@@ -152,6 +152,450 @@ describe('GeoJSON Validators', () => {
     });
   });
 
+
+  describe('validateDeploymentFeatureCollection', () => {
+    it('should validate valid Deployment collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Deployment',
+              uid: 'urn:test:deployment-1',
+              system: 'urn:test:system-1',
+            },
+          },
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Deployment',
+              uid: 'urn:test:deployment-2',
+              system: 'urn:test:system-2',
+            },
+          },
+        ],
+      };
+
+      const result = validateDeploymentFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate empty Deployment collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const result = validateDeploymentFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject invalid Deployment features in collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Deployment',
+              uid: 'urn:test:deployment-1',
+              // Missing system
+            },
+          },
+        ],
+      };
+
+      const result = validateDeploymentFeatureCollection(collection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeDefined();
+      expect(result.errors![0]).toContain('index 0');
+    });
+
+    it('should reject non-FeatureCollection object', () => {
+      const notCollection = {
+        type: 'Feature',
+        features: [],
+      };
+
+      const result = validateDeploymentFeatureCollection(notCollection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+    });
+  });
+
+  describe('validateProcedureFeatureCollection', () => {
+    it('should validate valid Procedure collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Procedure',
+              uid: 'urn:test:proc-1',
+            },
+          },
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Procedure',
+              uid: 'urn:test:proc-2',
+            },
+          },
+        ],
+      };
+
+      const result = validateProcedureFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate empty Procedure collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const result = validateProcedureFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject invalid Procedure features in collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Procedure',
+              // Missing uid
+            },
+          },
+        ],
+      };
+
+      const result = validateProcedureFeatureCollection(collection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeDefined();
+      expect(result.errors![0]).toContain('index 0');
+    });
+
+    it('should reject non-FeatureCollection object', () => {
+      const notCollection = {
+        type: 'Feature',
+        features: [],
+      };
+
+      const result = validateProcedureFeatureCollection(notCollection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+    });
+  });
+
+  describe('validateSamplingFeatureCollection', () => {
+    it('should validate valid SamplingFeature collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'SamplingFeature',
+              uid: 'urn:test:sf-1',
+            },
+          },
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'SamplingFeature',
+              uid: 'urn:test:sf-2',
+            },
+          },
+        ],
+      };
+
+      const result = validateSamplingFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate empty SamplingFeature collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const result = validateSamplingFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject invalid SamplingFeature features in collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'SamplingFeature',
+              // Missing uid
+            },
+          },
+        ],
+      };
+
+      const result = validateSamplingFeatureCollection(collection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeDefined();
+      expect(result.errors![0]).toContain('index 0');
+    });
+
+    it('should reject non-FeatureCollection object', () => {
+      const notCollection = {
+        type: 'Feature',
+        features: [],
+      };
+
+      const result = validateSamplingFeatureCollection(notCollection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+    });
+  });
+
+  describe('validatePropertyFeatureCollection', () => {
+    it('should validate valid Property collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Property',
+              uid: 'urn:test:prop-1',
+              definition: 'http://example.org/property1',
+            },
+          },
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Property',
+              uid: 'urn:test:prop-2',
+              definition: 'http://example.org/property2',
+            },
+          },
+        ],
+      };
+
+      const result = validatePropertyFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate empty Property collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const result = validatePropertyFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject invalid Property features in collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Property',
+              uid: 'urn:test:prop-1',
+              // Missing definition
+            },
+          },
+        ],
+      };
+
+      const result = validatePropertyFeatureCollection(collection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeDefined();
+      expect(result.errors![0]).toContain('index 0');
+    });
+
+    it('should reject non-FeatureCollection object', () => {
+      const notCollection = {
+        type: 'Feature',
+        features: [],
+      };
+
+      const result = validatePropertyFeatureCollection(notCollection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+    });
+  });
+
+  describe('validateDatastreamFeatureCollection', () => {
+    it('should validate valid Datastream collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Datastream',
+              uid: 'urn:test:ds-1',
+              system: 'urn:test:system-1',
+              observedProperty: 'http://example.org/temperature',
+            },
+          },
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Datastream',
+              uid: 'urn:test:ds-2',
+              system: 'urn:test:system-1',
+              observedProperty: 'http://example.org/humidity',
+            },
+          },
+        ],
+      };
+
+      const result = validateDatastreamFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate empty Datastream collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const result = validateDatastreamFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject invalid Datastream features in collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'Datastream',
+              uid: 'urn:test:ds-1',
+              system: 'urn:test:system-1',
+              // Missing observedProperty
+            },
+          },
+        ],
+      };
+
+      const result = validateDatastreamFeatureCollection(collection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeDefined();
+      expect(result.errors![0]).toContain('index 0');
+    });
+
+    it('should reject non-FeatureCollection object', () => {
+      const notCollection = {
+        type: 'Feature',
+        features: [],
+      };
+
+      const result = validateDatastreamFeatureCollection(notCollection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+    });
+  });
+
+  describe('validateControlStreamFeatureCollection', () => {
+    it('should validate valid ControlStream collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'ControlStream',
+              uid: 'urn:test:cs-1',
+              system: 'urn:test:system-1',
+              controlledProperty: 'http://example.org/valve',
+            },
+          },
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'ControlStream',
+              uid: 'urn:test:cs-2',
+              system: 'urn:test:system-1',
+              controlledProperty: 'http://example.org/pump',
+            },
+          },
+        ],
+      };
+
+      const result = validateControlStreamFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate empty ControlStream collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [],
+      };
+
+      const result = validateControlStreamFeatureCollection(collection);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject invalid ControlStream features in collection', () => {
+      const collection = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            geometry: null,
+            properties: {
+              featureType: 'ControlStream',
+              uid: 'urn:test:cs-1',
+              system: 'urn:test:system-1',
+              // Missing controlledProperty
+            },
+          },
+        ],
+      };
+
+      const result = validateControlStreamFeatureCollection(collection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeDefined();
+      expect(result.errors![0]).toContain('index 0');
+    });
+
+    it('should reject non-FeatureCollection object', () => {
+      const notCollection = {
+        type: 'Feature',
+        features: [],
+      };
+
+      const result = validateControlStreamFeatureCollection(notCollection as any);
+      expect(result.valid).toBe(false);
+      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+    });
+  });
   describe('validateDeploymentFeature', () => {
     it('should validate valid Deployment feature', () => {
       const feature = {
@@ -985,4 +1429,5 @@ describe('GeoJSON Validators', () => {
     });
   });
 });
+
 
