@@ -271,7 +271,7 @@ export function validateTimeConstraint(
     if (!inAnyInterval) {
       errors.push({
         path: 'value',
-        message: `Time value ${value} is outside allowed intervals: ${JSON.stringify(interval)}`,
+        message: `Time value ${value} is outside allowed intervals: ${JSON.stringify(intervals)}`,
       });
     }
   }
@@ -386,3 +386,4 @@ export function validateRangeConstraint(
     ? { valid: false, errors } 
     : { valid: true };
 }
+

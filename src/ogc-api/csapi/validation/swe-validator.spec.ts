@@ -604,7 +604,7 @@ describe('SWE Common Validators', () => {
         definition: 'test',
       });
       expect(result.valid).toBe(false);
-      expect(result.errors?.some((e: any) => typeof e === 'string' && e.includes('Quantity'))).toBe(true);
+      expect(result.errors?.some((e: any) => e.message && e.message.includes('Quantity'))).toBe(true);
     });
 
     it('should catch Quantity missing uom', () => {
@@ -680,4 +680,573 @@ describe('SWE Common Validators', () => {
       expect(result.valid).toBe(false);
     });
   });
-});
+
+  describe('validateConstraints parameter', () => {
+    describe('Quantity', () => {
+      it('should skip constraint validation when validateConstraints=false', () => {
+        const { validateQuantity } = require('./swe-validator.js');
+        const quantity = {
+          type: 'Quantity',
+          definition: 'http://example.org/distance',
+          label: 'Distance',
+          uom: { code: 'm' },
+          value: 150,  // Outside constraint interval
+          constraint: {
+            intervals: [[0, 100]],
+          },
+        };
+        
+        // With constraints: should fail
+        const withConstraints = validateQuantity(quantity, true);
+        expect(withConstraints.valid).toBe(false);
+        
+        // Without constraints: should pass (only structural validation)
+        const withoutConstraints = validateQuantity(quantity, false);
+        expect(withoutConstraints.valid).toBe(true);
+      });
+
+      it('should still validate structure when validateConstraints=false', () => {
+        const { validateQuantity } = require('./swe-validator.js');
+        const quantity = {
+          type: 'Quantity',
+          definition: 'http://example.org/distance',
+          label: 'Distance',
+          // Missing required uom
+          value: 150,
+        };
+        
+        const result = validateQuantity(quantity, false);
+        expect(result.valid).toBe(false);
+        expect(result.errors).toBeDefined();
+      });
+    });
+
+    describe('Count', () => {
+      it('should skip constraint validation when validateConstraints=false', () => {
+        const { validateCount } = require('./swe-validator.js');
+        const count = {
+          type: 'Count',
+          definition: 'http://example.org/count',
+          label: 'Count',
+          value: 150,  // Outside constraint interval
+          constraint: {
+            intervals: [[0, 100]],
+          },
+        };
+        
+        // With constraints: should fail
+        const withConstraints = validateCount(count, true);
+        expect(withConstraints.valid).toBe(false);
+        
+        // Without constraints: should pass
+        const withoutConstraints = validateCount(count, false);
+        expect(withoutConstraints.valid).toBe(true);
+      });
+    });
+
+    describe('Text', () => {
+      it('should skip constraint validation when validateConstraints=false', () => {
+        const { validateText } = require('./swe-validator.js');
+        const text = {
+          type: 'Text',
+          definition: 'http://example.org/text',
+          label: 'Text',
+          value: 'invalid',  // Doesn't match pattern
+          constraint: {
+            pattern: '^valid.*',
+          },
+        };
+        
+        // With constraints: should fail
+        const withConstraints = validateText(text, true);
+        expect(withConstraints.valid).toBe(false);
+        
+        // Without constraints: should pass
+        const withoutConstraints = validateText(text, false);
+        expect(withoutConstraints.valid).toBe(true);
+      });
+    });
+
+    describe('Category', () => {
+      it('should skip constraint validation when validateConstraints=false', () => {
+        const { validateCategory } = require('./swe-validator.js');
+        const category = {
+          type: 'Category',
+          definition: 'http://example.org/category',
+          label: 'Category',
+          codeSpace: 'http://example.org/codes',
+          value: 'invalid',  // Not in allowed values
+          constraint: {
+            values: ['option1', 'option2', 'option3'],
+          },
+        };
+        
+        // With constraints: should fail
+        const withConstraints = validateCategory(category, true);
+        expect(withConstraints.valid).toBe(false);
+        
+        // Without constraints: should pass
+        const withoutConstraints = validateCategory(category, false);
+        expect(withoutConstraints.valid).toBe(true);
+      });
+    });
+
+    describe('Time', () => {
+      it('should skip constraint validation when validateConstraints=false', () => {
+        const { validateTime } = require('./swe-validator.js');
+        const time = {
+          type: 'Time',
+          definition: 'http://example.org/time',
+          label: 'Time',
+          uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+          value: '2025-01-01T00:00:00Z',  // Outside constraint interval
+          constraint: {
+            intervals: [['2020-01-01T00:00:00Z', '2024-12-31T23:59:59Z']],
+          },
+        };
+        
+        // With constraints: should fail
+        const withConstraints = validateTime(time, true);
+        expect(withConstraints.valid).toBe(false);
+        
+        // Without constraints: should pass
+        const withoutConstraints = validateTime(time, false);
+        expect(withoutConstraints.valid).toBe(true);
+      });
+    });
+
+    describe('RangeComponent', () => {
+      it('should skip constraint validation when validateConstraints=false', () => {
+        const { validateRangeComponent } = require('./swe-validator.js');
+        const range = {
+          type: 'QuantityRange',
+          definition: 'http://example.org/range',
+          label: 'Range',
+          uom: { code: 'm' },
+          value: [150, 200],  // Outside constraint interval
+          constraint: {
+            intervals: [[0, 100]],
+          },
+        };
+        
+        // With constraints: should fail
+        const withConstraints = validateRangeComponent(range, true);
+        expect(withConstraints.valid).toBe(false);
+        
+        // Without constraints: should pass
+        const withoutConstraints = validateRangeComponent(range, false);
+        expect(withoutConstraints.valid).toBe(true);
+      });
+    });
+  });
+
+  describe('Edge cases and null/undefined handling', () => {
+    describe('Quantity', () => {
+      it('should handle null value', () => {
+        const { validateQuantity } = require('./swe-validator.js');
+        const quantity = {
+          type: 'Quantity',
+          definition: 'http://example.org/distance',
+          label: 'Distance',
+          uom: { code: 'm' },
+          value: null,
+        };
+        
+        const result = validateQuantity(quantity);
+        expect(result.valid).toBe(true);  // null value is valid (no value yet)
+      });
+
+      it('should handle undefined value', () => {
+        const { validateQuantity } = require('./swe-validator.js');
+        const quantity = {
+          type: 'Quantity',
+          definition: 'http://example.org/distance',
+          label: 'Distance',
+          uom: { code: 'm' },
+          value: undefined,
+        };
+        
+        const result = validateQuantity(quantity);
+        expect(result.valid).toBe(true);  // undefined value is valid
+      });
+    });
+
+    describe('Count', () => {
+      it('should handle null value', () => {
+        const { validateCount } = require('./swe-validator.js');
+        const count = {
+          type: 'Count',
+          definition: 'http://example.org/count',
+          label: 'Count',
+          value: null,
+        };
+        
+        const result = validateCount(count);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should handle undefined value', () => {
+        const { validateCount } = require('./swe-validator.js');
+        const count = {
+          type: 'Count',
+          definition: 'http://example.org/count',
+          label: 'Count',
+          value: undefined,
+        };
+        
+        const result = validateCount(count);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    describe('Text', () => {
+      it('should handle null value', () => {
+        const { validateText } = require('./swe-validator.js');
+        const text = {
+          type: 'Text',
+          definition: 'http://example.org/text',
+          label: 'Text',
+          value: null,
+        };
+        
+        const result = validateText(text);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should handle undefined value', () => {
+        const { validateText } = require('./swe-validator.js');
+        const text = {
+          type: 'Text',
+          definition: 'http://example.org/text',
+          label: 'Text',
+          value: undefined,
+        };
+        
+        const result = validateText(text);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should handle empty string value', () => {
+        const { validateText } = require('./swe-validator.js');
+        const text = {
+          type: 'Text',
+          definition: 'http://example.org/text',
+          label: 'Text',
+          value: '',
+        };
+        
+        const result = validateText(text);
+        expect(result.valid).toBe(true);  // empty string is valid
+      });
+    });
+
+    describe('Category', () => {
+      it('should handle null value', () => {
+        const { validateCategory } = require('./swe-validator.js');
+        const category = {
+          type: 'Category',
+          definition: 'http://example.org/category',
+          label: 'Category',
+          codeSpace: 'http://example.org/codes',
+          value: null,
+        };
+        
+        const result = validateCategory(category);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should handle undefined value', () => {
+        const { validateCategory } = require('./swe-validator.js');
+        const category = {
+          type: 'Category',
+          definition: 'http://example.org/category',
+          label: 'Category',
+          codeSpace: 'http://example.org/codes',
+          value: undefined,
+        };
+        
+        const result = validateCategory(category);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    describe('Time', () => {
+      it('should handle null value', () => {
+        const { validateTime } = require('./swe-validator.js');
+        const time = {
+          type: 'Time',
+          definition: 'http://example.org/time',
+          label: 'Time',
+          uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+          value: null,
+        };
+        
+        const result = validateTime(time);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should handle undefined value', () => {
+        const { validateTime } = require('./swe-validator.js');
+        const time = {
+          type: 'Time',
+          definition: 'http://example.org/time',
+          label: 'Time',
+          uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+          value: undefined,
+        };
+        
+        const result = validateTime(time);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    describe('RangeComponent', () => {
+      it('should handle null value', () => {
+        const { validateRangeComponent } = require('./swe-validator.js');
+        const range = {
+          type: 'QuantityRange',
+          definition: 'http://example.org/range',
+          label: 'Range',
+          uom: { code: 'm' },
+          value: null,
+        };
+        
+        const result = validateRangeComponent(range);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should handle undefined value', () => {
+        const { validateRangeComponent } = require('./swe-validator.js');
+        const range = {
+          type: 'QuantityRange',
+          definition: 'http://example.org/range',
+          label: 'Range',
+          uom: { code: 'm' },
+          value: undefined,
+        };
+        
+        const result = validateRangeComponent(range);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    it('should handle null constraint gracefully', () => {
+      const { validateQuantity } = require('./swe-validator.js');
+      const quantity = {
+        type: 'Quantity',
+        definition: 'http://example.org/distance',
+        label: 'Distance',
+        uom: { code: 'm' },
+        value: 50,
+        constraint: null,
+      };
+      
+      const result = validateQuantity(quantity);
+      expect(result.valid).toBe(true);  // null constraint is valid
+    });
+  });
+
+  describe('RangeComponent type coverage', () => {
+    it('should validate TimeRange', () => {
+      const { validateRangeComponent } = require('./swe-validator.js');
+      const timeRange = {
+        type: 'TimeRange',
+        definition: 'http://example.org/timerange',
+        label: 'Time Range',
+        uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+        value: ['2024-01-01T00:00:00Z', '2024-12-31T23:59:59Z'],
+      };
+      
+      const result = validateRangeComponent(timeRange);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate CategoryRange without constraint', () => {
+      const { validateRangeComponent } = require('./swe-validator.js');
+      const categoryRange = {
+        type: 'CategoryRange',
+        definition: 'http://example.org/categoryrange',
+        label: 'Category Range',
+        codeSpace: 'http://example.org/codes',
+        value: ['low', 'high'],
+      };
+      
+      const result = validateRangeComponent(categoryRange);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate CategoryRange with constraint', () => {
+      const { validateRangeComponent } = require('./swe-validator.js');
+      const categoryRange = {
+        type: 'CategoryRange',
+        definition: 'http://example.org/categoryrange',
+        label: 'Category Range',
+        codeSpace: 'http://example.org/codes',
+        value: ['option1', 'option3'],
+        constraint: {
+          values: ['option1', 'option2', 'option3', 'option4'],
+        },
+      };
+      
+      const result = validateRangeComponent(categoryRange);
+      expect(result.valid).toBe(true);
+    });
+
+
+
+
+
+    it('should reject QuantityRange missing uom', () => {
+      const { validateRangeComponent } = require('./swe-validator.js');
+      const quantityRange = {
+        type: 'QuantityRange',
+        definition: 'http://example.org/range',
+        label: 'Range',
+        // Missing uom
+        value: [0, 100],
+      };
+      
+      const result = validateRangeComponent(quantityRange);
+      expect(result.valid).toBe(false);
+    });
+
+    it('should reject TimeRange missing uom', () => {
+      const { validateRangeComponent } = require('./swe-validator.js');
+      const timeRange = {
+        type: 'TimeRange',
+        definition: 'http://example.org/timerange',
+        label: 'Time Range',
+        // Missing uom
+        value: ['2024-01-01T00:00:00Z', '2024-12-31T23:59:59Z'],
+      };
+      
+      const result = validateRangeComponent(timeRange);
+      expect(result.valid).toBe(false);
+    });
+  });
+
+  describe('Integration and nested validation', () => {
+    it('should validate complex nested observation result', () => {
+      const { validateObservationResult } = require('./swe-validator.js');
+      const observationResult = {
+        type: 'DataRecord',
+        definition: 'http://example.org/weather-observation',
+        label: 'Weather Observation',
+        fields: [
+          {
+            name: 'temperature',
+            component: {
+              type: 'Quantity',
+              definition: 'http://example.org/temperature',
+              label: 'Temperature',
+              uom: { code: 'Cel' },
+              value: 22.5,
+              constraint: {
+                intervals: [[-40, 50]],
+              },
+            },
+          },
+          {
+            name: 'humidity',
+            component: {
+              type: 'Quantity',
+              definition: 'http://example.org/humidity',
+              label: 'Humidity',
+              uom: { code: '%' },
+              value: 65,
+            },
+          },
+        ],
+      };
+      
+      const result = validateObservationResult(observationResult);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate deeply nested DataRecords', () => {
+      const { validateDataRecord } = require('./swe-validator.js');
+      // Create nested structure 3 levels deep
+      const deeplyNested = {
+        type: 'DataRecord',
+        definition: 'http://example.org/level0',
+        label: 'Level 0',
+        fields: [
+          {
+            name: 'level1',
+            component: {
+              type: 'DataRecord',
+              definition: 'http://example.org/level1',
+              label: 'Level 1',
+              fields: [
+                {
+                  name: 'level2',
+                  component: {
+                    type: 'DataRecord',
+                    definition: 'http://example.org/level2',
+                    label: 'Level 2',
+                    fields: [
+                      {
+                        name: 'value',
+                        component: {
+                          type: 'Quantity',
+                          definition: 'http://example.org/value',
+                          label: 'Value',
+                          uom: { code: 'm' },
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      };
+      
+      const result = validateDataRecord(deeplyNested);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate DataArray with complex element types', () => {
+      const { validateDataArray } = require('./swe-validator.js');
+      const dataArray = {
+        type: 'DataArray',
+        definition: 'http://example.org/measurements',
+        label: 'Measurements',
+        elementCount: { type: 'Count', value: 3 },
+        elementType: {
+          type: 'DataRecord',
+          definition: 'http://example.org/measurement',
+          label: 'Measurement',
+          fields: [
+            {
+              name: 'timestamp',
+              component: {
+                type: 'Time',
+                definition: 'http://example.org/timestamp',
+                label: 'Timestamp',
+                uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+              },
+            },
+            {
+              name: 'value',
+              component: {
+                type: 'Quantity',
+                definition: 'http://example.org/value',
+                label: 'Value',
+                uom: { code: 'm' },
+              },
+            },
+          ],
+        },
+      };
+      
+      const result = validateDataArray(dataArray);
+      expect(result.valid).toBe(true);
+    });
+  });});
+
+
+
+
+
