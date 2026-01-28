@@ -1,4 +1,4 @@
-# ogc-client [![Latest version on NPM](https://img.shields.io/npm/v/%40camptocamp%2Fogc-client)](https://www.npmjs.com/package/@camptocamp/ogc-client) [![Latest @dev version on NPM](https://img.shields.io/npm/v/%40camptocamp%2Fogc-client/dev)](https://www.npmjs.com/package/@camptocamp/ogc-client?activeTab=versions)
+# ogc-client [![Latest version on NPM](https://img.shields.io/npm/v/%40camptocamp%2Fogc-client)](https://www.npmjs.com/package/@camptocamp/ogc-client) [![Latest @dev version on NPM](https://img.shields.io/npm/v/%40camptocamp%2Fogc-client/dev)](https://www.npmjs.com/package/@camptocamp/ogc-client?activeTab=versions) [![Coverage](https://github.com/OS4CSAPI/ogc-client-CSAPI/actions/workflows/coverage.yml/badge.svg)](https://os4csapi.github.io/ogc-client-CSAPI/coverage/)
 
 > A Typescript library for interacting with [OGC-compliant services](https://www.ogc.org/docs/is)
 
@@ -87,3 +87,4 @@ Run examples with:
 npm run build
 node examples/stac-query.js
 ```
+

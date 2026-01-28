@@ -84,7 +84,8 @@
     "build:node": "vite build --config vite.node-config.js",
     "build:worker": "vite build --config vite.worker-config.js",
     "prepublishOnly": "npm run typecheck && npm test && npm run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:coverage": "npm run test:browser -- --coverage && npm run test:node -- --coverage"
   },
   "author": "olivia.guyot@camptocamp.com",
   "license": "BSD-3-Clause"
