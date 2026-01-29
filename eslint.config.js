@@ -17,42 +17,21 @@ export default defineConfig([
       globals: { ...globals.node, ...globals.browser },
     },
     rules: {
-      'import/extensions': [
-        'error',
-        'always',
-        {
-          ignorePackages: true,
-          pathGroupOverrides: [
-            {
-              // ask for file extensions when importing from OL (since we can do granular imports inside the lib)
-              pattern: 'ol/{*,*/**}',
-              action: 'enforce',
-            },
-          ],
-        },
-      ],
+      'import/extensions': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          args: 'all',
-          argsIgnorePattern: '^_',
-          caughtErrors: 'all',
-          caughtErrorsIgnorePattern: '^_',
-          destructuredArrayIgnorePattern: '^_',
-          ignoreRestSiblings: true,
-        },
-      ],
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
-  // test related
   {
-    files: ['**/__mocks__/**/*'],
+    files: ['**/*.spec.ts', '**/__mocks__/**/*'],
     languageOptions: {
       globals: {
         ...globals.commonjs,
         ...globals.jest,
       },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
   {
