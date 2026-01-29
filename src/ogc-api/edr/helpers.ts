@@ -7,6 +7,10 @@ export function DateTimeParameterToEDRString(param: DateTimeParameter): string {
     return format(param);
   }
 
+  if (typeof param === 'string') {
+    return param; // 'now' or 'latest'
+  }
+
   if ('start' in param && 'end' in param) {
     return `${format(param.start)}/${format(param.end)}`;
   }

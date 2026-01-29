@@ -400,7 +400,7 @@ describe('Request Builders', () => {
         expect(() =>
           buildPropertyBody(
             { uid: 'test', featureType: 'InvalidType' } as any,
-            null,
+            
             { validate: true, strict: true }
           )
         ).toThrow();

@@ -144,6 +144,8 @@ export default class StacEndpoint {
         'datetime',
         dateTime instanceof Date
           ? dateTime.toISOString()
+          : typeof dateTime === 'string'
+          ? dateTime
           : `${'start' in dateTime ? dateTime.start.toISOString() : '..'}/${
               'end' in dateTime ? dateTime.end.toISOString() : '..'
             }`

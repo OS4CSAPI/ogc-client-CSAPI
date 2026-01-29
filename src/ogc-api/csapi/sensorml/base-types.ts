@@ -11,6 +11,7 @@
 
 import type { GeoJsonProperties } from 'geojson';
 import type { Event } from './event';
+export type { Event } from './event';
 
 /**
  * Web link structure used for references between SensorML objects
