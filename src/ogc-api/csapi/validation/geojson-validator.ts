@@ -378,6 +378,119 @@ function validateGeometry(geometry: unknown): string[] {
   return errors;
 }
 
+
+// ========== LINK VALIDATION ==========
+
+/**
+ * Validate URI format (URN or URL)
+ * @param uri - URI string to validate
+ * @returns Array of error messages (empty if valid)
+ */
+function validateURI(uri: string): string[] {
+  const errors: string[] = [];
+
+  // Empty string is invalid
+  if (uri.trim().length === 0) {
+    errors.push('URI cannot be empty');
+    return errors;
+  }
+
+  // Check for spaces (invalid in URIs)
+  if (/\s/.test(uri)) {
+    errors.push(`URI contains spaces: "${uri}"`);
+    return errors;
+  }
+
+  // URN format: urn:namespace:specific
+  const urnPattern = /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$/i;
+  
+  // URL format: http:// or https://
+  const urlPattern = /^https?:\/\/.+/i;
+
+  if (!urnPattern.test(uri) && !urlPattern.test(uri)) {
+    errors.push(`Invalid URI format: "${uri}" (must be URN like "urn:namespace:value" or URL like "http://example.org/resource")`);
+  }
+
+  return errors;
+}
+
+/**
+ * Validate a single link (can be string URI or object with rel/href)
+ * @param link - Link value to validate (string or object)
+ * @param propertyName - Name of the property for error messages
+ * @returns Array of error messages (empty if valid)
+ */
+function validateLink(link: unknown, propertyName: string): string[] {
+  const errors: string[] = [];
+
+  // Link can be a string (URI) or an object with href
+  if (typeof link === 'string') {
+    // String link - validate as URI
+    const uriErrors = validateURI(link);
+    uriErrors.forEach(error => {
+      errors.push(`${propertyName}: ${error}`);
+    });
+    return errors;
+  }
+
+  // Link object - must have href property
+  if (typeof link !== 'object' || link === null) {
+    errors.push(`${propertyName} must be a string URI or object with href`);
+    return errors;
+  }
+
+  const linkObj = link as any;
+
+  // href is required for link objects
+  if (!linkObj.href) {
+    errors.push(`${propertyName} object must have href property`);
+    return errors;
+  }
+
+  if (typeof linkObj.href !== 'string') {
+    errors.push(`${propertyName}.href must be a string`);
+    return errors;
+  }
+
+  // Validate the href URI
+  const hrefErrors = validateURI(linkObj.href);
+  hrefErrors.forEach(error => {
+    errors.push(`${propertyName}.href: ${error}`);
+  });
+
+  // Validate rel if present (optional but must be string if provided)
+  if (linkObj.rel !== undefined) {
+    if (typeof linkObj.rel !== 'string') {
+      errors.push(`${propertyName}.rel must be a string`);
+    } else if (linkObj.rel.trim().length === 0) {
+      errors.push(`${propertyName}.rel cannot be empty`);
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate links array
+ * @param links - Array of link objects to validate
+ * @returns Array of error messages (empty if valid)
+ */
+function validateLinksArray(links: unknown): string[] {
+  const errors: string[] = [];
+
+  if (!Array.isArray(links)) {
+    errors.push('links must be an array');
+    return errors;
+  }
+
+  links.forEach((link, index) => {
+    const linkErrors = validateLink(link, `links[${index}]`);
+    errors.push(...linkErrors);
+  });
+
+  return errors;
+}
+
 // ========== FEATURE VALIDATORS ==========
 
 /**
@@ -399,6 +512,12 @@ export function validateSystemFeature(data: unknown): ValidationResult {
   const props = data.properties as any;
   if (props.featureType !== 'System') {
     errors.push(`Expected featureType 'System', got '${props.featureType}'`);
+  }
+
+  // Validate links array if present
+  if (props.links) {
+    const linksErrors = validateLinksArray(props.links);
+    errors.push(...linksErrors);
   }
 
   // Validate geometry
@@ -456,6 +575,18 @@ export function validateDeploymentFeature(data: unknown): ValidationResult {
     errors.push('Missing required property: system');
   }
 
+  // Validate system link
+  if (props.system !== undefined && props.system !== null) {
+    const systemLinkErrors = validateLink(props.system, 'system');
+    errors.push(...systemLinkErrors);
+  }
+
+  // Validate links array if present
+  if (props.links) {
+    const linksErrors = validateLinksArray(props.links);
+    errors.push(...linksErrors);
+  }
+
   // Validate geometry
   const feature = data as any;
   const geometryErrors = validateGeometry(feature.geometry);
@@ -505,6 +636,12 @@ export function validateProcedureFeature(data: unknown): ValidationResult {
   const props = data.properties as any;
   if (props.featureType !== 'Procedure') {
     errors.push(`Expected featureType 'Procedure', got '${props.featureType}'`);
+  }
+
+  // Validate links array if present
+  if (props.links) {
+    const linksErrors = validateLinksArray(props.links);
+    errors.push(...linksErrors);
   }
 
   // Validate geometry
@@ -566,6 +703,24 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
     errors.push('Missing required property: observedProperty');
   }
 
+  // Validate system link
+  if (props.system !== undefined && props.system !== null) {
+    const systemLinkErrors = validateLink(props.system, 'system');
+    errors.push(...systemLinkErrors);
+  }
+
+  // Validate observedProperty link
+  if (props.observedProperty !== undefined && props.observedProperty !== null) {
+    const obsPropErrors = validateLink(props.observedProperty, 'observedProperty');
+    errors.push(...obsPropErrors);
+  }
+
+  // Validate links array if present
+  if (props.links) {
+    const linksErrors = validateLinksArray(props.links);
+    errors.push(...linksErrors);
+  }
+
   // Validate geometry
   const feature = data as any;
   const geometryErrors = validateGeometry(feature.geometry);
@@ -619,6 +774,12 @@ export function validateSamplingFeature(data: unknown): ValidationResult {
 
   // Validate geometry
   const feature = data as any;
+
+  // Validate sampledFeature link if present
+  if (props.sampledFeature !== undefined && props.sampledFeature !== null) {
+    const sampledFeatureErrors = validateLink(props.sampledFeature, 'sampledFeature');
+    errors.push(...sampledFeatureErrors);
+  }
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
@@ -670,6 +831,12 @@ export function validatePropertyFeature(data: unknown): ValidationResult {
 
   if (!props.definition) {
     errors.push('Missing required property: definition');
+  }
+
+  // Validate links array if present
+  if (props.links) {
+    const linksErrors = validateLinksArray(props.links);
+    errors.push(...linksErrors);
   }
 
   // Validate geometry
@@ -729,6 +896,24 @@ export function validateControlStreamFeature(data: unknown): ValidationResult {
 
   if (!props.controlledProperty) {
     errors.push('Missing required property: controlledProperty');
+  }
+
+  // Validate system link
+  if (props.system !== undefined && props.system !== null) {
+    const systemLinkErrors = validateLink(props.system, 'system');
+    errors.push(...systemLinkErrors);
+  }
+
+  // Validate controlledProperty link
+  if (props.controlledProperty !== undefined && props.controlledProperty !== null) {
+    const ctrlPropErrors = validateLink(props.controlledProperty, 'controlledProperty');
+    errors.push(...ctrlPropErrors);
+  }
+
+  // Validate links array if present
+  if (props.links) {
+    const linksErrors = validateLinksArray(props.links);
+    errors.push(...linksErrors);
   }
 
   // Validate geometry
@@ -794,3 +979,7 @@ export function validateCSAPIFeature(data: unknown): ValidationResult {
       };
   }
 }
+
+
+
+

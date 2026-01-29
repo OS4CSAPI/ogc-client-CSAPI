@@ -1916,7 +1916,374 @@ describe('GeoJSON Validators', () => {
       });
     });
   });
+
+  // ========== LINK VALIDATION TESTS ==========
+
+  describe('Link Validation', () => {
+    describe('URI format validation', () => {
+      it('should accept valid URN format', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 'urn:test:system-1'
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid HTTP URL format', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 'http://example.org/systems/1'
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid HTTPS URL format', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 'https://example.org/systems/1'
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject URI with spaces', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 'http://example.org/systems with spaces/1'
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('contains spaces'))).toBe(true);
+      });
+
+      it('should reject malformed URN (missing namespace)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 'urn:system-1'  // Missing namespace separator
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Invalid URI format'))).toBe(true);
+      });
+
+      it('should reject malformed URL (no protocol)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 'example.org/systems/1'  // Missing http:// or https://
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Invalid URI format'))).toBe(true);
+      });
+
+      it('should reject empty string URI', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: ''
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('cannot be empty'))).toBe(true);
+      });
+    });
+
+    describe('Link object validation', () => {
+      it('should accept valid link object with rel and href', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: {
+              rel: 'related',
+              href: 'http://example.org/systems/1'
+            }
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid link object with only href', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: {
+              href: 'http://example.org/systems/1'
+            }
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject link object without href', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: {
+              rel: 'related'
+              // Missing href
+            }
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('must have href'))).toBe(true);
+      });
+
+      it('should reject link object with non-string href', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: {
+              href: 123  // Should be string
+            }
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('href must be a string'))).toBe(true);
+      });
+
+      it('should reject link object with empty rel', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: {
+              rel: '',
+              href: 'http://example.org/systems/1'
+            }
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('rel cannot be empty'))).toBe(true);
+      });
+
+      it('should reject non-string, non-object link', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: 123  // Should be string or object
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('must be a string URI or object with href'))).toBe(true);
+      });
+    });
+
+    describe('Links array validation', () => {
+      it('should accept links array with valid link objects', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            links: [
+              { rel: 'self', href: 'http://example.org/systems/1' },
+              { rel: 'alternate', href: 'http://example.org/systems/1.json' }
+            ]
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept links array with string URIs', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            links: [
+              'http://example.org/systems/1',
+              'http://example.org/systems/1.json'
+            ]
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject links array with invalid link at specific index', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            links: [
+              { rel: 'self', href: 'http://example.org/systems/1' },
+              { rel: 'alternate', href: 'http://example with spaces.org/systems/1.json' }  // Invalid
+            ]
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('links[1]') && e.includes('contains spaces'))).toBe(true);
+      });
+
+      it('should reject non-array links property', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            links: 'not-an-array'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('links must be an array'))).toBe(true);
+      });
+    });
+
+    describe('Integration with multiple feature types', () => {
+      it('should validate system link in Datastream features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Datastream',
+            uid: 'urn:test:1',
+            system: 'invalid uri with spaces',
+            observedProperty: { href: 'http://example.org/props/temp' }
+          }
+        };
+
+        const result = validateDatastreamFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('system') && e.includes('contains spaces'))).toBe(true);
+      });
+
+      it('should validate observedProperty link in Datastream features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Datastream',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.org/systems/1' },
+            observedProperty: 'malformed url'
+          }
+        };
+
+        const result = validateDatastreamFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('observedProperty') && e.includes('Invalid URI format'))).toBe(true);
+      });
+
+      it('should validate controlledProperty link in ControlStream features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'ControlStream',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.org/systems/1' },
+            controlledProperty: { href: '' }  // Empty href
+          }
+        };
+
+        const result = validateControlStreamFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('controlledProperty') && e.includes('cannot be empty'))).toBe(true);
+      });
+
+      it('should validate sampledFeature link in SamplingFeature', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'SamplingFeature',
+            uid: 'urn:test:1',
+            sampledFeature: { rel: 'sampled' }  // Missing href
+          }
+        };
+
+        const result = validateSamplingFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('sampledFeature') && e.includes('must have href'))).toBe(true);
+      });
+    });
+  });
 });
+
 
 
 
