@@ -28,6 +28,17 @@ export * from './types/index.js';
 export { decodeBinary } from './binary-decoder.js';
 export { encodeBinary } from './binary-encoder.js';
 
+// Text encoding support
+export { decodeText } from './text-decoder.js';
+export { encodeText } from './text-encoder.js';
+export {
+  validateTextEncoding,
+  validateTextDataLength,
+  validateTextDataStructure,
+  validateSeparatorCompatibility,
+} from './text-validation.js';
+export type { ValidationResult } from './text-validation.js';
+
 // Re-export union types for convenience
 export type {
   SimpleComponent,
