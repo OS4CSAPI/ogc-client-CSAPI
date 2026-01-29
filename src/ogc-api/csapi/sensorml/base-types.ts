@@ -1,9 +1,9 @@
 /**
  * SensorML 3.0 Base Types
- * 
+ *
  * Core type definitions for SensorML 3.0 JSON encoding.
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
- * 
+ *
  * References:
  * - https://schemas.opengis.net/sensorML/3.0/json/
  * - OGC 23-000: SensorML 3.0 Standard

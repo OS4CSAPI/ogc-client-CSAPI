@@ -75,7 +75,7 @@ describe('Request Builders', () => {
         buildSystemBody(
           {
             uid: 'urn:test:system',
-            featureType: 'InvalidType',  // Invalid: wrong feature type
+            featureType: 'InvalidType', // Invalid: wrong feature type
           } as any,
           null,
           { validate: true, strict: true }
@@ -167,7 +167,9 @@ describe('Request Builders', () => {
       expect(result.body.type).toBe('Feature');
       expect(result.body.properties.featureType).toBe('Property');
       expect(result.body.properties.uid).toBe('urn:test:property-1');
-      expect(result.body.properties.definition).toBe('http://example.org/property');
+      expect(result.body.properties.definition).toBe(
+        'http://example.org/property'
+      );
       expect(result.body.geometry).toBeNull();
       expect(result.contentType).toBe('application/geo+json');
     });
@@ -195,7 +197,9 @@ describe('Request Builders', () => {
       expect(result.body.properties.featureType).toBe('Datastream');
       expect(result.body.properties.uid).toBe('urn:test:ds-1');
       expect(result.body.properties.system).toBe('urn:test:system-1');
-      expect(result.body.properties.observedProperty).toBe('http://example.org/temperature');
+      expect(result.body.properties.observedProperty).toBe(
+        'http://example.org/temperature'
+      );
       expect(result.contentType).toBe('application/geo+json');
     });
 
@@ -223,7 +227,9 @@ describe('Request Builders', () => {
       expect(result.body.properties.featureType).toBe('ControlStream');
       expect(result.body.properties.uid).toBe('urn:test:cs-1');
       expect(result.body.properties.system).toBe('urn:test:system-1');
-      expect(result.body.properties.controlledProperty).toBe('http://example.org/valve-position');
+      expect(result.body.properties.controlledProperty).toBe(
+        'http://example.org/valve-position'
+      );
       expect(result.contentType).toBe('application/geo+json');
     });
 
@@ -269,11 +275,9 @@ describe('Request Builders', () => {
         },
       };
 
-      const result = buildFeatureBody(
-        feature,
-        validateSystemFeature,
-        { validate: false }
-      );
+      const result = buildFeatureBody(feature, validateSystemFeature, {
+        validate: false,
+      });
 
       expect(result.validation).toBeUndefined();
     });
@@ -288,11 +292,10 @@ describe('Request Builders', () => {
       };
 
       expect(() =>
-        buildFeatureBody(
-          invalidFeature as any,
-          validateSystemFeature,
-          { validate: true, strict: true }
-        )
+        buildFeatureBody(invalidFeature as any, validateSystemFeature, {
+          validate: true,
+          strict: true,
+        })
       ).toThrow();
     });
   });
@@ -314,7 +317,7 @@ describe('Request Builders', () => {
       const result = buildSystemBody(
         {
           uid: 'urn:test:system',
-          featureType: 'InvalidType',  // Invalid: wrong feature type
+          featureType: 'InvalidType', // Invalid: wrong feature type
         } as any,
         null,
         { validate: true, strict: false }
@@ -329,7 +332,7 @@ describe('Request Builders', () => {
         buildSystemBody(
           {
             uid: 'urn:test:system',
-            featureType: 'InvalidType',  // Invalid: wrong feature type
+            featureType: 'InvalidType', // Invalid: wrong feature type
           } as any,
           null,
           { validate: true, strict: true }
@@ -400,7 +403,7 @@ describe('Request Builders', () => {
         expect(() =>
           buildPropertyBody(
             { uid: 'test', featureType: 'InvalidType' } as any,
-            
+
             { validate: true, strict: true }
           )
         ).toThrow();
