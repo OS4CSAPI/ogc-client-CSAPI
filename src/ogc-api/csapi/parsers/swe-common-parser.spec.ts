@@ -625,7 +625,7 @@ describe('SWE Common Parsers', () => {
         uom: { code: 'Cel' },
       };
       const result = parseDataComponent(quantityData);
-      expect(result.type).toBe('Quantity');
+      expect((result as any).type).toBe('Quantity');
     });
 
     it('should reject non-object input', () => {
@@ -653,7 +653,7 @@ describe('SWE Common Parsers', () => {
 
       types.forEach((data) => {
         const result = parseDataComponent(data);
-        expect(result.type).toBe(data.type);
+      expect((result as any).type).toBe(data.type);
       });
     });
 
@@ -667,7 +667,7 @@ describe('SWE Common Parsers', () => {
 
       types.forEach((data) => {
         const result = parseDataComponent(data);
-        expect(result.type).toBe(data.type);
+      expect((result as any).type).toBe(data.type);
       });
     });
 
@@ -683,7 +683,7 @@ describe('SWE Common Parsers', () => {
       };
 
       const result = parseDataComponent(dataRecord);
-      expect(result.type).toBe('DataRecord');
+      expect((result as any).type).toBe('DataRecord');
     });
 
     it('should recursively parse deeply nested structures', () => {

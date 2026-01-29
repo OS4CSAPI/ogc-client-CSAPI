@@ -8,8 +8,6 @@
  */
 
 import type {
-  AnyDataComponent,
-  DataComponent,
   QuantityComponent,
   CountComponent,
   BooleanComponent,
@@ -73,7 +71,7 @@ export function parseQuantityComponent(data: unknown): QuantityComponent {
     throw new ParseError('Quantity uom must have code or href property');
   }
 
-  return data as QuantityComponent;
+  return data as unknown as QuantityComponent;
 }
 
 /**
@@ -88,7 +86,7 @@ export function parseCountComponent(data: unknown): CountComponent {
     throw new ParseError(`Expected type 'Count', got '${data.type}'`);
   }
 
-  return data as CountComponent;
+  return data as unknown as CountComponent;
 }
 
 /**
@@ -103,7 +101,7 @@ export function parseBooleanComponent(data: unknown): BooleanComponent {
     throw new ParseError(`Expected type 'Boolean', got '${data.type}'`);
   }
 
-  return data as BooleanComponent;
+  return data as unknown as BooleanComponent;
 }
 
 /**
@@ -118,7 +116,7 @@ export function parseTextComponent(data: unknown): TextComponent {
     throw new ParseError(`Expected type 'Text', got '${data.type}'`);
   }
 
-  return data as TextComponent;
+  return data as unknown as TextComponent;
 }
 
 /**
@@ -133,7 +131,7 @@ export function parseCategoryComponent(data: unknown): CategoryComponent {
     throw new ParseError(`Expected type 'Category', got '${data.type}'`);
   }
 
-  return data as CategoryComponent;
+  return data as unknown as CategoryComponent;
 }
 
 /**
@@ -152,7 +150,7 @@ export function parseTimeComponent(data: unknown): TimeComponent {
     throw new ParseError('Time requires uom with code or href');
   }
 
-  return data as TimeComponent;
+  return data as unknown as TimeComponent;
 }
 
 /**
@@ -171,7 +169,7 @@ export function parseQuantityRangeComponent(data: unknown): QuantityRangeCompone
     throw new ParseError('QuantityRange requires uom with code or href');
   }
 
-  return data as QuantityRangeComponent;
+  return data as unknown as QuantityRangeComponent;
 }
 
 /**
@@ -186,7 +184,7 @@ export function parseCountRangeComponent(data: unknown): CountRangeComponent {
     throw new ParseError(`Expected type 'CountRange', got '${data.type}'`);
   }
 
-  return data as CountRangeComponent;
+  return data as unknown as CountRangeComponent;
 }
 
 /**
@@ -201,7 +199,7 @@ export function parseCategoryRangeComponent(data: unknown): CategoryRangeCompone
     throw new ParseError(`Expected type 'CategoryRange', got '${data.type}'`);
   }
 
-  return data as CategoryRangeComponent;
+  return data as unknown as CategoryRangeComponent;
 }
 
 /**
@@ -220,7 +218,7 @@ export function parseTimeRangeComponent(data: unknown): TimeRangeComponent {
     throw new ParseError('TimeRange requires uom with code or href');
   }
 
-  return data as TimeRangeComponent;
+  return data as unknown as TimeRangeComponent;
 }
 
 /**
@@ -281,7 +279,7 @@ export function parseDataRecordComponent(data: unknown): DataRecordComponent {
   return {
     ...data,
     fields,
-  } as DataRecordComponent;
+  } as unknown as DataRecordComponent;
 }
 
 /**
@@ -341,7 +339,7 @@ export function parseVectorComponent(data: unknown): VectorComponent {
   return {
     ...data,
     coordinates,
-  } as VectorComponent;
+  } as unknown as VectorComponent;
 }
 
 /**
@@ -401,7 +399,7 @@ export function parseDataChoiceComponent(data: unknown): DataChoiceComponent {
   return {
     ...data,
     items,
-  } as DataChoiceComponent;
+  } as unknown as DataChoiceComponent;
 }
 
 /**
@@ -448,7 +446,7 @@ export function parseDataArrayComponent(data: unknown): DataArrayComponent {
     }
   }
 
-  return data as DataArrayComponent;
+  return data as unknown as DataArrayComponent;
 }
 
 /**
@@ -495,7 +493,7 @@ export function parseMatrixComponent(data: unknown): MatrixComponent {
     }
   }
 
-  return data as MatrixComponent;
+  return data as unknown as MatrixComponent;
 }
 
 /**
@@ -542,7 +540,7 @@ export function parseDataStreamComponent(data: unknown): DataStreamComponent {
     }
   }
 
-  return data as DataStreamComponent;
+  return data as unknown as DataStreamComponent;
 }
 
 /**
@@ -557,7 +555,7 @@ export function parseGeometryComponent(data: unknown): GeometryComponent {
     throw new ParseError(`Expected type 'Geometry', got '${data.type}'`);
   }
 
-  return data as GeometryComponent;
+  return data as unknown as GeometryComponent;
 }
 
 /**
@@ -565,7 +563,7 @@ export function parseGeometryComponent(data: unknown): GeometryComponent {
  * 
  * This function validates structure during parsing and recursively parses nested components.
  */
-export function parseDataComponent(data: unknown): DataComponent {
+export function parseDataComponent(data: unknown): unknown {
   if (!isObject(data)) {
     throw new ParseError('Data component must be an object');
   }
