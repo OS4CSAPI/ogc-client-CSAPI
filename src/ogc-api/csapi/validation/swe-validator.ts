@@ -66,6 +66,42 @@ function hasDataComponentProperties(obj: unknown): boolean {
 }
 
 /**
+ * Validates required OGC properties for all SWE Common components (per OGC 24-014)
+ * 
+ * All data components must have:
+ * - definition: URI that provides the semantic definition
+ * - label: Human-readable name for the component
+ * 
+ * @param component - The component to validate
+ * @param errors - Array to append validation errors to
+ */
+function validateRequiredOGCProperties(component: any, errors: ValidationError[]): void {
+  if (!component.definition) {
+    errors.push({ 
+      path: 'definition',
+      message: 'Missing required property: definition (URI)' 
+    });
+  } else if (typeof component.definition !== 'string') {
+    errors.push({ 
+      path: 'definition',
+      message: 'Property definition must be a string (URI)' 
+    });
+  }
+
+  if (!component.label) {
+    errors.push({ 
+      path: 'label',
+      message: 'Missing required property: label' 
+    });
+  } else if (typeof component.label !== 'string') {
+    errors.push({ 
+      path: 'label',
+      message: 'Property label must be a string' 
+    });
+  }
+}
+
+/**
  * Validate QuantityComponent
  * 
  * @param data - The component to validate
@@ -84,6 +120,9 @@ export function validateQuantity(data: unknown, validateConstraints = true): Val
   if (component.type !== 'Quantity') {
     errors.push({ message: `Expected type 'Quantity', got '${component.type}'` });
   }
+
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
 
   if (!component.uom) {
     errors.push({ message: 'Missing required property: uom' });
@@ -117,6 +156,9 @@ export function validateDataRecord(data: unknown): ValidationResult {
     errors.push(`Expected type 'DataRecord', got '${component.type}'`);
   }
 
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
+
   if (!component.fields || !Array.isArray(component.fields)) {
     errors.push({ message: 'Missing or invalid property: fields (must be an array)' });
   } else if (component.fields.length === 0) {
@@ -142,6 +184,9 @@ export function validateDataArray(data: unknown): ValidationResult {
   if (component.type !== 'DataArray') {
     errors.push({ message: `Expected type 'DataArray', got '${component.type}'` });
   }
+
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
 
   if (!component.elementCount) {
     errors.push({ message: 'Missing required property: elementCount' });
@@ -174,6 +219,9 @@ export function validateCount(data: unknown, validateConstraints = true): Valida
     errors.push({ message: `Expected type 'Count', got '${component.type}'` });
   }
 
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
+
   // Perform deep constraint validation if value is present
   if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
     const constraintResult = validateCountConstraint(component as CountComponent, component.value);
@@ -204,6 +252,9 @@ export function validateText(data: unknown, validateConstraints = true): Validat
   if (component.type !== 'Text') {
     errors.push({ message: `Expected type 'Text', got '${component.type}'` });
   }
+
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
 
   // Perform deep constraint validation if value is present
   if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
@@ -236,6 +287,9 @@ export function validateCategory(data: unknown, validateConstraints = true): Val
     errors.push({ message: `Expected type 'Category', got '${component.type}'` });
   }
 
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
+
   // Perform deep constraint validation if value is present
   if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
     const constraintResult = validateCategoryConstraint(component as CategoryComponent, component.value);
@@ -266,6 +320,9 @@ export function validateTime(data: unknown, validateConstraints = true): Validat
   if (component.type !== 'Time') {
     errors.push({ message: `Expected type 'Time', got '${component.type}'` });
   }
+
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
 
   if (!component.uom) {
     errors.push({ message: 'Missing required property: uom' });
@@ -302,6 +359,9 @@ export function validateRangeComponent(data: unknown, validateConstraints = true
   if (!validRangeTypes.includes(component.type)) {
     errors.push({ message: `Expected range type, got '${component.type}'` });
   }
+
+  // Validate required OGC properties (per OGC 24-014)
+  validateRequiredOGCProperties(component, errors);
 
   // Quantity and Time ranges require UOM
   if ((component.type === 'QuantityRange' || component.type === 'TimeRange') && !component.uom) {
