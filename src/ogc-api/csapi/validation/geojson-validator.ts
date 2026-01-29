@@ -686,13 +686,13 @@ export function validateDeploymentFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'Deployment') {
-    errors.push(`Expected featureType 'Deployment', got '${props.featureType}
+    errors.push(`Expected featureType 'Deployment', got '${props.featureType}'`);
+  }
 
   // Validate validTime if present
   if (props.validTime) {
     const validTimeErrors = validateTemporal(props.validTime, 'validTime');
     errors.push(...validTimeErrors);
-  }'`);
   }
 
   if (!props.system) {
@@ -759,13 +759,13 @@ export function validateProcedureFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'Procedure') {
-    errors.push(`Expected featureType 'Procedure', got '${props.featureType}
+    errors.push(`Expected featureType 'Procedure', got '${props.featureType}'`);
+  }
 
   // Validate validTime if present
   if (props.validTime) {
     const validTimeErrors = validateTemporal(props.validTime, 'validTime');
     errors.push(...validTimeErrors);
-  }'`);
   }
 
   // Validate links array if present
@@ -911,13 +911,13 @@ export function validateSamplingFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'SamplingFeature') {
-    errors.push(`Expected featureType 'SamplingFeature', got '${props.featureType}
+    errors.push(`Expected featureType 'SamplingFeature', got '${props.featureType}'`);
+  }
 
   // Validate samplingTime if present
   if (props.samplingTime) {
     const samplingTimeErrors = validateTemporal(props.samplingTime, 'samplingTime');
     errors.push(...samplingTimeErrors);
-  }'`);
   }
 
   // Validate geometry
