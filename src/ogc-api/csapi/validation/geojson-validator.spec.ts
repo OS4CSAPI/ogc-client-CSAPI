@@ -2282,7 +2282,352 @@ describe('GeoJSON Validators', () => {
       });
     });
   });
+
+  // ========== TEMPORAL VALIDATION TESTS ==========
+
+  describe('Temporal Validation', () => {
+    describe('ISO 8601 timestamp validation', () => {
+      it('should accept valid timestamp with UTC timezone (Z)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T10:30:00Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid timestamp with offset timezone', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T10:30:00+05:30'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid date-only format (YYYY-MM-DD)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid timestamp with milliseconds', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T10:30:00.123Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject non-ISO 8601 format (US date format)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '01/15/2024 10:30 AM'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Invalid ISO 8601 timestamp format'))).toBe(true);
+      });
+
+      it('should reject impossible date (Feb 30)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-02-30T00:00:00Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('impossible date'))).toBe(true);
+      });
+
+      it('should reject impossible date (Month 13)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-13-01T00:00:00Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('impossible date'))).toBe(true);
+      });
+
+      it('should warn about missing timezone', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T10:30:00'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('missing timezone'))).toBe(true);
+      });
+
+      it('should reject empty timestamp', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: ''
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('cannot be empty'))).toBe(true);
+      });
+    });
+
+    describe('ISO 8601 interval validation', () => {
+      it('should accept valid closed interval (start/end)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T00:00:00Z/2024-01-20T23:59:59Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid open-ended start interval (../end)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '../2024-01-20T23:59:59Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid open-ended end interval (start/..)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T00:00:00Z/..'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject reversed interval (end < start)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-20T00:00:00Z/2024-01-10T00:00:00Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Start time') && e.includes('must be before end time'))).toBe(true);
+      });
+
+      it('should reject malformed interval (missing end)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T00:00:00Z/'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Timestamp cannot be empty'))).toBe(true);
+      });
+
+      it('should reject interval with invalid start timestamp', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-02-30T00:00:00Z/2024-03-15T00:00:00Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('(start)') && e.includes('impossible date'))).toBe(true);
+      });
+
+      it('should reject interval with invalid end timestamp', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'System',
+            uid: 'urn:test:1',
+            validTime: '2024-01-15T00:00:00Z/2024-13-01T00:00:00Z'
+          }
+        };
+
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('(end)') && e.includes('impossible date'))).toBe(true);
+      });
+    });
+
+    describe('Integration with multiple feature types', () => {
+      it('should validate validTime in Deployment features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.org/systems/1' },
+            validTime: '01/15/2024 10:30 AM'  // Invalid format
+          }
+        };
+
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('validTime') && e.includes('Invalid ISO 8601'))).toBe(true);
+      });
+
+      it('should validate validTime in Procedure features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Procedure',
+            uid: 'urn:test:1',
+            validTime: '2024-02-30T00:00:00Z'  // Impossible date
+          }
+        };
+
+        const result = validateProcedureFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('validTime') && e.includes('impossible date'))).toBe(true);
+      });
+
+      it('should validate phenomenonTime in Datastream features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Datastream',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.org/systems/1' },
+            observedProperty: { href: 'http://example.org/props/temp' },
+            phenomenonTime: '2024-01-15T10:30:00'  // Missing timezone
+          }
+        };
+
+        const result = validateDatastreamFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('phenomenonTime') && e.includes('missing timezone'))).toBe(true);
+      });
+
+      it('should validate resultTime in Datastream features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'Datastream',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.org/systems/1' },
+            observedProperty: { href: 'http://example.org/props/temp' },
+            resultTime: '2024-01-20T00:00:00Z/2024-01-10T00:00:00Z'  // Reversed interval
+          }
+        };
+
+        const result = validateDatastreamFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('resultTime') && e.includes('must be before end time'))).toBe(true);
+      });
+
+      it('should validate samplingTime in SamplingFeature', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [5.0, 45.0] },
+          properties: {
+            featureType: 'SamplingFeature',
+            uid: 'urn:test:1',
+            samplingTime: 'not-a-timestamp'
+          }
+        };
+
+        const result = validateSamplingFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('samplingTime') && e.includes('Invalid ISO 8601'))).toBe(true);
+      });
+    });
+  });
 });
+
 
 
 

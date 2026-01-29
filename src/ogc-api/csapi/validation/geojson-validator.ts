@@ -491,6 +491,118 @@ function validateLinksArray(links: unknown): string[] {
   return errors;
 }
 
+
+// ========== TEMPORAL VALIDATION ==========
+
+/**
+ * Validate ISO 8601 timestamp format
+ * @param timestamp - Timestamp string to validate
+ * @param propertyName - Name of the property for error messages
+ * @returns Array of error messages (empty if valid)
+ */
+function validateTimestamp(timestamp: string, propertyName: string): string[] {
+  const errors: string[] = [];
+
+  // Empty string is invalid
+  if (timestamp.trim().length === 0) {
+    errors.push(`${propertyName}: Timestamp cannot be empty`);
+    return errors;
+  }
+
+  // ISO 8601 timestamp pattern
+  // Supports: YYYY-MM-DD, YYYY-MM-DDTHH:MM:SSZ, YYYY-MM-DDTHH:MM:SS±HH:MM, YYYY-MM-DDTHH:MM:SS.sssZ
+  const iso8601Pattern = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
+
+  if (!iso8601Pattern.test(timestamp)) {
+    errors.push(`${propertyName}: Invalid ISO 8601 timestamp format "${timestamp}" (expected formats: YYYY-MM-DD, YYYY-MM-DDTHH:MM:SSZ, or YYYY-MM-DDTHH:MM:SS±HH:MM)`);
+    return errors;
+  }
+
+  // Check if date is parseable and valid
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) {
+    errors.push(`${propertyName}: Timestamp "${timestamp}" represents an impossible date`);
+    return errors;
+  }
+
+  // Warn if timezone is missing (ambiguous)
+  if (timestamp.includes('T') && !timestamp.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(timestamp)) {
+    errors.push(`${propertyName}: Timestamp "${timestamp}" is missing timezone (should end with Z or ±HH:MM)`);
+  }
+
+  return errors;
+}
+
+/**
+ * Validate ISO 8601 temporal interval (start/end)
+ * @param interval - Interval string to validate (e.g., "2024-01-01T00:00:00Z/2024-01-31T23:59:59Z")
+ * @param propertyName - Name of the property for error messages
+ * @returns Array of error messages (empty if valid)
+ */
+function validateTemporalInterval(interval: string, propertyName: string): string[] {
+  const errors: string[] = [];
+
+  // Check for interval separator
+  if (!interval.includes('/')) {
+    errors.push(`${propertyName}: Temporal interval must contain "/" separator (format: start/end)`);
+    return errors;
+  }
+
+  const parts = interval.split('/');
+  if (parts.length !== 2) {
+    errors.push(`${propertyName}: Temporal interval must have exactly two parts separated by "/" (got ${parts.length} parts)`);
+    return errors;
+  }
+
+  const [start, end] = parts;
+
+  // Validate start timestamp (unless open-ended with "..")
+  if (start !== '..') {
+    const startErrors = validateTimestamp(start, `${propertyName} (start)`);
+    errors.push(...startErrors);
+  }
+
+  // Validate end timestamp (unless open-ended with "..")
+  if (end !== '..') {
+    const endErrors = validateTimestamp(end, `${propertyName} (end)`);
+    errors.push(...endErrors);
+  }
+
+  // Validate temporal range (start must be before end) for closed intervals
+  if (start !== '..' && end !== '..' && errors.length === 0) {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    if (startDate.getTime() >= endDate.getTime()) {
+      errors.push(`${propertyName}: Start time "${start}" must be before end time "${end}"`);
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate temporal property (timestamp or interval)
+ * @param temporal - Temporal value to validate (string)
+ * @param propertyName - Name of the property for error messages
+ * @returns Array of error messages (empty if valid)
+ */
+function validateTemporal(temporal: unknown, propertyName: string): string[] {
+  const errors: string[] = [];
+
+  if (typeof temporal !== 'string') {
+    errors.push(`${propertyName} must be a string`);
+    return errors;
+  }
+
+  // Check if it's an interval (contains "/")
+  if (temporal.includes('/')) {
+    return validateTemporalInterval(temporal, propertyName);
+  } else {
+    return validateTimestamp(temporal, propertyName);
+  }
+}
+
 // ========== FEATURE VALIDATORS ==========
 
 /**
@@ -510,6 +622,12 @@ export function validateSystemFeature(data: unknown): ValidationResult {
   }
 
   const props = data.properties as any;
+
+  // Validate validTime if present
+  if (props.validTime) {
+    const validTimeErrors = validateTemporal(props.validTime, 'validTime');
+    errors.push(...validTimeErrors);
+  }
   if (props.featureType !== 'System') {
     errors.push(`Expected featureType 'System', got '${props.featureType}'`);
   }
@@ -568,7 +686,13 @@ export function validateDeploymentFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'Deployment') {
-    errors.push(`Expected featureType 'Deployment', got '${props.featureType}'`);
+    errors.push(`Expected featureType 'Deployment', got '${props.featureType}
+
+  // Validate validTime if present
+  if (props.validTime) {
+    const validTimeErrors = validateTemporal(props.validTime, 'validTime');
+    errors.push(...validTimeErrors);
+  }'`);
   }
 
   if (!props.system) {
@@ -635,7 +759,13 @@ export function validateProcedureFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'Procedure') {
-    errors.push(`Expected featureType 'Procedure', got '${props.featureType}'`);
+    errors.push(`Expected featureType 'Procedure', got '${props.featureType}
+
+  // Validate validTime if present
+  if (props.validTime) {
+    const validTimeErrors = validateTemporal(props.validTime, 'validTime');
+    errors.push(...validTimeErrors);
+  }'`);
   }
 
   // Validate links array if present
@@ -701,6 +831,18 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
 
   if (!props.observedProperty) {
     errors.push('Missing required property: observedProperty');
+  }
+
+  // Validate phenomenonTime if present
+  if (props.phenomenonTime) {
+    const phenomenonTimeErrors = validateTemporal(props.phenomenonTime, 'phenomenonTime');
+    errors.push(...phenomenonTimeErrors);
+  }
+
+  // Validate resultTime if present
+  if (props.resultTime) {
+    const resultTimeErrors = validateTemporal(props.resultTime, 'resultTime');
+    errors.push(...resultTimeErrors);
   }
 
   // Validate system link
@@ -769,7 +911,13 @@ export function validateSamplingFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'SamplingFeature') {
-    errors.push(`Expected featureType 'SamplingFeature', got '${props.featureType}'`);
+    errors.push(`Expected featureType 'SamplingFeature', got '${props.featureType}
+
+  // Validate samplingTime if present
+  if (props.samplingTime) {
+    const samplingTimeErrors = validateTemporal(props.samplingTime, 'samplingTime');
+    errors.push(...samplingTimeErrors);
+  }'`);
   }
 
   // Validate geometry
@@ -979,6 +1127,9 @@ export function validateCSAPIFeature(data: unknown): ValidationResult {
       };
   }
 }
+
+
+
 
 
 
