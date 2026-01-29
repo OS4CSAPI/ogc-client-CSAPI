@@ -141,8 +141,11 @@ export function validateQuantity(data: unknown, validateConstraints = true): Val
 
 /**
  * Validate DataRecordComponent
+ * 
+ * @param data - The component to validate
+ * @param validateNested - Whether to recursively validate nested components (default: true)
  */
-export function validateDataRecord(data: unknown): ValidationResult {
+export function validateDataRecord(data: unknown, validateNested = true): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -153,7 +156,7 @@ export function validateDataRecord(data: unknown): ValidationResult {
   const component = data as any;
 
   if (component.type !== 'DataRecord') {
-    errors.push(`Expected type 'DataRecord', got '${component.type}'`);
+    errors.push({ message: `Expected type 'DataRecord', got '${component.type}'` });
   }
 
   // Validate required OGC properties (per OGC 24-014)
@@ -163,6 +166,35 @@ export function validateDataRecord(data: unknown): ValidationResult {
     errors.push({ message: 'Missing or invalid property: fields (must be an array)' });
   } else if (component.fields.length === 0) {
     errors.push({ message: 'DataRecord must have at least one field' });
+  } else if (validateNested) {
+    // Recursively validate each field's component
+    component.fields.forEach((field: any, idx: number) => {
+      // Validate field structure
+      if (!field.name || typeof field.name !== 'string') {
+        errors.push({ 
+          path: `fields[${idx}].name`,
+          message: 'Field must have a valid name property' 
+        });
+      }
+      
+      if (!field.component) {
+        errors.push({ 
+          path: `fields[${idx}].component`,
+          message: 'Field must have a component property' 
+        });
+      } else {
+        // Recursively validate the nested component
+        const nestedResult = validateSWEComponent(field.component, true);
+        if (!nestedResult.valid && nestedResult.errors) {
+          nestedResult.errors.forEach((err) => {
+            errors.push({
+              path: `fields[${idx}].component${err.path ? '.' + err.path : ''}`,
+              message: err.message
+            });
+          });
+        }
+      }
+    });
   }
 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
@@ -170,8 +202,11 @@ export function validateDataRecord(data: unknown): ValidationResult {
 
 /**
  * Validate DataArrayComponent
+ * 
+ * @param data - The component to validate
+ * @param validateNested - Whether to recursively validate nested components (default: true)
  */
-export function validateDataArray(data: unknown): ValidationResult {
+export function validateDataArray(data: unknown, validateNested = true): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -194,6 +229,17 @@ export function validateDataArray(data: unknown): ValidationResult {
 
   if (!component.elementType) {
     errors.push({ message: 'Missing required property: elementType' });
+  } else if (validateNested) {
+    // Recursively validate elementType
+    const nestedResult = validateSWEComponent(component.elementType, true);
+    if (!nestedResult.valid && nestedResult.errors) {
+      nestedResult.errors.forEach((err) => {
+        errors.push({
+          path: `elementType${err.path ? '.' + err.path : ''}`,
+          message: err.message
+        });
+      });
+    }
   }
 
   return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
@@ -447,9 +493,9 @@ export function validateSWEComponent(data: unknown, validateConstraints = true):
     case 'CategoryRange':
       return validateRangeComponent(data, validateConstraints);
     case 'DataRecord':
-      return validateDataRecord(data);
+      return validateDataRecord(data, validateConstraints);
     case 'DataArray':
-      return validateDataArray(data);
+      return validateDataArray(data, validateConstraints);
     default:
       // Basic validation passed for other types
       return { valid: true };
