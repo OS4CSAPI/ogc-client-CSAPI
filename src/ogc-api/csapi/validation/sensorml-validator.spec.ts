@@ -103,7 +103,7 @@ describe('SensorML Validator', () => {
         },
         deployedSystems: [
           {
-            system: 'urn:test:system-1',
+            system: { href: 'urn:test:system-1' },
           },
         ],
       };

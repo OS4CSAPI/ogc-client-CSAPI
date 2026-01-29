@@ -104,7 +104,7 @@ describe('Parser Edge Cases', () => {
           properties: { featureType: 'System', uid: 'urn:test:1' }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.geometry).toBeNull();
       });
 
@@ -233,8 +233,8 @@ describe('Parser Edge Cases', () => {
           properties: { featureType: 'System', uid: 'urn:test:1' }
         };
 
-        const result = parser.parseGeoJSON(feature);
-        expect(result.geometry?.coordinates?.[0]).toBe(Number.MAX_SAFE_INTEGER);
+        const result = parser.parseGeoJSON(feature as any);
+        expect((result.geometry as any)?.coordinates?.[0]).toBe(Number.MAX_SAFE_INTEGER);
       });
 
       it('should handle negative zero', () => {
@@ -247,8 +247,8 @@ describe('Parser Edge Cases', () => {
           properties: { featureType: 'System', uid: 'urn:test:1' }
         };
 
-        const result = parser.parseGeoJSON(feature);
-        expect(result.geometry?.coordinates?.[0]).toBe(-0);
+        const result = parser.parseGeoJSON(feature as any);
+        expect((result.geometry as any)?.coordinates?.[0]).toBe(-0);
       });
 
       it('should handle very small numbers near MIN_VALUE', () => {
@@ -261,8 +261,8 @@ describe('Parser Edge Cases', () => {
           properties: { featureType: 'System', uid: 'urn:test:1' }
         };
 
-        const result = parser.parseGeoJSON(feature);
-        expect(result.geometry?.coordinates?.[0]).toBe(Number.MIN_VALUE);
+        const result = parser.parseGeoJSON(feature as any);
+        expect((result.geometry as any)?.coordinates?.[0]).toBe(Number.MIN_VALUE);
       });
     });
 
@@ -279,7 +279,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.description).toHaveLength(10 * 1024);
       });
 
@@ -295,7 +295,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toHaveLength(longName.length);
       });
     });
@@ -315,7 +315,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toBe('温度传感器');
         expect(result.properties.uid).toContain('系统');
       });
@@ -332,7 +332,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.description).toContain('استشعار');
       });
 
@@ -347,7 +347,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toContain('🌡️');
         expect(result.properties.name).toContain('🔥');
       });
@@ -363,7 +363,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toContain('טמפרטורה');
       });
 
@@ -379,7 +379,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toBe('温度センサー');
         expect(result.properties.description).toContain('センサー');
       });
@@ -396,7 +396,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.uid).toContain(' ');
       });
 
@@ -410,7 +410,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.uid).toContain('@');
         expect(result.properties.uid).toContain('#');
         expect(result.properties.uid).toContain('!');
@@ -426,7 +426,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.uid).toContain('%20');
       });
     });
@@ -443,7 +443,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toContain('Sensor');
         expect(result.properties.name).toContain('الحرارة');
         expect(result.properties.name).toContain('温度');
@@ -463,7 +463,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toContain('\t');
       });
 
@@ -478,7 +478,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.description).toContain('\n');
       });
 
@@ -493,7 +493,7 @@ describe('Parser Edge Cases', () => {
           }
         };
 
-        const result = parser.parseGeoJSON(feature);
+        const result = parser.parseGeoJSON(feature as any);
         expect(result.properties.name).toContain('\u00A0');
       });
     });
@@ -513,8 +513,8 @@ describe('Parser Edge Cases', () => {
         };
 
         // Without validation, should pass through
-        const result = parser.parseGeoJSON(feature);
-        expect(result.geometry?.coordinates?.[1]).toBe(95.0);
+        const result = parser.parseGeoJSON(feature as any);
+        expect((result.geometry as any)?.coordinates?.[1]).toBe(95.0);
       });
 
       it('should accept longitude > 180 without validation', () => {
@@ -528,8 +528,8 @@ describe('Parser Edge Cases', () => {
         };
 
         // Without validation, should pass through
-        const result = parser.parseGeoJSON(feature);
-        expect(result.geometry?.coordinates?.[0]).toBe(190.0);
+        const result = parser.parseGeoJSON(feature as any);
+        expect((result.geometry as any)?.coordinates?.[0]).toBe(190.0);
       });
     });
 

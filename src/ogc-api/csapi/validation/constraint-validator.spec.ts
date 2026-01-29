@@ -348,12 +348,12 @@ describe('SWE Common Constraint Validation', () => {
         label: 'Time',
         uom: { code: 'ms' },
         constraint: {
-          intervals: [[0, 1000000] as [number, number]],
+          intervals: [['0', '1000000']],
         },
         value: 500000,
       };
 
-      const result = validateTimeConstraint(component, 500000);
+      const result = validateTimeConstraint(component as any, 500000);
       expect(result.valid).toBe(true);
     });
 

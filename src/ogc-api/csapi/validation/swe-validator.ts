@@ -509,7 +509,7 @@ export function validateSWEComponent(data: unknown, validateConstraints = true):
 export function validateObservationResult(data: unknown): ValidationResult {
   // Result can be any SWE Common component or simple value
   if (data === null || data === undefined) {
-    return { valid: false, errors: ['Observation result cannot be null or undefined'] };
+    return { valid: false, errors: [{ message: 'Observation result cannot be null or undefined' }] };
   }
 
   // If it's an object with a type property, validate as SWE component
