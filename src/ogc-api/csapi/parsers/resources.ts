@@ -35,6 +35,7 @@ import {
 import {
   parseDataStreamComponent,
   parseDataRecordComponent,
+  parseDataChoiceComponent,
   parseDataComponent,
   ParseError,
 } from './swe-common-parser.js';
@@ -535,10 +536,131 @@ export class ControlStreamParser extends CSAPIParser<ControlStreamFeature> {
     throw new CSAPIParseError('ControlStreams not defined in SensorML format');
   }
 
+  /**
+   * Parse ControlStream from SWE Common format.
+   *
+   * Extracts command schema information from SWE DataRecord or DataChoice components
+   * and converts to GeoJSON Feature format with schema as properties.
+   *
+   * Supported SWE types:
+   * - DataRecord (command parameter fields)
+   * - DataChoice (alternative command modes)
+   * - DataArray (repeating commands)
+   * - Any other SWE component (treated as single parameter)
+   *
+   * @param data - SWE Common component (DataRecord, DataChoice, etc.)
+   * @returns GeoJSON Feature with command schema information in properties
+   * @throws CSAPIParseError if SWE component is invalid or cannot be parsed
+   */
   parseSWE(data: Record<string, unknown>): ControlStreamFeature {
-    throw new CSAPIParseError(
-      'SWE format not applicable for ControlStream resources'
-    );
+    try {
+      // Parse SWE DataRecord, DataChoice, or other component describing command schema
+      let parsedComponent: any;
+
+      if (data.type === 'DataRecord') {
+        // Most common: DataRecord with command parameter fields
+        parsedComponent = parseDataRecordComponent(data);
+      } else if (data.type === 'DataChoice') {
+        // Alternative command modes
+        parsedComponent = parseDataChoiceComponent(data);
+      } else {
+        // Try generic component parser (could be DataArray, Vector, etc.)
+        parsedComponent = parseDataComponent(data);
+      }
+
+      // Extract command schema information
+      const properties: Record<string, unknown> = {
+        featureType: 'ControlStream',
+        definition: parsedComponent.definition,
+        name: parsedComponent.label,
+        description: parsedComponent.description,
+        commandSchemaObject: this.extractCommandSchema(parsedComponent),
+      };
+
+      // Build GeoJSON Feature
+      return {
+        type: 'Feature',
+        id: (parsedComponent as any).id || (parsedComponent as any).uniqueId,
+        geometry: null, // ControlStreams don't have geometry
+        properties,
+      } as unknown as ControlStreamFeature;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new CSAPIParseError(
+          `Failed to parse SWE ControlStream schema: ${error.message}`,
+          'swe',
+          error
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Extract command schema structure from SWE component
+   * Handles DataRecord (parameters), DataChoice (alternative modes), and other components
+   */
+  private extractCommandSchema(component: any): Record<string, unknown> {
+    const schema: Record<string, unknown> = {
+      type: component.type,
+      definition: component.definition,
+      label: component.label,
+    };
+
+    // For DataRecord, extract parameter fields
+    if (component.type === 'DataRecord' && component.fields) {
+      schema.parameters = component.fields.map((field: any) => ({
+        name: field.name,
+        definition: field.component?.definition,
+        label: field.component?.label,
+        type: field.component?.type,
+        uom: field.component?.uom,
+        constraint: field.component?.constraint,
+        description: field.component?.description,
+      }));
+    }
+
+    // For DataChoice, extract alternative command modes
+    if (component.type === 'DataChoice' && component.items) {
+      schema.modes = component.items.map((item: any) => ({
+        name: item.name,
+        definition: item.component?.definition,
+        label: item.component?.label,
+        type: item.component?.type,
+        // Recursively extract parameters if mode has DataRecord
+        parameters:
+          item.component?.type === 'DataRecord' && item.component?.fields
+            ? item.component.fields.map((field: any) => ({
+                name: field.name,
+                definition: field.component?.definition,
+                label: field.component?.label,
+                type: field.component?.type,
+                uom: field.component?.uom,
+                constraint: field.component?.constraint,
+              }))
+            : undefined,
+      }));
+    }
+
+    // For DataArray, extract element type (repeating command)
+    if (component.type === 'DataArray') {
+      schema.elementCount = component.elementCount;
+      if (component.elementType) {
+        schema.elementType = this.extractCommandSchema(component.elementType);
+      }
+    }
+
+    // Add constraint information for validation
+    if ('constraint' in component && component.constraint) {
+      schema.constraint = component.constraint;
+    }
+
+    // Add UoM for quantity-based parameters
+    if ('uom' in component && component.uom) {
+      schema.uom = component.uom;
+    }
+
+    return schema;
   }
 
   validate(
