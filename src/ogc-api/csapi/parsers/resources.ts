@@ -32,6 +32,12 @@ import {
   validateControlStreamFeature,
   type ValidationResult,
 } from '../validation';
+import {
+  parseDataStreamComponent,
+  parseDataRecordComponent,
+  parseDataComponent,
+  ParseError,
+} from './swe-common-parser.js';
 
 /**
  * Helper: Extract geometry from SensorML Position or location
@@ -337,8 +343,135 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
     throw new CSAPIParseError('Datastreams not defined in SensorML format');
   }
 
+  /**
+   * Parse Datastream from SWE Common format.
+   * 
+   * Extracts schema information from SWE DataStream or DataRecord components
+   * and converts to GeoJSON Feature format with schema as properties.
+   * 
+   * @param data - SWE Common component (DataStream, DataRecord, etc.)
+   * @returns GeoJSON Feature with schema information in properties
+   * @throws CSAPIParseError if SWE component is invalid or cannot be parsed
+   */
   parseSWE(data: Record<string, unknown>): DatastreamFeature {
-    throw new CSAPIParseError('SWE format not applicable for Datastream resources');
+    try {
+      // Parse SWE DataStream or DataRecord component
+      let parsedComponent: any;
+      
+      if (data.type === 'DataStream') {
+        parsedComponent = parseDataStreamComponent(data);
+      } else if (data.type === 'DataRecord') {
+        // Some servers may return DataRecord directly as schema
+        parsedComponent = parseDataRecordComponent(data);
+      } else {
+        // Try generic component parser
+        parsedComponent = parseDataComponent(data);
+      }
+
+      // Extract schema information
+      const properties: Record<string, unknown> = {
+        featureType: 'Datastream',
+        definition: parsedComponent.definition,
+        name: parsedComponent.label,
+        description: parsedComponent.description,
+        schema: this.extractSchema(parsedComponent),
+      };
+
+      // Add encoding information if present
+      if ('encoding' in parsedComponent && parsedComponent.encoding) {
+        properties.encoding = parsedComponent.encoding;
+      }
+
+      // Add elementCount if present (for DataStream)
+      if ('elementCount' in parsedComponent && parsedComponent.elementCount !== undefined) {
+        properties.elementCount = parsedComponent.elementCount;
+      }
+
+      // Build GeoJSON Feature
+      return {
+        type: 'Feature',
+        id: (parsedComponent as any).id || (parsedComponent as any).uniqueId,
+        geometry: null, // Datastreams don't have geometry
+        properties,
+      } as unknown as DatastreamFeature;
+      
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new CSAPIParseError(
+          `Failed to parse SWE Datastream schema: ${error.message}`,
+          'swe',
+          error
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Extract schema structure from SWE component
+   * Handles DataStream (with elementType) and DataRecord (with fields)
+   */
+  private extractSchema(component: any): Record<string, unknown> {
+    const schema: Record<string, unknown> = {
+      type: component.type,
+      definition: component.definition,
+      label: component.label,
+    };
+
+    // For DataStream, extract elementType schema
+    if (component.type === 'DataStream' && component.elementType) {
+      // elementType has a "component" wrapper, extract the actual component
+      const actualComponent = component.elementType.component || component.elementType;
+      schema.elementType = this.extractSchema(actualComponent);
+    }
+
+    // For DataRecord, extract field schemas
+    if (component.type === 'DataRecord' && component.fields) {
+      schema.fields = component.fields.map((field: any) => ({
+        name: field.name,
+        definition: field.component?.definition,
+        label: field.component?.label,
+        type: field.component?.type,
+        uom: field.component?.uom,
+        constraint: field.component?.constraint,
+      }));
+    }
+
+    // For DataArray, extract elementType
+    if (component.type === 'DataArray') {
+      schema.elementCount = component.elementCount;
+      if (component.elementType) {
+        // elementType has a "component" wrapper, extract the actual component
+        const actualComponent = component.elementType.component || component.elementType;
+        schema.elementType = this.extractSchema(actualComponent);
+      }
+    }
+
+    // For Vector, extract coordinates
+    if (component.type === 'Vector' && component.coordinates) {
+      schema.referenceFrame = component.referenceFrame;
+      schema.coordinates = component.coordinates.map((coord: any) => ({
+        name: coord.name,
+        component: {
+          type: coord.component?.type,
+          definition: coord.component?.definition,
+          label: coord.component?.label,
+          uom: coord.component?.uom,
+        },
+      }));
+    }
+
+    // Add UoM for quantity-based components
+    if ('uom' in component && component.uom) {
+      schema.uom = component.uom;
+    }
+
+    // Add constraint information
+    if ('constraint' in component && component.constraint) {
+      schema.constraint = component.constraint;
+    }
+
+    return schema;
   }
 
   validate(

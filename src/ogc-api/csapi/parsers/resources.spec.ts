@@ -299,8 +299,289 @@ describe('Resource Parsers', () => {
       expect(() => parser.parse(sensorml, { contentType: 'application/sml+json' })).toThrow('Datastreams not defined in SensorML format');
     });
 
-    it('should throw on SWE format (not supported)', () => {
-      expect(() => parser.parse({}, { contentType: 'application/swe+json' })).toThrow('SWE format not applicable');
+    describe('parseSWE', () => {
+      it('should parse SWE DataStream with DataRecord elementType', () => {
+        const sweDataStream = {
+          type: 'DataStream',
+          id: 'ds-001',
+          definition: 'http://example.org/datastreams/temp-humidity',
+          label: 'Temperature and Humidity',
+          description: 'Continuous temperature and humidity measurements',
+          elementType: {
+            component: {
+              type: 'DataRecord',
+              definition: 'http://example.org/observation-schema',
+              label: 'Observation',
+              fields: [
+                {
+                  name: 'timestamp',
+                  component: {
+                    type: 'Time',
+                    definition: 'http://www.opengis.net/def/property/OGC/0/SamplingTime',
+                    label: 'Sampling Time',
+                    uom: {
+                      code: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian'
+                    }
+                  }
+                },
+                {
+                  name: 'temperature',
+                  component: {
+                    type: 'Quantity',
+                    definition: 'http://example.org/def/temperature',
+                    label: 'Temperature',
+                    uom: { code: 'Cel' }
+                  }
+                }
+              ]
+            }
+          },
+          encoding: {
+            type: 'JSONEncoding'
+          }
+        };
+
+        const result = parser.parse(sweDataStream, { contentType: 'application/swe+json' });
+
+        expect(result.data.type).toBe('Feature');
+        expect(result.data.geometry).toBeNull();
+        expect(result.data.properties.featureType).toBe('Datastream');
+        expect(result.data.properties.name).toBe('Temperature and Humidity');
+        expect(result.data.properties.schema).toBeDefined();
+        expect(result.data.properties.schema.type).toBe('DataStream');
+        expect(result.data.properties.schema.elementType.type).toBe('DataRecord');
+        expect(result.data.properties.schema.elementType.fields).toHaveLength(2);
+        expect(result.data.properties.schema.elementType.fields[0].name).toBe('timestamp');
+        expect(result.data.properties.schema.elementType.fields[0].type).toBe('Time');
+        expect(result.data.properties.schema.elementType.fields[1].name).toBe('temperature');
+        expect(result.data.properties.schema.elementType.fields[1].type).toBe('Quantity');
+        expect(result.data.properties.encoding).toEqual({ type: 'JSONEncoding' });
+        expect(result.format.format).toBe('swe');
+      });
+
+      it('should parse SWE DataRecord schema directly', () => {
+        const sweDataRecord = {
+          type: 'DataRecord',
+          id: 'schema-001',
+          definition: 'http://example.org/observation-schema',
+          label: 'Observation Schema',
+          fields: [
+            {
+              name: 'value',
+              component: {
+                type: 'Quantity',
+                definition: 'http://example.org/def/measurement',
+                label: 'Measurement',
+                uom: { code: 'm' }
+              }
+            }
+          ]
+        };
+
+        const result = parser.parse(sweDataRecord, { contentType: 'application/swe+json' });
+
+        expect(result.data.type).toBe('Feature');
+        expect(result.data.properties.schema.type).toBe('DataRecord');
+        expect(result.data.properties.schema.fields).toHaveLength(1);
+        expect(result.data.properties.schema.fields[0].name).toBe('value');
+        expect(result.data.properties.schema.fields[0].type).toBe('Quantity');
+        expect(result.data.properties.schema.fields[0].uom).toEqual({ code: 'm' });
+      });
+
+      it('should handle nested DataRecord in DataStream', () => {
+        const nestedSchema = {
+          type: 'DataStream',
+          definition: 'http://example.org/complex-stream',
+          label: 'Complex Stream',
+          elementType: {
+            component: {
+              type: 'DataRecord',
+              definition: 'http://example.org/complex-record',
+              label: 'Complex Record',
+              fields: [
+                {
+                  name: 'metadata',
+                  component: {
+                    type: 'DataRecord',
+                    definition: 'http://example.org/metadata',
+                    label: 'Metadata',
+                    fields: [
+                      {
+                        name: 'quality',
+                        component: {
+                          type: 'Text',
+                          definition: 'http://example.org/quality',
+                          label: 'Quality Flag'
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        };
+
+        const result = parser.parse(nestedSchema, { contentType: 'application/swe+json' });
+
+        expect(result.data.properties.schema.elementType.fields[0].name).toBe('metadata');
+        expect(result.data.properties.schema.elementType.fields[0].type).toBe('DataRecord');
+      });
+
+      it('should handle DataArray elementType', () => {
+        const dataArraySchema = {
+          type: 'DataStream',
+          definition: 'http://example.org/trajectory',
+          label: 'Trajectory',
+          elementType: {
+            component: {
+              type: 'DataArray',
+              definition: 'http://example.org/positions',
+              label: 'Positions',
+              elementCount: 100,
+              elementType: {
+                component: {
+                  type: 'Vector',
+                  definition: 'http://example.org/position',
+                  label: 'Position',
+                  referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4979',
+                  coordinates: [
+                    {
+                      name: 'lat',
+                      component: {
+                        type: 'Quantity',
+                        definition: 'http://example.org/latitude',
+                        label: 'Latitude',
+                        uom: { code: 'deg' }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        };
+
+        const result = parser.parse(dataArraySchema, { contentType: 'application/swe+json' });
+
+        expect(result.data.properties.schema.elementType.type).toBe('DataArray');
+        expect(result.data.properties.schema.elementType.elementCount).toBe(100);
+        expect(result.data.properties.schema.elementType.elementType.type).toBe('Vector');
+      });
+
+      it('should preserve constraints in schema', () => {
+        const constrainedSchema = {
+          type: 'DataRecord',
+          definition: 'http://example.org/constrained',
+          label: 'Constrained Schema',
+          fields: [
+            {
+              name: 'temperature',
+              component: {
+                type: 'Quantity',
+                definition: 'http://example.org/temperature',
+                label: 'Temperature',
+                uom: { code: 'Cel' },
+                constraint: {
+                  intervals: [[-40, 60]],
+                  significantFigures: 2
+                }
+              }
+            }
+          ]
+        };
+
+        const result = parser.parse(constrainedSchema, { contentType: 'application/swe+json' });
+
+        expect(result.data.properties.schema.fields[0].constraint).toEqual({
+          intervals: [[-40, 60]],
+          significantFigures: 2
+        });
+      });
+
+      it('should handle parsing errors gracefully', () => {
+        const invalidSWE = {
+          type: 'InvalidType',
+          // Missing required properties
+        };
+
+        expect(() => {
+          parser.parse(invalidSWE, { contentType: 'application/swe+json' });
+        }).toThrow();
+      });
+
+      it('should include encoding information', () => {
+        const streamWithEncoding = {
+          type: 'DataStream',
+          definition: 'http://example.org/stream',
+          label: 'Stream',
+          elementType: {
+            component: {
+              type: 'Quantity',
+              definition: 'http://example.org/value',
+              label: 'Value',
+              uom: { code: 'm' }
+            }
+          },
+          encoding: {
+            type: 'TextEncoding',
+            tokenSeparator: ',',
+            blockSeparator: '\n'
+          }
+        };
+
+        const result = parser.parse(streamWithEncoding, { contentType: 'application/swe+json' });
+
+        expect(result.data.properties.encoding).toEqual({
+          type: 'TextEncoding',
+          tokenSeparator: ',',
+          blockSeparator: '\n'
+        });
+      });
+
+      it('should handle Vector component extraction', () => {
+        const vectorSchema = {
+          type: 'DataStream',
+          definition: 'http://example.org/location-stream',
+          label: 'Location Stream',
+          elementType: {
+            component: {
+              type: 'Vector',
+              definition: 'http://example.org/location',
+              label: 'Location',
+              referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
+              coordinates: [
+                {
+                  name: 'lon',
+                  component: {
+                    type: 'Quantity',
+                    definition: 'http://example.org/longitude',
+                    label: 'Longitude',
+                    uom: { code: 'deg' }
+                  }
+                },
+                {
+                  name: 'lat',
+                  component: {
+                    type: 'Quantity',
+                    definition: 'http://example.org/latitude',
+                    label: 'Latitude',
+                    uom: { code: 'deg' }
+                  }
+                }
+              ]
+            }
+          }
+        };
+
+        const result = parser.parse(vectorSchema, { contentType: 'application/swe+json' });
+
+        expect(result.data.properties.schema.elementType.type).toBe('Vector');
+        expect(result.data.properties.schema.elementType.referenceFrame).toBe('http://www.opengis.net/def/crs/EPSG/0/4326');
+        expect(result.data.properties.schema.elementType.coordinates).toHaveLength(2);
+        expect(result.data.properties.schema.elementType.coordinates[0].name).toBe('lon');
+        expect(result.data.properties.schema.elementType.coordinates[1].name).toBe('lat');
+      });
     });
   });
 
