@@ -24,6 +24,10 @@ export * from './base-types.js';
 // Component types
 export * from './types/index.js';
 
+// Binary encoding support
+export { decodeBinary } from './binary-decoder.js';
+export { encodeBinary } from './binary-encoder.js';
+
 // Re-export union types for convenience
 export type {
   SimpleComponent,
