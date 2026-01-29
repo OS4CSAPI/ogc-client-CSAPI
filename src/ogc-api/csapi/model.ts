@@ -100,6 +100,18 @@ export interface DatastreamsQueryOptions {
 
   /** Property path filtering: comma-separated list of property paths */
   select?: string;
+
+  /** Text search query */
+  q?: string;
+
+  /** Filter by parent system ID */
+  system?: string;
+
+  /** Filter by feature of interest ID */
+  foi?: string;
+
+  /** Temporal filter: result time range */
+  resultTime?: DateTimeParameter;
 }
 
 /**
@@ -139,6 +151,12 @@ export interface ObservationsQueryOptions {
 
   /** Property path filtering: comma-separated list of property paths */
   select?: string;
+
+  /** Filter by datastream ID */
+  dataStream?: string;
+
+  /** Filter by parent system ID */
+  system?: string;
 }
 
 /**
@@ -166,6 +184,15 @@ export interface ControlStreamsQueryOptions {
 
   /** Property path filtering: comma-separated list of property paths */
   select?: string;
+
+  /** Text search query */
+  q?: string;
+
+  /** Filter by parent system ID */
+  system?: string;
+
+  /** Filter by feature of interest ID */
+  foi?: string;
 }
 
 /**
@@ -190,6 +217,24 @@ export interface CommandsQueryOptions {
 
   /** Property path filtering: comma-separated list of property paths */
   select?: string;
+
+  /** Filter by sender ID */
+  sender?: string;
+
+  /** Filter by control stream ID */
+  controlStream?: string;
+
+  /** Filter by parent system ID */
+  system?: string;
+
+  /** Filter by feature of interest ID */
+  foi?: string;
+
+  /** Filter by controlled property */
+  controlledProperty?: string;
+
+  /** Filter by status code */
+  statusCode?: string;
 }
 
 /**

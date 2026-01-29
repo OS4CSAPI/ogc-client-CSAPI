@@ -1,4 +1,4 @@
-import type { Link } from '../../../shared/models.js';
+import type { Link } from '../base-types.js';
 
 /**
  * Feasibility resource (NOT a GeoJSON Feature)
