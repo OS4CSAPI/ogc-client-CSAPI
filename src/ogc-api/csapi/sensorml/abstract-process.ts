@@ -1,6 +1,6 @@
 /**
  * SensorML 3.0 Abstract Process Types
- * 
+ *
  * Base process types that all SensorML processes inherit from.
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
  */

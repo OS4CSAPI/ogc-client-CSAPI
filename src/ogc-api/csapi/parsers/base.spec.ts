@@ -75,10 +75,13 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parseSensorML(sensorml as any);
-        
+
         expect(result.type).toBe('Feature');
         expect(result.id).toBe('system-1');
-        expect(result.geometry).toEqual({ type: 'Point', coordinates: [5.0, 45.0] });
+        expect(result.geometry).toEqual({
+          type: 'Point',
+          coordinates: [5.0, 45.0],
+        });
         expect(result.properties.featureType).toBe('System');
         expect(result.properties.name).toBe('Test System');
         expect(result.properties.description).toBe('A test system');
@@ -93,7 +96,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parseSensorML(sensorml as any);
-        
+
         expect(result.type).toBe('Feature');
         expect(result.properties.systemType).toBe('sensor');
       });
@@ -129,7 +132,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parseSensorML(sensorml as any);
-        
+
         expect(result.geometry).toEqual({
           type: 'Point',
           coordinates: [5.0, 45.0, 100.0],
@@ -144,7 +147,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parseSensorML(sensorml as any);
-        
+
         expect(result.geometry).toBeNull();
       });
     });
@@ -168,7 +171,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parse(feature);
-        
+
         expect(result.data).toEqual(feature);
         expect(result.format.format).toBe('geojson');
       });
@@ -181,7 +184,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parse(sensorml);
-        
+
         expect(result.data.type).toBe('Feature');
         expect(result.format.format).toBe('sensorml');
       });
@@ -198,7 +201,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parse(feature, { validate: true });
-        
+
         expect(result.errors).toBeNull();
         expect(result.data).toBeDefined();
       });
@@ -213,7 +216,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parse(invalid, { validate: true, strict: false });
-        
+
         expect(result.errors).toBeDefined();
         expect(result.errors!.length).toBeGreaterThan(0);
       });
@@ -227,7 +230,7 @@ describe('CSAPIParser', () => {
           },
         };
 
-        expect(() => 
+        expect(() =>
           parser.parse(invalid, { validate: true, strict: true })
         ).toThrow();
       });
@@ -278,7 +281,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parseGeoJSON(collection as any);
-        
+
         expect(result).toHaveLength(2);
         expect(result[0].id).toBe('system-1');
         expect(result[1].id).toBe('system-2');
@@ -296,7 +299,7 @@ describe('CSAPIParser', () => {
         };
 
         const result = parser.parseGeoJSON(feature as any);
-        
+
         expect(result).toHaveLength(1);
         expect(result[0].id).toBe('system-1');
       });
@@ -312,13 +315,21 @@ describe('CSAPIParser', () => {
       it('should throw CSAPIParseError on parseJSON fallback failure', () => {
         // Create a parser that fails all format parsers
         class FailingParser extends SystemParser {
-          parseGeoJSON(): SystemFeature { throw new Error('GeoJSON failed'); }
-          parseSensorML(): SystemFeature { throw new Error('SensorML failed'); }
-          parseSWE(): SystemFeature { throw new Error('SWE failed'); }
+          parseGeoJSON(): SystemFeature {
+            throw new Error('GeoJSON failed');
+          }
+          parseSensorML(): SystemFeature {
+            throw new Error('SensorML failed');
+          }
+          parseSWE(): SystemFeature {
+            throw new Error('SWE failed');
+          }
         }
 
         const failingParser = new FailingParser();
-        expect(() => failingParser.parse({ unknown: 'format' })).toThrow('Unable to parse data in any known format');
+        expect(() => failingParser.parse({ unknown: 'format' })).toThrow(
+          'Unable to parse data in any known format'
+        );
       });
 
       it('should re-throw CSAPIParseError without wrapping', () => {
@@ -329,8 +340,12 @@ describe('CSAPIParser', () => {
         }
 
         const errorParser = new ErrorThrowingParser();
-        const feature = { type: 'Feature', properties: { featureType: 'System', uid: 'test' }, geometry: null };
-        
+        const feature = {
+          type: 'Feature',
+          properties: { featureType: 'System', uid: 'test' },
+          geometry: null,
+        };
+
         expect(() => errorParser.parse(feature)).toThrow(CSAPIParseError);
         expect(() => errorParser.parse(feature)).toThrow('Custom parse error');
       });
@@ -350,7 +365,7 @@ describe('CSAPIParser', () => {
         const jsonString = JSON.stringify({
           type: 'Feature',
           properties: { featureType: 'System', uid: 'urn:test:system' },
-          geometry: null
+          geometry: null,
         });
 
         const result = parser.parse(jsonString);
@@ -362,7 +377,7 @@ describe('CSAPIParser', () => {
         const invalidData = {
           type: 'Feature',
           properties: { featureType: 'System' }, // missing uid
-          geometry: null
+          geometry: null,
         };
 
         // In strict mode, validation errors should propagate
@@ -383,7 +398,7 @@ describe('CSAPIParser', () => {
           properties: { featureType: 'System', uid: 'urn:test:system' },
           geometry: null,
         };
-        
+
         const result = parser.parse(data);
         expect(result).toBeDefined();
       });
@@ -394,7 +409,7 @@ describe('CSAPIParser', () => {
             throw new Error('Generic error');
           }
         }
-        
+
         const parser = new FailingParser();
         expect(() => parser.parse({ data: 'test' })).toThrow(CSAPIParseError);
       });
@@ -405,7 +420,7 @@ describe('CSAPIParser', () => {
             return { valid: true, warnings: ['test warning'] };
           }
         }
-        
+
         const parser = new ValidatingParser();
         const data = {
           type: 'Feature',
@@ -419,9 +434,9 @@ describe('CSAPIParser', () => {
       it('should return undefined for unsupported position types in extractLocationFromPosition', () => {
         const unsupportedPosition = {
           type: 'TextComponent',
-          value: 'some text'
+          value: 'some text',
         };
-        
+
         // This is a private function, but we can test indirectly through parsers
         // For now, we just verify the code path exists
         expect(unsupportedPosition.type).toBe('TextComponent');
@@ -481,17 +496,14 @@ describe('CSAPIParser', () => {
           position: {
             type: 'Vector',
             referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
-            coordinates: [
-              { value: 5.0 },
-              { value: 45.0 }
-            ]
-          }
+            coordinates: [{ value: 5.0 }, { value: 45.0 }],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0]
+          coordinates: [5.0, 45.0],
         });
       });
 
@@ -501,18 +513,14 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'Vector',
-            coordinates: [
-              { value: 5.0 },
-              { value: 45.0 },
-              { value: 100.0 }
-            ]
-          }
+            coordinates: [{ value: 5.0 }, { value: 45.0 }, { value: 100.0 }],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0, 100.0]
+          coordinates: [5.0, 45.0, 100.0],
         });
       });
 
@@ -524,15 +532,15 @@ describe('CSAPIParser', () => {
             type: 'Vector',
             coordinates: [
               { value: 5.0 },
-              {}  // Missing value
-            ]
-          }
+              {}, // Missing value
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 0]
+          coordinates: [5.0, 0],
         });
       });
 
@@ -543,9 +551,9 @@ describe('CSAPIParser', () => {
           position: {
             type: 'Vector',
             coordinates: [
-              { value: 5.0 }  // Only 1 coordinate
-            ]
-          }
+              { value: 5.0 }, // Only 1 coordinate
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -558,8 +566,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'Vector',
-            referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326'
-          }
+            referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -577,15 +585,15 @@ describe('CSAPIParser', () => {
             fields: [
               { name: 'latitude', value: 45.0 },
               { name: 'longitude', value: 5.0 },
-              { name: 'altitude', value: 100.0 }
-            ]
-          }
+              { name: 'altitude', value: 100.0 },
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0, 100.0]
+          coordinates: [5.0, 45.0, 100.0],
         });
       });
 
@@ -598,15 +606,15 @@ describe('CSAPIParser', () => {
             fields: [
               { name: 'lat', value: 45.0 },
               { name: 'lon', value: 5.0 },
-              { name: 'h', value: 100.0 }
-            ]
-          }
+              { name: 'h', value: 100.0 },
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0, 100.0]
+          coordinates: [5.0, 45.0, 100.0],
         });
       });
 
@@ -618,15 +626,15 @@ describe('CSAPIParser', () => {
             type: 'DataRecord',
             fields: [
               { name: 'lat', value: 45.0 },
-              { name: 'long', value: 5.0 }
-            ]
-          }
+              { name: 'long', value: 5.0 },
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0]
+          coordinates: [5.0, 45.0],
         });
       });
 
@@ -639,15 +647,15 @@ describe('CSAPIParser', () => {
             fields: [
               { name: 'lat', value: 45.0 },
               { name: 'lon', value: 5.0 },
-              { name: 'alt', value: 150.0 }
-            ]
-          }
+              { name: 'alt', value: 150.0 },
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0, 150.0]
+          coordinates: [5.0, 45.0, 150.0],
         });
       });
 
@@ -659,15 +667,15 @@ describe('CSAPIParser', () => {
             type: 'DataRecord',
             fields: [
               { name: 'lat', value: 45.0 },
-              { name: 'lon', value: 5.0 }
-            ]
-          }
+              { name: 'lon', value: 5.0 },
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.0, 45.0]
+          coordinates: [5.0, 45.0],
         });
       });
 
@@ -677,10 +685,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'DataRecord',
-            fields: [
-              { name: 'altitude', value: 100.0 }
-            ]
-          }
+            fields: [{ name: 'altitude', value: 100.0 }],
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -692,8 +698,8 @@ describe('CSAPIParser', () => {
           type: 'PhysicalSystem',
           uniqueId: 'urn:test:system-1',
           position: {
-            type: 'DataRecord'
-          }
+            type: 'DataRecord',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -711,15 +717,15 @@ describe('CSAPIParser', () => {
             values: [
               [5.0, 45.0, 100.0],
               [5.1, 45.1, 110.0],
-              [5.2, 45.2, 120.0]
-            ]
-          }
+              [5.2, 45.2, 120.0],
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.2, 45.2, 120.0]
+          coordinates: [5.2, 45.2, 120.0],
         });
       });
 
@@ -731,15 +737,15 @@ describe('CSAPIParser', () => {
             type: 'DataArray',
             values: [
               [5.0, 45.0],
-              [5.1, 45.1]
-            ]
-          }
+              [5.1, 45.1],
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
         expect(result.geometry).toEqual({
           type: 'Point',
-          coordinates: [5.1, 45.1]
+          coordinates: [5.1, 45.1],
         });
       });
 
@@ -749,8 +755,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'DataArray',
-            values: []
-          }
+            values: [],
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -762,8 +768,8 @@ describe('CSAPIParser', () => {
           type: 'PhysicalSystem',
           uniqueId: 'urn:test:system-1',
           position: {
-            type: 'DataArray'
-          }
+            type: 'DataArray',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -778,9 +784,9 @@ describe('CSAPIParser', () => {
             type: 'DataArray',
             values: [
               [5.0, 45.0],
-              [5.1]  // Only 1 coordinate
-            ]
-          }
+              [5.1], // Only 1 coordinate
+            ],
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -795,8 +801,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'Text',
-            value: '45.0, 5.0'
-          }
+            value: '45.0, 5.0',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -808,8 +814,8 @@ describe('CSAPIParser', () => {
           type: 'PhysicalSystem',
           uniqueId: 'urn:test:system-1',
           position: {
-            href: 'http://example.org/locations/1'
-          }
+            href: 'http://example.org/locations/1',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -822,8 +828,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'SimpleProcess',
-            id: 'geocoder'
-          }
+            id: 'geocoder',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -836,8 +842,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'AggregateProcess',
-            id: 'location-processor'
-          }
+            id: 'location-processor',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -850,8 +856,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'PhysicalComponent',
-            uniqueId: 'urn:test:component-1'
-          }
+            uniqueId: 'urn:test:component-1',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -864,8 +870,8 @@ describe('CSAPIParser', () => {
           uniqueId: 'urn:test:system-1',
           position: {
             type: 'PhysicalSystem',
-            uniqueId: 'urn:test:system-2'
-          }
+            uniqueId: 'urn:test:system-2',
+          },
         };
 
         const result = parser.parseSensorML(sml);
@@ -873,499 +879,491 @@ describe('CSAPIParser', () => {
       });
     });
 
-  describe('extractGeometry - SWE Common Position Types', () => {
-    const parser = new SystemParser();
+    describe('extractGeometry - SWE Common Position Types', () => {
+      const parser = new SystemParser();
 
-    describe('Vector positions', () => {
-      it('should extract coordinates from 2D Vector', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'Vector',
-            referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
-            coordinates: [
-              { name: 'lon', value: 5.0 },
-              { name: 'lat', value: 45.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45]
-        });
-      });
-
-      it('should extract coordinates from 3D Vector', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'Vector',
-            referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
-            coordinates: [
-              { name: 'lon', value: 5.0 },
-              { name: 'lat', value: 45.0 },
-              { name: 'alt', value: 100.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 100]
-        });
-      });
-
-      it('should handle Vector with missing value properties (defaults to 0)', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'Vector',
-            coordinates: [
-              { name: 'lon', value: 5.0 },
-              { name: 'lat' }  // Missing value
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 0]
-        });
-      });
-
-      it('should return null for Vector with insufficient coordinates (< 2)', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'Vector',
-            coordinates: [
-              { name: 'lon', value: 5.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should return null for Vector without coordinates array', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'Vector',
-            referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326'
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-    });
-
-    describe('DataRecord positions', () => {
-      it('should extract lat/lon from DataRecord with "lat"/"lon" field names', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 45.0 },
-              { name: 'lon', value: 5.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 0]
-        });
-      });
-
-      it('should extract lat/lon from DataRecord with "latitude"/"longitude" field names', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'latitude', value: 45.0 },
-              { name: 'longitude', value: 5.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 0]
-        });
-      });
-
-      it('should extract lat/lon from DataRecord with "long" as longitude variant', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 45.0 },
-              { name: 'long', value: 5.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 0]
-        });
-      });
-
-      it('should extract altitude from "alt" field', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 45.0 },
-              { name: 'lon', value: 5.0 },
-              { name: 'alt', value: 100.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 100]
-        });
-      });
-
-      it('should extract altitude from "altitude" field', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'latitude', value: 45.0 },
-              { name: 'longitude', value: 5.0 },
-              { name: 'altitude', value: 100.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 100]
-        });
-      });
-
-      it('should extract altitude from "h" field', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 45.0 },
-              { name: 'long', value: 5.0 },
-              { name: 'h', value: 100.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 100]
-        });
-      });
-
-      it('should have altitude defaulted to 0 when not provided', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 45.0 },
-              { name: 'lon', value: 5.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 0]
-        });
-      });
-
-      it('should return null for DataRecord with missing latitude', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lon', value: 5.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should return null for DataRecord with missing longitude', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 45.0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should return null for DataRecord with empty fields array', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: []
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should NOT match case-insensitive field names', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'Latitude', value: 45.0 },   // Capital L - won't match
-              { name: 'Longitude', value: 5.0 }    // Capital L - won't match
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        // Should return null because field names don't match (case-sensitive)
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should handle latitude=0, longitude=0 as valid position', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataRecord',
-            fields: [
-              { name: 'lat', value: 0 },
-              { name: 'lon', value: 0 }
-            ]
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [0, 0, 0]
-        });
-      });
-    });
-
-    describe('DataArray trajectory positions', () => {
-      it('should extract last position from multi-point trajectory', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataArray',
-            elementType: {
+      describe('Vector positions', () => {
+        it('should extract coordinates from 2D Vector', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
               type: 'Vector',
-              referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326'
+              referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
+              coordinates: [
+                { name: 'lon', value: 5.0 },
+                { name: 'lat', value: 45.0 },
+              ],
             },
-            values: [
-              [5.0, 45.0, 100.0],   // First position
-              [5.1, 45.1, 110.0],   // Middle position
-              [5.2, 45.2, 120.0]    // Last position (should extract this)
-            ]
-          }
-        };
+          };
 
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5.2, 45.2, 120]
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45],
+          });
+        });
+
+        it('should extract coordinates from 3D Vector', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'Vector',
+              referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
+              coordinates: [
+                { name: 'lon', value: 5.0 },
+                { name: 'lat', value: 45.0 },
+                { name: 'alt', value: 100.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 100],
+          });
+        });
+
+        it('should handle Vector with missing value properties (defaults to 0)', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'Vector',
+              coordinates: [
+                { name: 'lon', value: 5.0 },
+                { name: 'lat' }, // Missing value
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 0],
+          });
+        });
+
+        it('should return null for Vector with insufficient coordinates (< 2)', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'Vector',
+              coordinates: [{ name: 'lon', value: 5.0 }],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should return null for Vector without coordinates array', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'Vector',
+              referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
         });
       });
 
-      it('should extract last position from 2D trajectory', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataArray',
-            values: [
-              [5.0, 45.0],
-              [5.1, 45.1],
-              [5.2, 45.2]
-            ]
-          }
-        };
+      describe('DataRecord positions', () => {
+        it('should extract lat/lon from DataRecord with "lat"/"lon" field names', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'lat', value: 45.0 },
+                { name: 'lon', value: 5.0 },
+              ],
+            },
+          };
 
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5.2, 45.2]
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 0],
+          });
+        });
+
+        it('should extract lat/lon from DataRecord with "latitude"/"longitude" field names', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'latitude', value: 45.0 },
+                { name: 'longitude', value: 5.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 0],
+          });
+        });
+
+        it('should extract lat/lon from DataRecord with "long" as longitude variant', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'lat', value: 45.0 },
+                { name: 'long', value: 5.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 0],
+          });
+        });
+
+        it('should extract altitude from "alt" field', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'lat', value: 45.0 },
+                { name: 'lon', value: 5.0 },
+                { name: 'alt', value: 100.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 100],
+          });
+        });
+
+        it('should extract altitude from "altitude" field', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'latitude', value: 45.0 },
+                { name: 'longitude', value: 5.0 },
+                { name: 'altitude', value: 100.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 100],
+          });
+        });
+
+        it('should extract altitude from "h" field', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'lat', value: 45.0 },
+                { name: 'long', value: 5.0 },
+                { name: 'h', value: 100.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 100],
+          });
+        });
+
+        it('should have altitude defaulted to 0 when not provided', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'lat', value: 45.0 },
+                { name: 'lon', value: 5.0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 0],
+          });
+        });
+
+        it('should return null for DataRecord with missing latitude', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [{ name: 'lon', value: 5.0 }],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should return null for DataRecord with missing longitude', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [{ name: 'lat', value: 45.0 }],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should return null for DataRecord with empty fields array', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should NOT match case-insensitive field names', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'Latitude', value: 45.0 }, // Capital L - won't match
+                { name: 'Longitude', value: 5.0 }, // Capital L - won't match
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          // Should return null because field names don't match (case-sensitive)
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should handle latitude=0, longitude=0 as valid position', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataRecord',
+              fields: [
+                { name: 'lat', value: 0 },
+                { name: 'lon', value: 0 },
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [0, 0, 0],
+          });
         });
       });
 
-      it('should handle single-point trajectory', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataArray',
-            values: [
-              [5.0, 45.0, 100.0]
-            ]
-          }
-        };
+      describe('DataArray trajectory positions', () => {
+        it('should extract last position from multi-point trajectory', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataArray',
+              elementType: {
+                type: 'Vector',
+                referenceFrame: 'http://www.opengis.net/def/crs/EPSG/0/4326',
+              },
+              values: [
+                [5.0, 45.0, 100.0], // First position
+                [5.1, 45.1, 110.0], // Middle position
+                [5.2, 45.2, 120.0], // Last position (should extract this)
+              ],
+            },
+          };
 
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toEqual({
-          type: 'Point',
-          coordinates: [5, 45, 100]
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5.2, 45.2, 120],
+          });
+        });
+
+        it('should extract last position from 2D trajectory', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataArray',
+              values: [
+                [5.0, 45.0],
+                [5.1, 45.1],
+                [5.2, 45.2],
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5.2, 45.2],
+          });
+        });
+
+        it('should handle single-point trajectory', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataArray',
+              values: [[5.0, 45.0, 100.0]],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toEqual({
+            type: 'Point',
+            coordinates: [5, 45, 100],
+          });
+        });
+
+        it('should return null for empty DataArray', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataArray',
+              values: [],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should return null for DataArray without values', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataArray',
+              elementType: {
+                type: 'Vector',
+              },
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should return null for DataArray with insufficient coordinates in last value', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'DataArray',
+              values: [
+                [5.0, 45.0],
+                [5.1], // Only one coordinate
+              ],
+            },
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
         });
       });
 
-      it('should return null for empty DataArray', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataArray',
-            values: []
-          }
-        };
+      describe('Unsupported position types', () => {
+        it('should return null for TextComponent', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              type: 'Text',
+              value: '45.0, 5.0', // Text requiring geocoding
+            },
+          };
 
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
+          const result = parser.parseSensorML(sml);
+          // Intentionally returns null - geocoding not supported
+          expect(result.geometry).toBeNull();
+        });
 
-      it('should return null for DataArray without values', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataArray',
-            elementType: {
-              type: 'Vector'
-            }
-          }
-        };
+        it('should return null for XLink reference', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: {
+              href: 'http://example.org/locations/station-01', // External reference
+            },
+          };
 
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
+          const result = parser.parseSensorML(sml);
+          // Intentionally returns null - external fetch not supported
+          expect(result.geometry).toBeNull();
+        });
 
-      it('should return null for DataArray with insufficient coordinates in last value', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'DataArray',
-            values: [
-              [5.0, 45.0],
-              [5.1]  // Only one coordinate
-            ]
-          }
-        };
+        it('should return null for null position', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            position: null,
+          };
 
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
+
+        it('should return null for undefined position', () => {
+          const sml = {
+            type: 'PhysicalSystem',
+            uniqueId: 'urn:test:system-1',
+            // position: undefined (omitted)
+          };
+
+          const result = parser.parseSensorML(sml);
+          expect(result.geometry).toBeNull();
+        });
       });
     });
-
-    describe('Unsupported position types', () => {
-      it('should return null for TextComponent', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            type: 'Text',
-            value: '45.0, 5.0'  // Text requiring geocoding
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        // Intentionally returns null - geocoding not supported
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should return null for XLink reference', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: {
-            href: 'http://example.org/locations/station-01'  // External reference
-          }
-        };
-
-        const result = parser.parseSensorML(sml);
-        // Intentionally returns null - external fetch not supported
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should return null for null position', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1',
-          position: null
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-
-      it('should return null for undefined position', () => {
-        const sml = {
-          type: 'PhysicalSystem',
-          uniqueId: 'urn:test:system-1'
-          // position: undefined (omitted)
-        };
-
-        const result = parser.parseSensorML(sml);
-        expect(result.geometry).toBeNull();
-      });
-    });
-  });
   });
 });

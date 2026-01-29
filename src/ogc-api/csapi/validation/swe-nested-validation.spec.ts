@@ -1,4 +1,8 @@
-import { validateDataRecord, validateDataArray, validateSWEComponent } from './swe-validator';
+import {
+  validateDataRecord,
+  validateDataArray,
+  validateSWEComponent,
+} from './swe-validator';
 
 describe('Nested SWE Component Validation', () => {
   describe('DataRecord with nested components', () => {
@@ -15,10 +19,10 @@ describe('Nested SWE Component Validation', () => {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
                 label: 'Temperature',
-                uom: { code: 'Cel' }
-              }
-            }
-          ]
+                uom: { code: 'Cel' },
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -38,8 +42,8 @@ describe('Nested SWE Component Validation', () => {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
                 label: 'Temperature',
-                uom: { code: 'Cel' }
-              }
+                uom: { code: 'Cel' },
+              },
             },
             {
               name: 'humidity',
@@ -47,10 +51,10 @@ describe('Nested SWE Component Validation', () => {
                 type: 'Quantity',
                 definition: 'http://example.com/humidity',
                 label: 'Humidity',
-                uom: { code: '%' }
-              }
-            }
-          ]
+                uom: { code: '%' },
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -69,11 +73,11 @@ describe('Nested SWE Component Validation', () => {
               component: {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
-                label: 'Temperature'
+                label: 'Temperature',
                 // Missing uom
-              }
-            }
-          ]
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -94,11 +98,11 @@ describe('Nested SWE Component Validation', () => {
               component: {
                 type: 'Quantity',
                 label: 'Temperature',
-                uom: { code: 'Cel' }
+                uom: { code: 'Cel' },
                 // Missing definition
-              }
-            }
-          ]
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -129,8 +133,8 @@ describe('Nested SWE Component Validation', () => {
                       type: 'Quantity',
                       definition: 'http://example.com/latitude',
                       label: 'Latitude',
-                      uom: { code: 'deg' }
-                    }
+                      uom: { code: 'deg' },
+                    },
                   },
                   {
                     name: 'longitude',
@@ -138,13 +142,13 @@ describe('Nested SWE Component Validation', () => {
                       type: 'Quantity',
                       definition: 'http://example.com/longitude',
                       label: 'Longitude',
-                      uom: { code: 'deg' }
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+                      uom: { code: 'deg' },
+                    },
+                  },
+                ],
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -170,20 +174,22 @@ describe('Nested SWE Component Validation', () => {
                     component: {
                       type: 'Quantity',
                       definition: 'http://example.com/latitude',
-                      label: 'Latitude'
+                      label: 'Latitude',
                       // Missing uom
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+                    },
+                  },
+                ],
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
         expect(result.valid).toBe(false);
         expect(result.errors).toHaveLength(1);
-        expect(result.errors?.[0].path).toBe('fields[0].component.fields[0].component');
+        expect(result.errors?.[0].path).toBe(
+          'fields[0].component.fields[0].component'
+        );
         expect(result.errors?.[0].message).toContain('uom');
       });
     });
@@ -215,16 +221,16 @@ describe('Nested SWE Component Validation', () => {
                             type: 'Quantity',
                             definition: 'http://example.com/level3',
                             label: 'Level 3 Value',
-                            uom: { code: 'm' }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+                            uom: { code: 'm' },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -257,23 +263,25 @@ describe('Nested SWE Component Validation', () => {
                           component: {
                             type: 'Quantity',
                             definition: 'http://example.com/level3',
-                            label: 'Level 3 Value'
+                            label: 'Level 3 Value',
                             // Missing uom
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
         expect(result.valid).toBe(false);
         expect(result.errors).toHaveLength(1);
-        expect(result.errors?.[0].path).toBe('fields[0].component.fields[0].component.fields[0].component');
+        expect(result.errors?.[0].path).toBe(
+          'fields[0].component.fields[0].component.fields[0].component'
+        );
         expect(result.errors?.[0].message).toContain('uom');
       });
     });
@@ -291,10 +299,10 @@ describe('Nested SWE Component Validation', () => {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
                 label: 'Temperature',
-                uom: { code: 'Cel' }
-              }
-            }
-          ]
+                uom: { code: 'Cel' },
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -302,7 +310,7 @@ describe('Nested SWE Component Validation', () => {
         expect(result.errors).toContainEqual(
           expect.objectContaining({
             path: 'fields[0].name',
-            message: expect.stringContaining('name')
+            message: expect.stringContaining('name'),
           })
         );
       });
@@ -319,10 +327,10 @@ describe('Nested SWE Component Validation', () => {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
                 label: 'Temperature',
-                uom: { code: 'Cel' }
-              }
-            }
-          ]
+                uom: { code: 'Cel' },
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -330,7 +338,7 @@ describe('Nested SWE Component Validation', () => {
         expect(result.errors).toContainEqual(
           expect.objectContaining({
             path: 'fields[0].name',
-            message: expect.stringContaining('name')
+            message: expect.stringContaining('name'),
           })
         );
       });
@@ -342,10 +350,10 @@ describe('Nested SWE Component Validation', () => {
           label: 'Measurements',
           fields: [
             {
-              name: 'temperature'
+              name: 'temperature',
               // Missing component
-            }
-          ]
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -353,7 +361,7 @@ describe('Nested SWE Component Validation', () => {
         expect(result.errors).toContainEqual(
           expect.objectContaining({
             path: 'fields[0].component',
-            message: expect.stringContaining('component')
+            message: expect.stringContaining('component'),
           })
         );
       });
@@ -369,15 +377,15 @@ describe('Nested SWE Component Validation', () => {
               component: {
                 type: 'Quantity',
                 definition: 'http://example.com/temp',
-                label: 'Temperature'
+                label: 'Temperature',
                 // Missing uom
-              }
+              },
             },
             {
-              name: 'humidity'
+              name: 'humidity',
               // Missing component
-            }
-          ]
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord);
@@ -398,11 +406,11 @@ describe('Nested SWE Component Validation', () => {
               component: {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
-                label: 'Temperature'
+                label: 'Temperature',
                 // Missing uom - should not be detected
-              }
-            }
-          ]
+              },
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord, false);
@@ -417,10 +425,10 @@ describe('Nested SWE Component Validation', () => {
           label: 'Measurements',
           fields: [
             {
-              name: 'temperature'
+              name: 'temperature',
               // Missing component - should still be detected
-            }
-          ]
+            },
+          ],
         };
 
         const result = validateDataRecord(dataRecord, false);
@@ -442,8 +450,8 @@ describe('Nested SWE Component Validation', () => {
             type: 'Quantity',
             definition: 'http://example.com/temperature',
             label: 'Temperature',
-            uom: { code: 'Cel' }
-          }
+            uom: { code: 'Cel' },
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -460,9 +468,9 @@ describe('Nested SWE Component Validation', () => {
           elementType: {
             type: 'Quantity',
             definition: 'http://example.com/temperature',
-            label: 'Temperature'
+            label: 'Temperature',
             // Missing uom
-          }
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -481,9 +489,9 @@ describe('Nested SWE Component Validation', () => {
           elementType: {
             type: 'Quantity',
             label: 'Temperature',
-            uom: { code: 'Cel' }
+            uom: { code: 'Cel' },
             // Missing definition
-          }
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -512,8 +520,8 @@ describe('Nested SWE Component Validation', () => {
                   type: 'Quantity',
                   definition: 'http://example.com/temperature',
                   label: 'Temperature',
-                  uom: { code: 'Cel' }
-                }
+                  uom: { code: 'Cel' },
+                },
               },
               {
                 name: 'pressure',
@@ -521,11 +529,11 @@ describe('Nested SWE Component Validation', () => {
                   type: 'Quantity',
                   definition: 'http://example.com/pressure',
                   label: 'Pressure',
-                  uom: { code: 'hPa' }
-                }
-              }
-            ]
-          }
+                  uom: { code: 'hPa' },
+                },
+              },
+            ],
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -549,12 +557,12 @@ describe('Nested SWE Component Validation', () => {
                 component: {
                   type: 'Quantity',
                   definition: 'http://example.com/temperature',
-                  label: 'Temperature'
+                  label: 'Temperature',
                   // Missing uom
-                }
-              }
-            ]
-          }
+                },
+              },
+            ],
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -581,9 +589,9 @@ describe('Nested SWE Component Validation', () => {
               type: 'Quantity',
               definition: 'http://example.com/value',
               label: 'Value',
-              uom: { code: 'm' }
-            }
-          }
+              uom: { code: 'm' },
+            },
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -605,10 +613,10 @@ describe('Nested SWE Component Validation', () => {
             elementType: {
               type: 'Quantity',
               definition: 'http://example.com/value',
-              label: 'Value'
+              label: 'Value',
               // Missing uom
-            }
-          }
+            },
+          },
         };
 
         const result = validateDataArray(dataArray);
@@ -629,9 +637,9 @@ describe('Nested SWE Component Validation', () => {
           elementType: {
             type: 'Quantity',
             definition: 'http://example.com/temperature',
-            label: 'Temperature'
+            label: 'Temperature',
             // Missing uom - should not be detected
-          }
+          },
         };
 
         const result = validateDataArray(dataArray, false);
@@ -659,11 +667,11 @@ describe('Nested SWE Component Validation', () => {
                 type: 'Quantity',
                 definition: 'http://example.com/temperature',
                 label: 'Temperature',
-                uom: { code: 'Cel' }
-              }
-            }
-          }
-        ]
+                uom: { code: 'Cel' },
+              },
+            },
+          },
+        ],
       };
 
       const result = validateDataRecord(dataRecord);
@@ -693,12 +701,12 @@ describe('Nested SWE Component Validation', () => {
                   type: 'Quantity',
                   definition: 'http://example.com/reading',
                   label: 'Reading',
-                  uom: { code: 'Cel' }
-                }
-              }
-            }
-          ]
-        }
+                  uom: { code: 'Cel' },
+                },
+              },
+            },
+          ],
+        },
       };
 
       const result = validateDataArray(dataArray);
@@ -734,22 +742,24 @@ describe('Nested SWE Component Validation', () => {
                       elementType: {
                         type: 'Quantity',
                         definition: 'http://example.com/value',
-                        label: 'Value'
+                        label: 'Value',
                         // Missing uom
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        ]
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
       };
 
       const result = validateDataRecord(dataRecord);
       expect(result.valid).toBe(false);
       expect(result.errors).toHaveLength(1);
-      expect(result.errors?.[0].path).toBe('fields[0].component.elementType.fields[0].component.elementType');
+      expect(result.errors?.[0].path).toBe(
+        'fields[0].component.elementType.fields[0].component.elementType'
+      );
       expect(result.errors?.[0].message).toContain('uom');
     });
   });
@@ -767,10 +777,10 @@ describe('Nested SWE Component Validation', () => {
               type: 'Quantity',
               definition: 'http://example.com/temperature',
               label: 'Temperature',
-              uom: { code: 'Cel' }
-            }
-          }
-        ]
+              uom: { code: 'Cel' },
+            },
+          },
+        ],
       };
 
       const result = validateSWEComponent(dataRecord);
@@ -789,11 +799,11 @@ describe('Nested SWE Component Validation', () => {
             component: {
               type: 'Quantity',
               definition: 'http://example.com/temperature',
-              label: 'Temperature'
+              label: 'Temperature',
               // Missing uom
-            }
-          }
-        ]
+            },
+          },
+        ],
       };
 
       const result = validateSWEComponent(dataRecord);
@@ -810,9 +820,9 @@ describe('Nested SWE Component Validation', () => {
         elementType: {
           type: 'Quantity',
           definition: 'http://example.com/temperature',
-          label: 'Temperature'
+          label: 'Temperature',
           // Missing uom
-        }
+        },
       };
 
       const resultWithValidation = validateSWEComponent(dataArray, true);
@@ -835,11 +845,11 @@ describe('Nested SWE Component Validation', () => {
             component: {
               type: 'Quantity',
               definition: 'http://example.com/temperature',
-              label: 'Temperature'
+              label: 'Temperature',
               // Missing uom
-            }
-          }
-        ]
+            },
+          },
+        ],
       };
 
       const result = validateDataRecord(dataRecord);
@@ -858,10 +868,10 @@ describe('Nested SWE Component Validation', () => {
             component: {
               type: 'Count',
               definition: 'http://example.com/count',
-              label: 'Count'
-            }
-          }
-        ]
+              label: 'Count',
+            },
+          },
+        ],
       };
 
       const result = validateDataRecord(simpleDataRecord);

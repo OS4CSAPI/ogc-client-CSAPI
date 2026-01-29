@@ -2,10 +2,10 @@ import type { Link } from '../base-types.js';
 
 /**
  * System Event resource (NOT a GeoJSON Feature)
- * 
+ *
  * System events represent significant occurrences in a system's lifecycle,
  * such as state changes, configuration updates, alerts, or notifications.
- * 
+ *
  * @see https://docs.ogc.org/is/23-002/23-002.html#_system_events
  */
 
@@ -25,7 +25,7 @@ export type SystemEventType =
 
 /**
  * System Event resource
- * 
+ *
  * Represents a significant occurrence in a system's lifecycle.
  * System events are non-spatial resources (not GeoJSON features).
  */
@@ -57,7 +57,7 @@ export interface SystemEvent {
 
 /**
  * System Event Collection
- * 
+ *
  * Collection of system event resources with pagination links.
  */
 export interface SystemEventCollection {

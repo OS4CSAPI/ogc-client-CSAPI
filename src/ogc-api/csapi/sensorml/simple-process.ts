@@ -1,6 +1,6 @@
 /**
  * SensorML 3.0 Simple Process
- * 
+ *
  * A process that is not subdivided into components.
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
  */

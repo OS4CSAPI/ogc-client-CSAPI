@@ -1,9 +1,9 @@
 /**
  * Property feature types for CSAPI
- * 
+ *
  * Properties represent observable or controllable properties of systems,
  * such as temperature, pressure, speed, or any other measurable/controllable characteristic.
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_properties_2
  */
 
@@ -18,7 +18,7 @@ import type {
 
 /**
  * Properties specific to Property features
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_property_resource
  */
 export interface PropertyFeatureProperties extends CSAPIFeatureProperties {
@@ -26,22 +26,22 @@ export interface PropertyFeatureProperties extends CSAPIFeatureProperties {
    * Always 'Property' for property features
    */
   featureType: 'Property';
-  
+
   /**
    * Definition URI for the property (e.g., from ontology)
    */
   definition: DefinitionURI;
-  
+
   /**
    * Label for display
    */
   label?: string;
-  
+
   /**
    * IDs of datastreams observing this property
    */
   observedBy?: UniqueID[];
-  
+
   /**
    * IDs of control streams controlling this property
    */
@@ -60,7 +60,7 @@ export interface PropertyFeatureProperties extends CSAPIFeatureProperties {
 
 /**
  * GeoJSON Feature representing a Property
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_property_resource
  */
 export interface PropertyFeature
@@ -70,7 +70,7 @@ export interface PropertyFeature
 
 /**
  * GeoJSON FeatureCollection of Properties
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_properties_2
  */
 export interface PropertyFeatureCollection
@@ -81,7 +81,9 @@ export interface PropertyFeatureCollection
 /**
  * Type guard to check if a feature is a Property feature
  */
-export function isPropertyFeature(feature: unknown): feature is PropertyFeature {
+export function isPropertyFeature(
+  feature: unknown
+): feature is PropertyFeature {
   return (
     typeof feature === 'object' &&
     feature !== null &&

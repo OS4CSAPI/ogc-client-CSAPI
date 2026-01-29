@@ -1,11 +1,11 @@
 /**
  * Aggregate component types for SWE Common
- * 
+ *
  * Aggregate components group multiple data components together:
  * - DataRecord: Ordered collection of named fields (like a struct/record)
  * - Vector: Special case of DataRecord representing a mathematical vector
  * - DataChoice: Selection from multiple alternative data components
- * 
+ *
  * @see https://docs.ogc.org/is/24-014/24-014.html Section 9.2
  */
 
@@ -21,7 +21,11 @@ import type { RangeComponent } from './range-components.js';
  * Forward declarations for recursive types
  * Note: Full DataComponent type is defined in the main index
  */
-export type DataComponent = SimpleComponent | RangeComponent | AggregateComponent | any;
+export type DataComponent =
+  | SimpleComponent
+  | RangeComponent
+  | AggregateComponent
+  | any;
 
 /**
  * Field definition for DataRecord
@@ -32,7 +36,7 @@ export interface DataRecordField extends SoftNamedProperty {
    * External reference (alternative to inline component)
    */
   href?: string;
-  
+
   /**
    * Inline component definition
    */
@@ -41,10 +45,10 @@ export interface DataRecordField extends SoftNamedProperty {
 
 /**
  * DataRecord component representing a structured record with named fields
- * 
+ *
  * Similar to a struct or object in programming languages, a DataRecord
  * groups multiple data components with names.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/DataRecord.json
  */
 export interface DataRecordComponent extends AbstractDataComponent {
@@ -52,7 +56,7 @@ export interface DataRecordComponent extends AbstractDataComponent {
    * Always 'DataRecord' for data record components
    */
   type: 'DataRecord';
-  
+
   /**
    * List of fields in the record
    */
@@ -67,7 +71,7 @@ export interface VectorCoordinate extends SoftNamedProperty {
    * External reference (alternative to inline component)
    */
   href?: string;
-  
+
   /**
    * Inline quantity component for this coordinate
    */
@@ -76,10 +80,10 @@ export interface VectorCoordinate extends SoftNamedProperty {
 
 /**
  * Vector component representing a mathematical vector
- * 
+ *
  * Vectors are special DataRecords representing n-dimensional quantities
  * with a specific reference frame and coordinate system.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Vector.json
  * @required referenceFrame - Required by JSON Schema
  */
@@ -88,17 +92,17 @@ export interface VectorComponent extends AbstractDataComponent {
    * Always 'Vector' for vector components
    */
   type: 'Vector';
-  
+
   /**
    * Reference frame for the vector (e.g., WGS84, local frame) (REQUIRED)
    */
   referenceFrame: string;
-  
+
   /**
    * Local frame identifier
    */
   localFrame?: string;
-  
+
   /**
    * Vector coordinates (typically Quantity components)
    */
@@ -113,7 +117,7 @@ export interface DataChoiceItem extends SoftNamedProperty {
    * External reference (alternative to inline component)
    */
   href?: string;
-  
+
   /**
    * Inline component definition
    */
@@ -122,10 +126,10 @@ export interface DataChoiceItem extends SoftNamedProperty {
 
 /**
  * DataChoice component representing a selection from alternatives
- * 
+ *
  * DataChoice allows specifying multiple possible data components,
  * with one selected at runtime based on conditions.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/DataChoice.json
  */
 export interface DataChoiceComponent extends AbstractDataComponent {
@@ -133,12 +137,12 @@ export interface DataChoiceComponent extends AbstractDataComponent {
    * Always 'DataChoice' for data choice components
    */
   type: 'DataChoice';
-  
+
   /**
    * Name of the field that determines which choice is active
    */
   choiceValue?: string;
-  
+
   /**
    * List of possible choices
    */
@@ -170,7 +174,9 @@ export function isDataRecordComponent(
 /**
  * Type guard for Vector component
  */
-export function isVectorComponent(component: unknown): component is VectorComponent {
+export function isVectorComponent(
+  component: unknown
+): component is VectorComponent {
   return (
     typeof component === 'object' &&
     component !== null &&

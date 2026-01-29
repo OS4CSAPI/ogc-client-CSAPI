@@ -41,22 +41,30 @@ describe('SWE Common Parsers', () => {
 
       it('should reject non-object input', () => {
         expect(() => parseQuantityComponent('invalid')).toThrow(ParseError);
-        expect(() => parseQuantityComponent('invalid')).toThrow('Quantity must be an object');
+        expect(() => parseQuantityComponent('invalid')).toThrow(
+          'Quantity must be an object'
+        );
       });
 
       it('should reject wrong type', () => {
         const data = { type: 'Count', uom: { code: 'Cel' } };
-        expect(() => parseQuantityComponent(data)).toThrow('Expected type \'Quantity\'');
+        expect(() => parseQuantityComponent(data)).toThrow(
+          "Expected type 'Quantity'"
+        );
       });
 
       it('should reject missing uom', () => {
         const data = { type: 'Quantity' };
-        expect(() => parseQuantityComponent(data)).toThrow('Quantity requires uom');
+        expect(() => parseQuantityComponent(data)).toThrow(
+          'Quantity requires uom'
+        );
       });
 
       it('should reject uom without code or href', () => {
         const data = { type: 'Quantity', uom: {} };
-        expect(() => parseQuantityComponent(data)).toThrow('uom must have code or href');
+        expect(() => parseQuantityComponent(data)).toThrow(
+          'uom must have code or href'
+        );
       });
     });
 
@@ -72,12 +80,16 @@ describe('SWE Common Parsers', () => {
       });
 
       it('should reject non-object input', () => {
-        expect(() => parseCountComponent(123)).toThrow('Count must be an object');
+        expect(() => parseCountComponent(123)).toThrow(
+          'Count must be an object'
+        );
       });
 
       it('should reject wrong type', () => {
         const data = { type: 'Boolean' };
-        expect(() => parseCountComponent(data)).toThrow('Expected type \'Count\'');
+        expect(() => parseCountComponent(data)).toThrow(
+          "Expected type 'Count'"
+        );
       });
     });
 
@@ -93,7 +105,9 @@ describe('SWE Common Parsers', () => {
       });
 
       it('should reject non-object input', () => {
-        expect(() => parseBooleanComponent(null)).toThrow('Boolean must be an object');
+        expect(() => parseBooleanComponent(null)).toThrow(
+          'Boolean must be an object'
+        );
       });
     });
 
@@ -126,7 +140,9 @@ describe('SWE Common Parsers', () => {
 
       it('should reject wrong type', () => {
         const data = { type: 'Text' };
-        expect(() => parseCategoryComponent(data)).toThrow('Expected type \'Category\'');
+        expect(() => parseCategoryComponent(data)).toThrow(
+          "Expected type 'Category'"
+        );
       });
     });
 
@@ -165,7 +181,9 @@ describe('SWE Common Parsers', () => {
 
       it('should reject missing uom', () => {
         const data = { type: 'QuantityRange' };
-        expect(() => parseQuantityRangeComponent(data)).toThrow('QuantityRange requires uom');
+        expect(() => parseQuantityRangeComponent(data)).toThrow(
+          'QuantityRange requires uom'
+        );
       });
     });
 
@@ -182,7 +200,9 @@ describe('SWE Common Parsers', () => {
 
       it('should reject wrong type', () => {
         const data = { type: 'Count' };
-        expect(() => parseCountRangeComponent(data)).toThrow('Expected type \'CountRange\'');
+        expect(() => parseCountRangeComponent(data)).toThrow(
+          "Expected type 'CountRange'"
+        );
       });
     });
 
@@ -212,7 +232,9 @@ describe('SWE Common Parsers', () => {
 
       it('should reject missing uom', () => {
         const data = { type: 'TimeRange' };
-        expect(() => parseTimeRangeComponent(data)).toThrow('TimeRange requires uom');
+        expect(() => parseTimeRangeComponent(data)).toThrow(
+          'TimeRange requires uom'
+        );
       });
     });
   });
@@ -289,7 +311,9 @@ describe('SWE Common Parsers', () => {
           type: 'DataRecord',
           fields: [],
         };
-        expect(() => parseDataRecordComponent(data)).toThrow('must have at least one field');
+        expect(() => parseDataRecordComponent(data)).toThrow(
+          'must have at least one field'
+        );
       });
 
       it('should reject field without name', () => {
@@ -301,7 +325,9 @@ describe('SWE Common Parsers', () => {
             },
           ],
         };
-        expect(() => parseDataRecordComponent(data)).toThrow('must have a name property');
+        expect(() => parseDataRecordComponent(data)).toThrow(
+          'must have a name property'
+        );
       });
 
       it('should reject field without component or href', () => {
@@ -313,7 +339,9 @@ describe('SWE Common Parsers', () => {
             },
           ],
         };
-        expect(() => parseDataRecordComponent(data)).toThrow('must have either component or href');
+        expect(() => parseDataRecordComponent(data)).toThrow(
+          'must have either component or href'
+        );
       });
 
       it('should allow field with href', () => {
@@ -328,7 +356,9 @@ describe('SWE Common Parsers', () => {
         };
 
         const result = parseDataRecordComponent(data);
-        expect(result.fields[0].href).toBe('http://example.org/components/temp');
+        expect(result.fields[0].href).toBe(
+          'http://example.org/components/temp'
+        );
       });
 
       it('should provide path in nested error messages', () => {
@@ -406,7 +436,9 @@ describe('SWE Common Parsers', () => {
           type: 'Vector',
           coordinates: [],
         };
-        expect(() => parseVectorComponent(data)).toThrow('must have at least one coordinate');
+        expect(() => parseVectorComponent(data)).toThrow(
+          'must have at least one coordinate'
+        );
       });
 
       it('should reject coordinate without name', () => {
@@ -418,7 +450,9 @@ describe('SWE Common Parsers', () => {
             },
           ],
         };
-        expect(() => parseVectorComponent(data)).toThrow('must have a name property');
+        expect(() => parseVectorComponent(data)).toThrow(
+          'must have a name property'
+        );
       });
     });
 
@@ -454,7 +488,9 @@ describe('SWE Common Parsers', () => {
           type: 'DataChoice',
           items: [],
         };
-        expect(() => parseDataChoiceComponent(data)).toThrow('must have at least one item');
+        expect(() => parseDataChoiceComponent(data)).toThrow(
+          'must have at least one item'
+        );
       });
 
       it('should allow items with href', () => {
@@ -488,7 +524,9 @@ describe('SWE Common Parsers', () => {
                   name: 'time',
                   component: {
                     type: 'Time',
-                    uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+                    uom: {
+                      href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian',
+                    },
                   },
                 },
                 {
@@ -518,14 +556,18 @@ describe('SWE Common Parsers', () => {
         };
 
         const result = parseDataArrayComponent(data);
-        expect(result.elementType.href).toBe('http://example.org/components/record');
+        expect(result.elementType.href).toBe(
+          'http://example.org/components/record'
+        );
       });
 
       it('should reject missing elementType', () => {
         const data = {
           type: 'DataArray',
         };
-        expect(() => parseDataArrayComponent(data)).toThrow('DataArray requires elementType');
+        expect(() => parseDataArrayComponent(data)).toThrow(
+          'DataArray requires elementType'
+        );
       });
 
       it('should reject elementType without component or href', () => {
@@ -535,7 +577,9 @@ describe('SWE Common Parsers', () => {
             name: 'record',
           },
         };
-        expect(() => parseDataArrayComponent(data)).toThrow('must have either component or href');
+        expect(() => parseDataArrayComponent(data)).toThrow(
+          'must have either component or href'
+        );
       });
     });
 
@@ -561,7 +605,9 @@ describe('SWE Common Parsers', () => {
         const data = {
           type: 'Matrix',
         };
-        expect(() => parseMatrixComponent(data)).toThrow('Matrix requires elementType');
+        expect(() => parseMatrixComponent(data)).toThrow(
+          'Matrix requires elementType'
+        );
       });
     });
 
@@ -578,7 +624,9 @@ describe('SWE Common Parsers', () => {
                   name: 'time',
                   component: {
                     type: 'Time',
-                    uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+                    uom: {
+                      href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian',
+                    },
                   },
                 },
               ],
@@ -595,7 +643,9 @@ describe('SWE Common Parsers', () => {
         const data = {
           type: 'DataStream',
         };
-        expect(() => parseDataStreamComponent(data)).toThrow('DataStream requires elementType');
+        expect(() => parseDataStreamComponent(data)).toThrow(
+          'DataStream requires elementType'
+        );
       });
     });
   });
@@ -613,7 +663,9 @@ describe('SWE Common Parsers', () => {
       });
 
       it('should reject non-object input', () => {
-        expect(() => parseGeometryComponent(null)).toThrow('Geometry must be an object');
+        expect(() => parseGeometryComponent(null)).toThrow(
+          'Geometry must be an object'
+        );
       });
     });
   });
@@ -629,7 +681,9 @@ describe('SWE Common Parsers', () => {
     });
 
     it('should reject non-object input', () => {
-      expect(() => parseDataComponent('invalid')).toThrow('Data component must be an object');
+      expect(() => parseDataComponent('invalid')).toThrow(
+        'Data component must be an object'
+      );
     });
 
     it('should reject missing type property', () => {
@@ -638,7 +692,9 @@ describe('SWE Common Parsers', () => {
 
     it('should reject unknown component type', () => {
       const data = { type: 'UnknownType' };
-      expect(() => parseDataComponent(data)).toThrow('Unknown or unsupported component type');
+      expect(() => parseDataComponent(data)).toThrow(
+        'Unknown or unsupported component type'
+      );
     });
 
     it('should handle all simple component types', () => {
@@ -648,12 +704,15 @@ describe('SWE Common Parsers', () => {
         { type: 'Category' },
         { type: 'Count' },
         { type: 'Quantity', uom: { code: 'Cel' } },
-        { type: 'Time', uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' } },
+        {
+          type: 'Time',
+          uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+        },
       ];
 
       types.forEach((data) => {
         const result = parseDataComponent(data);
-      expect((result as any).type).toBe(data.type);
+        expect((result as any).type).toBe(data.type);
       });
     });
 
@@ -662,12 +721,15 @@ describe('SWE Common Parsers', () => {
         { type: 'CategoryRange' },
         { type: 'CountRange' },
         { type: 'QuantityRange', uom: { code: 'Cel' } },
-        { type: 'TimeRange', uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' } },
+        {
+          type: 'TimeRange',
+          uom: { href: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian' },
+        },
       ];
 
       types.forEach((data) => {
         const result = parseDataComponent(data);
-      expect((result as any).type).toBe(data.type);
+        expect((result as any).type).toBe(data.type);
       });
     });
 
@@ -717,8 +779,13 @@ describe('SWE Common Parsers', () => {
       const result = parseDataComponent(data) as any;
       expect(result.type).toBe('DataRecord');
       expect(result.fields[0].component.type).toBe('DataArray');
-      expect(result.fields[0].component.elementType.component.type).toBe('DataRecord');
-      expect(result.fields[0].component.elementType.component.fields[0].component.type).toBe('Quantity');
+      expect(result.fields[0].component.elementType.component.type).toBe(
+        'DataRecord'
+      );
+      expect(
+        result.fields[0].component.elementType.component.fields[0].component
+          .type
+      ).toBe('Quantity');
     });
   });
 

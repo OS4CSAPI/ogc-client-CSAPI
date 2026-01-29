@@ -63,7 +63,10 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
@@ -347,7 +350,10 @@ export default class CSAPINavigator {
       );
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
@@ -478,7 +484,10 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
@@ -501,7 +510,9 @@ export default class CSAPINavigator {
     if (options.parent !== undefined) {
       url.searchParams.set(
         'parent',
-        Array.isArray(options.parent) ? options.parent.join(',') : options.parent
+        Array.isArray(options.parent)
+          ? options.parent.join(',')
+          : options.parent
       );
     }
     if (options.system !== undefined) {
@@ -632,7 +643,9 @@ export default class CSAPINavigator {
   ): string {
     this._checkResourceAvailable('deployments');
     const url = new URL(
-      `${this.baseUrl}/deployments/${encodeURIComponent(parentDeploymentId)}/subdeployments`
+      `${this.baseUrl}/deployments/${encodeURIComponent(
+        parentDeploymentId
+      )}/subdeployments`
     );
 
     if (options.limit !== undefined) {
@@ -642,7 +655,10 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
@@ -663,7 +679,9 @@ export default class CSAPINavigator {
    */
   createSubdeploymentUrl(parentDeploymentId: string): string {
     this._checkResourceAvailable('deployments');
-    return `${this.baseUrl}/deployments/${encodeURIComponent(parentDeploymentId)}/subdeployments`;
+    return `${this.baseUrl}/deployments/${encodeURIComponent(
+      parentDeploymentId
+    )}/subdeployments`;
   }
 
   // ========================================
@@ -688,7 +706,10 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.q !== undefined) {
       url.searchParams.set('q', options.q);
@@ -728,7 +749,11 @@ export default class CSAPINavigator {
    */
   getSamplingFeatureUrl(samplingFeatureId: string, format?: string): string {
     this._checkResourceAvailable('samplingFeatures');
-    return this._buildResourceUrl('samplingFeatures', samplingFeatureId, format);
+    return this._buildResourceUrl(
+      'samplingFeatures',
+      samplingFeatureId,
+      format
+    );
   }
 
   /**
@@ -751,7 +776,9 @@ export default class CSAPINavigator {
    */
   updateSamplingFeatureUrl(samplingFeatureId: string): string {
     this._checkResourceAvailable('samplingFeatures');
-    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`;
+    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(
+      samplingFeatureId
+    )}`;
   }
 
   /**
@@ -763,7 +790,9 @@ export default class CSAPINavigator {
    */
   patchSamplingFeatureUrl(samplingFeatureId: string): string {
     this._checkResourceAvailable('samplingFeatures');
-    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`;
+    return `${this.baseUrl}/samplingFeatures/${encodeURIComponent(
+      samplingFeatureId
+    )}`;
   }
 
   /**
@@ -774,10 +803,15 @@ export default class CSAPINavigator {
    * @param cascade If true, cascade delete to related resources (Part 2: Section 10.5)
    * @returns URL string for DELETE request
    */
-  deleteSamplingFeatureUrl(samplingFeatureId: string, cascade?: boolean): string {
+  deleteSamplingFeatureUrl(
+    samplingFeatureId: string,
+    cascade?: boolean
+  ): string {
     this._checkResourceAvailable('samplingFeatures');
     const url = new URL(
-      `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}`
+      `${this.baseUrl}/samplingFeatures/${encodeURIComponent(
+        samplingFeatureId
+      )}`
     );
     if (cascade !== undefined) {
       url.searchParams.set('cascade', cascade.toString());
@@ -799,7 +833,9 @@ export default class CSAPINavigator {
   ): string {
     this._checkResourceAvailable('samplingFeatures');
     const url = new URL(
-      `${this.baseUrl}/samplingFeatures/${encodeURIComponent(samplingFeatureId)}/history`
+      `${this.baseUrl}/samplingFeatures/${encodeURIComponent(
+        samplingFeatureId
+      )}/history`
     );
 
     if (options.validTime !== undefined) {
@@ -837,7 +873,10 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.id !== undefined) {
       url.searchParams.set(
@@ -861,10 +900,16 @@ export default class CSAPINavigator {
       url.searchParams.set('observedProperty', options.observedProperty);
     }
     if (options.phenomenonTime !== undefined) {
-      url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+      url.searchParams.set(
+        'phenomenonTime',
+        this._serializeDatetime(options.phenomenonTime)
+      );
     }
     if (options.resultTime !== undefined) {
-      url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
+      url.searchParams.set(
+        'resultTime',
+        this._serializeDatetime(options.resultTime)
+      );
     }
     if (options.select !== undefined) {
       url.searchParams.set('select', options.select);
@@ -979,7 +1024,9 @@ export default class CSAPINavigator {
    */
   getDatastreamSchemaUrl(datastreamId: string): string {
     this._checkResourceAvailable('datastreams');
-    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/schema`;
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(
+      datastreamId
+    )}/schema`;
   }
 
   /**
@@ -991,7 +1038,9 @@ export default class CSAPINavigator {
    */
   updateDatastreamSchemaUrl(datastreamId: string): string {
     this._checkResourceAvailable('datastreams');
-    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/schema`;
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(
+      datastreamId
+    )}/schema`;
   }
 
   /**
@@ -1008,7 +1057,9 @@ export default class CSAPINavigator {
   ): string {
     this._checkResourceAvailable('datastreams');
     const url = new URL(
-      `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/observations`
+      `${this.baseUrl}/datastreams/${encodeURIComponent(
+        datastreamId
+      )}/observations`
     );
 
     if (options.limit !== undefined) {
@@ -1018,13 +1069,22 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.phenomenonTime !== undefined) {
-      url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+      url.searchParams.set(
+        'phenomenonTime',
+        this._serializeDatetime(options.phenomenonTime)
+      );
     }
     if (options.resultTime !== undefined) {
-      url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
+      url.searchParams.set(
+        'resultTime',
+        this._serializeDatetime(options.resultTime)
+      );
     }
     if (options.observedProperty !== undefined) {
       url.searchParams.set('observedProperty', options.observedProperty);
@@ -1067,7 +1127,10 @@ export default class CSAPINavigator {
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.id !== undefined) {
       url.searchParams.set(
@@ -1076,10 +1139,16 @@ export default class CSAPINavigator {
       );
     }
     if (options.phenomenonTime !== undefined) {
-      url.searchParams.set('phenomenonTime', this._serializeDatetime(options.phenomenonTime));
+      url.searchParams.set(
+        'phenomenonTime',
+        this._serializeDatetime(options.phenomenonTime)
+      );
     }
     if (options.resultTime !== undefined) {
-      url.searchParams.set('resultTime', this._serializeDatetime(options.resultTime));
+      url.searchParams.set(
+        'resultTime',
+        this._serializeDatetime(options.resultTime)
+      );
     }
     if (options.dataStream !== undefined) {
       url.searchParams.set('dataStream', options.dataStream);
@@ -1142,7 +1211,9 @@ export default class CSAPINavigator {
    */
   createDatastreamObservationUrl(datastreamId: string): string {
     this._checkResourceAvailable('datastreams');
-    return `${this.baseUrl}/datastreams/${encodeURIComponent(datastreamId)}/observations`;
+    return `${this.baseUrl}/datastreams/${encodeURIComponent(
+      datastreamId
+    )}/observations`;
   }
 
   /**
@@ -1195,7 +1266,10 @@ export default class CSAPINavigator {
       url.searchParams.set('limit', options.limit.toString());
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.id !== undefined) {
       url.searchParams.set(
@@ -1219,10 +1293,16 @@ export default class CSAPINavigator {
       url.searchParams.set('controlledProperty', options.controlledProperty);
     }
     if (options.issueTime !== undefined) {
-      url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
+      url.searchParams.set(
+        'issueTime',
+        this._serializeDatetime(options.issueTime)
+      );
     }
     if (options.executionTime !== undefined) {
-      url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+      url.searchParams.set(
+        'executionTime',
+        this._serializeDatetime(options.executionTime)
+      );
     }
     if (options.select !== undefined) {
       url.searchParams.set('select', options.select);
@@ -1264,7 +1344,9 @@ export default class CSAPINavigator {
    */
   updateControlStreamUrl(controlStreamId: string): string {
     this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`;
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+      controlStreamId
+    )}`;
   }
 
   /**
@@ -1276,7 +1358,9 @@ export default class CSAPINavigator {
    */
   patchControlStreamUrl(controlStreamId: string): string {
     this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}`;
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+      controlStreamId
+    )}`;
   }
 
   /**
@@ -1312,7 +1396,9 @@ export default class CSAPINavigator {
   ): string {
     this._checkResourceAvailable('controlStreams');
     const url = new URL(
-      `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/history`
+      `${this.baseUrl}/controlStreams/${encodeURIComponent(
+        controlStreamId
+      )}/history`
     );
 
     if (options.validTime !== undefined) {
@@ -1337,7 +1423,9 @@ export default class CSAPINavigator {
    */
   getControlStreamSchemaUrl(controlStreamId: string): string {
     this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/schema`;
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+      controlStreamId
+    )}/schema`;
   }
 
   /**
@@ -1349,7 +1437,9 @@ export default class CSAPINavigator {
    */
   updateControlStreamSchemaUrl(controlStreamId: string): string {
     this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/schema`;
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+      controlStreamId
+    )}/schema`;
   }
 
   /**
@@ -1366,7 +1456,9 @@ export default class CSAPINavigator {
   ): string {
     this._checkResourceAvailable('controlStreams');
     const url = new URL(
-      `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands`
+      `${this.baseUrl}/controlStreams/${encodeURIComponent(
+        controlStreamId
+      )}/commands`
     );
 
     if (options.limit !== undefined) {
@@ -1379,10 +1471,16 @@ export default class CSAPINavigator {
       );
     }
     if (options.issueTime !== undefined) {
-      url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
+      url.searchParams.set(
+        'issueTime',
+        this._serializeDatetime(options.issueTime)
+      );
     }
     if (options.executionTime !== undefined) {
-      url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+      url.searchParams.set(
+        'executionTime',
+        this._serializeDatetime(options.executionTime)
+      );
     }
     if (options.sender !== undefined) {
       url.searchParams.set('sender', options.sender);
@@ -1421,7 +1519,9 @@ export default class CSAPINavigator {
    */
   issueCommandUrl(controlStreamId: string): string {
     this._checkResourceAvailable('controlStreams');
-    return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands`;
+    return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+      controlStreamId
+    )}/commands`;
   }
 
   /**
@@ -1442,7 +1542,9 @@ export default class CSAPINavigator {
     let url: string;
     if (controlStreamId) {
       this._checkResourceAvailable('controlStreams');
-      url = `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+      url = `${this.baseUrl}/controlStreams/${encodeURIComponent(
+        controlStreamId
+      )}/commands/${encodeURIComponent(commandId)}`;
     } else {
       this._checkResourceAvailable('commands');
       url = `${this.baseUrl}/commands/${encodeURIComponent(commandId)}`;
@@ -1462,13 +1564,12 @@ export default class CSAPINavigator {
    * @param controlStreamId Optional unique identifier of the control stream (for scoped access)
    * @returns URL string for PATCH request (body contains status update)
    */
-  updateCommandStatusUrl(
-    commandId: string,
-    controlStreamId?: string
-  ): string {
+  updateCommandStatusUrl(commandId: string, controlStreamId?: string): string {
     if (controlStreamId) {
       this._checkResourceAvailable('controlStreams');
-      return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+      return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+        controlStreamId
+      )}/commands/${encodeURIComponent(commandId)}`;
     } else {
       this._checkResourceAvailable('commands');
       return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}`;
@@ -1484,13 +1585,12 @@ export default class CSAPINavigator {
    * @param controlStreamId Optional unique identifier of the control stream (for scoped access)
    * @returns URL string for DELETE request
    */
-  cancelCommandUrl(
-    commandId: string,
-    controlStreamId?: string
-  ): string {
+  cancelCommandUrl(commandId: string, controlStreamId?: string): string {
     if (controlStreamId) {
       this._checkResourceAvailable('controlStreams');
-      return `${this.baseUrl}/controlStreams/${encodeURIComponent(controlStreamId)}/commands/${encodeURIComponent(commandId)}`;
+      return `${this.baseUrl}/controlStreams/${encodeURIComponent(
+        controlStreamId
+      )}/commands/${encodeURIComponent(commandId)}`;
     } else {
       this._checkResourceAvailable('commands');
       return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}`;
@@ -1522,10 +1622,16 @@ export default class CSAPINavigator {
       );
     }
     if (options.issueTime !== undefined) {
-      url.searchParams.set('issueTime', this._serializeDatetime(options.issueTime));
+      url.searchParams.set(
+        'issueTime',
+        this._serializeDatetime(options.issueTime)
+      );
     }
     if (options.executionTime !== undefined) {
-      url.searchParams.set('executionTime', this._serializeDatetime(options.executionTime));
+      url.searchParams.set(
+        'executionTime',
+        this._serializeDatetime(options.executionTime)
+      );
     }
     if (options.sender !== undefined) {
       url.searchParams.set('sender', options.sender);
@@ -1598,7 +1704,9 @@ export default class CSAPINavigator {
     format?: string
   ): string {
     this._checkResourceAvailable('commands');
-    let url = `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status/${encodeURIComponent(statusId)}`;
+    let url = `${this.baseUrl}/commands/${encodeURIComponent(
+      commandId
+    )}/status/${encodeURIComponent(statusId)}`;
     if (format) {
       url += `?f=${encodeURIComponent(format)}`;
     }
@@ -1615,7 +1723,9 @@ export default class CSAPINavigator {
    */
   updateCommandStatusReportUrl(commandId: string, statusId: string): string {
     this._checkResourceAvailable('commands');
-    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status/${encodeURIComponent(statusId)}`;
+    return `${this.baseUrl}/commands/${encodeURIComponent(
+      commandId
+    )}/status/${encodeURIComponent(statusId)}`;
   }
 
   /**
@@ -1628,7 +1738,9 @@ export default class CSAPINavigator {
    */
   deleteCommandStatusUrl(commandId: string, statusId: string): string {
     this._checkResourceAvailable('commands');
-    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/status/${encodeURIComponent(statusId)}`;
+    return `${this.baseUrl}/commands/${encodeURIComponent(
+      commandId
+    )}/status/${encodeURIComponent(statusId)}`;
   }
 
   // ========================================
@@ -1674,7 +1786,9 @@ export default class CSAPINavigator {
     format?: string
   ): string {
     this._checkResourceAvailable('commands');
-    let url = `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result/${encodeURIComponent(resultId)}`;
+    let url = `${this.baseUrl}/commands/${encodeURIComponent(
+      commandId
+    )}/result/${encodeURIComponent(resultId)}`;
     if (format) {
       url += `?f=${encodeURIComponent(format)}`;
     }
@@ -1691,7 +1805,9 @@ export default class CSAPINavigator {
    */
   updateCommandResultUrl(commandId: string, resultId: string): string {
     this._checkResourceAvailable('commands');
-    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result/${encodeURIComponent(resultId)}`;
+    return `${this.baseUrl}/commands/${encodeURIComponent(
+      commandId
+    )}/result/${encodeURIComponent(resultId)}`;
   }
 
   /**
@@ -1704,7 +1820,9 @@ export default class CSAPINavigator {
    */
   deleteCommandResultUrl(commandId: string, resultId: string): string {
     this._checkResourceAvailable('commands');
-    return `${this.baseUrl}/commands/${encodeURIComponent(commandId)}/result/${encodeURIComponent(resultId)}`;
+    return `${this.baseUrl}/commands/${encodeURIComponent(
+      commandId
+    )}/result/${encodeURIComponent(resultId)}`;
   }
 
   // ========================================
@@ -1870,7 +1988,10 @@ export default class CSAPINavigator {
       url.searchParams.set('limit', options.limit.toString());
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.id !== undefined) {
       url.searchParams.set(
@@ -1879,12 +2000,17 @@ export default class CSAPINavigator {
       );
     }
     if (options.eventTime !== undefined) {
-      url.searchParams.set('eventTime', this._serializeDatetime(options.eventTime));
+      url.searchParams.set(
+        'eventTime',
+        this._serializeDatetime(options.eventTime)
+      );
     }
     if (options.eventType !== undefined) {
       url.searchParams.set(
         'eventType',
-        Array.isArray(options.eventType) ? options.eventType.join(',') : options.eventType
+        Array.isArray(options.eventType)
+          ? options.eventType.join(',')
+          : options.eventType
       );
     }
     if (options.system !== undefined) {
@@ -1931,15 +2057,23 @@ export default class CSAPINavigator {
       url.searchParams.set('limit', options.limit.toString());
     }
     if (options.datetime !== undefined) {
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     }
     if (options.eventTime !== undefined) {
-      url.searchParams.set('eventTime', this._serializeDatetime(options.eventTime));
+      url.searchParams.set(
+        'eventTime',
+        this._serializeDatetime(options.eventTime)
+      );
     }
     if (options.eventType !== undefined) {
       url.searchParams.set(
         'eventType',
-        Array.isArray(options.eventType) ? options.eventType.join(',') : options.eventType
+        Array.isArray(options.eventType)
+          ? options.eventType.join(',')
+          : options.eventType
       );
     }
 
@@ -1966,7 +2100,9 @@ export default class CSAPINavigator {
    */
   createSystemSystemEventUrl(systemId: string): string {
     this._checkResourceAvailable('systems');
-    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/systemEvents`;
+    return `${this.baseUrl}/systems/${encodeURIComponent(
+      systemId
+    )}/systemEvents`;
   }
 
   /**
@@ -2006,7 +2142,9 @@ export default class CSAPINavigator {
    */
   requestFeasibilityUrl(systemId: string): string {
     this._checkResourceAvailable('systems');
-    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/feasibility`;
+    return `${this.baseUrl}/systems/${encodeURIComponent(
+      systemId
+    )}/feasibility`;
   }
 
   /**
@@ -2019,7 +2157,9 @@ export default class CSAPINavigator {
    */
   getFeasibilityResultUrl(systemId: string, requestId: string): string {
     this._checkResourceAvailable('systems');
-    return `${this.baseUrl}/systems/${encodeURIComponent(systemId)}/feasibility/${encodeURIComponent(requestId)}`;
+    return `${this.baseUrl}/systems/${encodeURIComponent(
+      systemId
+    )}/feasibility/${encodeURIComponent(requestId)}`;
   }
 
   // ========================================
@@ -2039,9 +2179,7 @@ export default class CSAPINavigator {
   private _extractFormats(collection: OgcApiCollectionInfo): Set<string> {
     const formats = new Set<string>();
     // Look for formats in links and itemFormats
-    collection.links
-      .filter((l) => l.type)
-      .forEach((l) => formats.add(l.type));
+    collection.links.filter((l) => l.type).forEach((l) => formats.add(l.type));
     if (collection.itemFormats) {
       collection.itemFormats.forEach((f) => formats.add(f));
     }
@@ -2058,8 +2196,7 @@ export default class CSAPINavigator {
       if (rel.includes('systems')) resources.add('systems');
       if (rel.includes('procedures')) resources.add('procedures');
       if (rel.includes('deployments')) resources.add('deployments');
-      if (rel.includes('samplingfeatures'))
-        resources.add('samplingFeatures');
+      if (rel.includes('samplingfeatures')) resources.add('samplingFeatures');
       if (rel.includes('properties')) resources.add('properties');
       if (rel.includes('datastreams')) resources.add('datastreams');
       if (rel.includes('observations')) resources.add('observations');
@@ -2093,7 +2230,7 @@ export default class CSAPINavigator {
     if (param === 'now' || param === 'latest') {
       return param;
     }
-    
+
     // Use existing DateTimeParameter serialization from shared/models
     if (param instanceof Date) {
       return param.toISOString();
@@ -2114,16 +2251,16 @@ export default class CSAPINavigator {
     return `${bbox[0]},${bbox[1]},${bbox[2]},${bbox[3]}`;
   }
 
-  private _applySystemsQuery(
-    url: URL,
-    options: SystemsQueryOptions
-  ): URL {
+  private _applySystemsQuery(url: URL, options: SystemsQueryOptions): URL {
     if (options.limit !== undefined)
       url.searchParams.set('limit', options.limit.toString());
     if (options.bbox !== undefined)
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     if (options.datetime !== undefined)
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     if (options.q !== undefined) url.searchParams.set('q', options.q);
     if (options.parent !== undefined)
       url.searchParams.set('parent', options.parent);
@@ -2149,7 +2286,10 @@ export default class CSAPINavigator {
     if (options.bbox !== undefined)
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     if (options.datetime !== undefined)
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     if (options.q !== undefined) url.searchParams.set('q', options.q);
     if (options.select !== undefined)
       url.searchParams.set('select', options.select);
@@ -2165,7 +2305,10 @@ export default class CSAPINavigator {
     if (options.bbox !== undefined)
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     if (options.datetime !== undefined)
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     if (options.observedProperty !== undefined)
       url.searchParams.set('observedProperty', options.observedProperty);
     if (options.phenomenonTime !== undefined)
@@ -2185,7 +2328,10 @@ export default class CSAPINavigator {
     if (options.limit !== undefined)
       url.searchParams.set('limit', options.limit.toString());
     if (options.datetime !== undefined)
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     if (options.controlledProperty !== undefined)
       url.searchParams.set('controlledProperty', options.controlledProperty);
     if (options.issueTime !== undefined)
@@ -2212,7 +2358,10 @@ export default class CSAPINavigator {
     if (options.bbox !== undefined)
       url.searchParams.set('bbox', this._serializeBbox(options.bbox));
     if (options.datetime !== undefined)
-      url.searchParams.set('datetime', this._serializeDatetime(options.datetime));
+      url.searchParams.set(
+        'datetime',
+        this._serializeDatetime(options.datetime)
+      );
     if (options.q !== undefined) url.searchParams.set('q', options.q);
     if (options.id !== undefined)
       url.searchParams.set(
@@ -2228,7 +2377,9 @@ export default class CSAPINavigator {
     if (options.parent !== undefined)
       url.searchParams.set(
         'parent',
-        Array.isArray(options.parent) ? options.parent.join(',') : options.parent
+        Array.isArray(options.parent)
+          ? options.parent.join(',')
+          : options.parent
       );
     if (options.system !== undefined)
       url.searchParams.set('system', options.system);

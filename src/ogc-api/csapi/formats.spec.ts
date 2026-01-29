@@ -40,7 +40,9 @@ describe('Format Detection', () => {
     });
 
     it('should handle content type with parameters', () => {
-      const result = detectFormatFromContentType('application/geo+json; charset=utf-8');
+      const result = detectFormatFromContentType(
+        'application/geo+json; charset=utf-8'
+      );
       expect(result?.format).toBe('geojson');
     });
 
@@ -249,9 +251,7 @@ describe('Format Detection', () => {
       });
 
       it('should handle arrays', () => {
-        const data = [
-          { type: 'Feature' },
-        ];
+        const data = [{ type: 'Feature' }];
 
         const result = detectFormatFromBody(data as any);
         expect(result.format).toBe('json');
@@ -266,7 +266,7 @@ describe('Format Detection', () => {
 
       it('should be case-sensitive', () => {
         const data = {
-          type: 'feature',  // lowercase
+          type: 'feature', // lowercase
         };
 
         const result = detectFormatFromBody(data);
@@ -278,7 +278,9 @@ describe('Format Detection', () => {
 
   describe('detectFormat (combined)', () => {
     it('should prefer high-confidence header result', () => {
-      const result = detectFormat('application/geo+json', { type: 'SomethingElse' });
+      const result = detectFormat('application/geo+json', {
+        type: 'SomethingElse',
+      });
       expect(result.format).toBe('geojson');
       expect(result.confidence).toBe('high');
     });

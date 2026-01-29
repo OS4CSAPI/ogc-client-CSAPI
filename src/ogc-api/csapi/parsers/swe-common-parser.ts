@@ -1,9 +1,9 @@
 /**
  * Explicit SWE Common component parsers
- * 
+ *
  * This module provides explicit parsing and validation for SWE Common data components.
  * Parsers validate structure during parsing and provide clear error messages for malformed data.
- * 
+ *
  * @see https://docs.ogc.org/is/24-014/24-014.html
  */
 
@@ -156,7 +156,9 @@ export function parseTimeComponent(data: unknown): TimeComponent {
 /**
  * Parse QuantityRangeComponent
  */
-export function parseQuantityRangeComponent(data: unknown): QuantityRangeComponent {
+export function parseQuantityRangeComponent(
+  data: unknown
+): QuantityRangeComponent {
   if (!isObject(data)) {
     throw new ParseError('QuantityRange must be an object');
   }
@@ -190,7 +192,9 @@ export function parseCountRangeComponent(data: unknown): CountRangeComponent {
 /**
  * Parse CategoryRangeComponent
  */
-export function parseCategoryRangeComponent(data: unknown): CategoryRangeComponent {
+export function parseCategoryRangeComponent(
+  data: unknown
+): CategoryRangeComponent {
   if (!isObject(data)) {
     throw new ParseError('CategoryRange must be an object');
   }
@@ -248,13 +252,17 @@ export function parseDataRecordComponent(data: unknown): DataRecordComponent {
     }
 
     if (!field.name || typeof field.name !== 'string') {
-      throw new ParseError(`DataRecord.fields[${index}] must have a name property`);
+      throw new ParseError(
+        `DataRecord.fields[${index}] must have a name property`
+      );
     }
 
     if (!field.component) {
       // Check for href (external reference)
       if (!field.href) {
-        throw new ParseError(`DataRecord.fields[${index}] must have either component or href`);
+        throw new ParseError(
+          `DataRecord.fields[${index}] must have either component or href`
+        );
       }
       return field;
     }
@@ -309,12 +317,16 @@ export function parseVectorComponent(data: unknown): VectorComponent {
     }
 
     if (!coord.name || typeof coord.name !== 'string') {
-      throw new ParseError(`Vector.coordinates[${index}] must have a name property`);
+      throw new ParseError(
+        `Vector.coordinates[${index}] must have a name property`
+      );
     }
 
     if (!coord.component) {
       if (!coord.href) {
-        throw new ParseError(`Vector.coordinates[${index}] must have either component or href`);
+        throw new ParseError(
+          `Vector.coordinates[${index}] must have either component or href`
+        );
       }
       return coord;
     }
@@ -369,12 +381,16 @@ export function parseDataChoiceComponent(data: unknown): DataChoiceComponent {
     }
 
     if (!item.name || typeof item.name !== 'string') {
-      throw new ParseError(`DataChoice.items[${index}] must have a name property`);
+      throw new ParseError(
+        `DataChoice.items[${index}] must have a name property`
+      );
     }
 
     if (!item.component) {
       if (!item.href) {
-        throw new ParseError(`DataChoice.items[${index}] must have either component or href`);
+        throw new ParseError(
+          `DataChoice.items[${index}] must have either component or href`
+        );
       }
       return item;
     }
@@ -424,7 +440,9 @@ export function parseDataArrayComponent(data: unknown): DataArrayComponent {
   }
 
   if (!elementType.component && !elementType.href) {
-    throw new ParseError('DataArray.elementType must have either component or href');
+    throw new ParseError(
+      'DataArray.elementType must have either component or href'
+    );
   }
 
   // Parse element type component if inline
@@ -440,7 +458,10 @@ export function parseDataArrayComponent(data: unknown): DataArrayComponent {
       } as DataArrayComponent;
     } catch (error) {
       if (error instanceof ParseError) {
-        throw new ParseError(error.message, `elementType.component${error.path ? '.' + error.path : ''}`);
+        throw new ParseError(
+          error.message,
+          `elementType.component${error.path ? '.' + error.path : ''}`
+        );
       }
       throw error;
     }
@@ -471,7 +492,9 @@ export function parseMatrixComponent(data: unknown): MatrixComponent {
   }
 
   if (!elementType.component && !elementType.href) {
-    throw new ParseError('Matrix.elementType must have either component or href');
+    throw new ParseError(
+      'Matrix.elementType must have either component or href'
+    );
   }
 
   // Parse element type component if inline
@@ -487,7 +510,10 @@ export function parseMatrixComponent(data: unknown): MatrixComponent {
       } as MatrixComponent;
     } catch (error) {
       if (error instanceof ParseError) {
-        throw new ParseError(error.message, `elementType.component${error.path ? '.' + error.path : ''}`);
+        throw new ParseError(
+          error.message,
+          `elementType.component${error.path ? '.' + error.path : ''}`
+        );
       }
       throw error;
     }
@@ -518,7 +544,9 @@ export function parseDataStreamComponent(data: unknown): DataStreamComponent {
   }
 
   if (!elementType.component && !elementType.href) {
-    throw new ParseError('DataStream.elementType must have either component or href');
+    throw new ParseError(
+      'DataStream.elementType must have either component or href'
+    );
   }
 
   // Parse element type component if inline
@@ -534,7 +562,10 @@ export function parseDataStreamComponent(data: unknown): DataStreamComponent {
       } as DataStreamComponent;
     } catch (error) {
       if (error instanceof ParseError) {
-        throw new ParseError(error.message, `elementType.component${error.path ? '.' + error.path : ''}`);
+        throw new ParseError(
+          error.message,
+          `elementType.component${error.path ? '.' + error.path : ''}`
+        );
       }
       throw error;
     }
@@ -560,7 +591,7 @@ export function parseGeometryComponent(data: unknown): GeometryComponent {
 
 /**
  * Parse any DataComponent - dispatcher function
- * 
+ *
  * This function validates structure during parsing and recursively parses nested components.
  */
 export function parseDataComponent(data: unknown): unknown {
@@ -619,6 +650,8 @@ export function parseDataComponent(data: unknown): unknown {
       return parseGeometryComponent(data);
 
     default:
-      throw new ParseError(`Unknown or unsupported component type: ${data.type}`);
+      throw new ParseError(
+        `Unknown or unsupported component type: ${data.type}`
+      );
   }
 }

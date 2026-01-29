@@ -1,10 +1,10 @@
 /**
  * Datastream feature types for CSAPI
- * 
+ *
  * Datastreams represent a series of observations of a specific property
  * by a specific system over time. They define what is being observed,
  * how it's being observed, and provide metadata about the observation series.
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastreams_2
  */
 
@@ -26,22 +26,22 @@ export interface DatastreamSchema {
    * Observation format (e.g., 'application/om+json', 'application/swe+json')
    */
   obsFormat?: string;
-  
+
   /**
    * Link to result schema
    */
   resultSchema?: string;
-  
+
   /**
    * Inline result schema (SWE Common structure)
    */
   resultSchemaObject?: unknown;
-  
+
   /**
    * Link to encoding specification
    */
   resultEncoding?: string;
-  
+
   /**
    * Inline encoding specification
    */
@@ -70,7 +70,7 @@ export interface DatastreamSchema {
 
 /**
  * Properties specific to Datastream features
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource
  */
 export interface DatastreamFeatureProperties extends CSAPIFeatureProperties {
@@ -78,52 +78,52 @@ export interface DatastreamFeatureProperties extends CSAPIFeatureProperties {
    * Always 'Datastream' for datastream features
    */
   featureType: 'Datastream';
-  
+
   /**
    * ID of the system producing observations
    */
   system: UniqueID;
-  
+
   /**
    * ID of the deployment (if observations are from a specific deployment)
    */
   deployment?: UniqueID;
-  
+
   /**
    * ID of the procedure used to make observations
    */
   procedure?: UniqueID;
-  
+
   /**
    * ID of the observed property
    */
   observedProperty: UniqueID;
-  
+
   /**
    * Definition URI for the observed property
    */
   observedPropertyDefinition?: DefinitionURI;
-  
+
   /**
    * ID of the sampling feature being observed
    */
   samplingFeature?: UniqueID;
-  
+
   /**
    * Time extent of all observations in this datastream
    */
   phenomenonTime?: TimeExtent;
-  
+
   /**
    * Time extent of when observations were recorded
    */
   resultTime?: TimeExtent;
-  
+
   /**
    * Schema and encoding information for observations
    */
   schema?: DatastreamSchema;
-  
+
   /**
    * Number of observations in this datastream
    */
@@ -137,7 +137,7 @@ export interface DatastreamFeatureProperties extends CSAPIFeatureProperties {
 
 /**
  * GeoJSON Feature representing a Datastream
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastream_resource
  */
 export interface DatastreamFeature
@@ -147,7 +147,7 @@ export interface DatastreamFeature
 
 /**
  * GeoJSON FeatureCollection of Datastreams
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_datastreams_2
  */
 export interface DatastreamFeatureCollection
@@ -158,7 +158,9 @@ export interface DatastreamFeatureCollection
 /**
  * Type guard to check if a feature is a Datastream feature
  */
-export function isDatastreamFeature(feature: unknown): feature is DatastreamFeature {
+export function isDatastreamFeature(
+  feature: unknown
+): feature is DatastreamFeature {
   return (
     typeof feature === 'object' &&
     feature !== null &&

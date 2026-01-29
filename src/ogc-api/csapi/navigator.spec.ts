@@ -93,7 +93,9 @@ describe('CSAPINavigator - Systems Resource', () => {
       const url = navigator.getSystemsUrl({
         bbox: [-180, -90, 180, 90],
       });
-      expect(url).toBe('http://example.com/csapi/systems?bbox=-180%2C-90%2C180%2C90');
+      expect(url).toBe(
+        'http://example.com/csapi/systems?bbox=-180%2C-90%2C180%2C90'
+      );
     });
 
     it('builds URL with datetime filter (single date)', () => {
@@ -152,7 +154,9 @@ describe('CSAPINavigator - Systems Resource', () => {
       const url = navigator.getSystemsUrl({
         procedure: 'temp-measurement',
       });
-      expect(url).toBe('http://example.com/csapi/systems?procedure=temp-measurement');
+      expect(url).toBe(
+        'http://example.com/csapi/systems?procedure=temp-measurement'
+      );
     });
 
     it('builds URL with observedProperty filter', () => {
@@ -177,7 +181,9 @@ describe('CSAPINavigator - Systems Resource', () => {
       const url = navigator.getSystemsUrl({
         systemKind: 'PhysicalSystem',
       });
-      expect(url).toBe('http://example.com/csapi/systems?systemKind=PhysicalSystem');
+      expect(url).toBe(
+        'http://example.com/csapi/systems?systemKind=PhysicalSystem'
+      );
     });
 
     it('builds URL with multiple filters', () => {
@@ -275,19 +281,29 @@ describe('CSAPINavigator - Systems Resource', () => {
 
     it('builds delete URL with cascade parameter', () => {
       const url = navigator.deleteSystemUrl('sensor-123', true);
-      expect(url).toBe('http://example.com/csapi/systems/sensor-123?cascade=true');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/sensor-123?cascade=true'
+      );
     });
 
     it('builds delete URL with cascade=false', () => {
       const url = navigator.deleteSystemUrl('sensor-123', false);
-      expect(url).toBe('http://example.com/csapi/systems/sensor-123?cascade=false');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/sensor-123?cascade=false'
+      );
     });
 
     it('encodes system IDs in all CRUD URLs', () => {
       const systemId = 'sensor/special#id';
-      expect(navigator.updateSystemUrl(systemId)).toContain('sensor%2Fspecial%23id');
-      expect(navigator.patchSystemUrl(systemId)).toContain('sensor%2Fspecial%23id');
-      expect(navigator.deleteSystemUrl(systemId)).toContain('sensor%2Fspecial%23id');
+      expect(navigator.updateSystemUrl(systemId)).toContain(
+        'sensor%2Fspecial%23id'
+      );
+      expect(navigator.patchSystemUrl(systemId)).toContain(
+        'sensor%2Fspecial%23id'
+      );
+      expect(navigator.deleteSystemUrl(systemId)).toContain(
+        'sensor%2Fspecial%23id'
+      );
     });
   });
 
@@ -320,7 +336,9 @@ describe('CSAPINavigator - Systems Resource', () => {
   describe('sub-resource URLs', () => {
     it('builds subsystems URL', () => {
       const url = navigator.getSubsystemsUrl('parent-123');
-      expect(url).toBe('http://example.com/csapi/systems/parent-123/subsystems');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/parent-123/subsystems'
+      );
     });
 
     it('builds subsystems URL with filters', () => {
@@ -341,17 +359,23 @@ describe('CSAPINavigator - Systems Resource', () => {
 
     it('builds system datastreams URL', () => {
       const url = navigator.getSystemDatastreamsUrl('sensor-123');
-      expect(url).toBe('http://example.com/csapi/systems/sensor-123/datastreams');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/sensor-123/datastreams'
+      );
     });
 
     it('builds system control streams URL', () => {
       const url = navigator.getSystemControlStreamsUrl('sensor-123');
-      expect(url).toBe('http://example.com/csapi/systems/sensor-123/controlStreams');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/sensor-123/controlStreams'
+      );
     });
 
     it('builds system deployments URL', () => {
       const url = navigator.getSystemDeploymentsUrl('sensor-123');
-      expect(url).toBe('http://example.com/csapi/systems/sensor-123/deployments');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/sensor-123/deployments'
+      );
     });
 
     it('builds system deployments URL with query options', () => {
@@ -366,7 +390,9 @@ describe('CSAPINavigator - Systems Resource', () => {
 
     it('builds system procedures URL', () => {
       const url = navigator.getSystemProceduresUrl('sensor-123');
-      expect(url).toBe('http://example.com/csapi/systems/sensor-123/procedures');
+      expect(url).toBe(
+        'http://example.com/csapi/systems/sensor-123/procedures'
+      );
     });
 
     it('builds system procedures URL with query options', () => {
@@ -418,7 +444,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         const url = navigator.getProceduresUrl({
           q: 'temperature measurement',
         });
-        expect(url).toBe('http://example.com/csapi/procedures?q=temperature+measurement');
+        expect(url).toBe(
+          'http://example.com/csapi/procedures?q=temperature+measurement'
+        );
       });
 
       it('builds URL with observedProperty filter', () => {
@@ -469,7 +497,10 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
 
       it('builds URL with format parameter', () => {
-        const url = navigator.getProcedureUrl('procedure-123', 'application/sml+json');
+        const url = navigator.getProcedureUrl(
+          'procedure-123',
+          'application/sml+json'
+        );
         expect(url).toBe(
           'http://example.com/csapi/procedures/procedure-123?f=application%2Fsml%2Bjson'
         );
@@ -506,7 +537,9 @@ describe('CSAPINavigator - Systems Resource', () => {
     describe('getProcedureHistoryUrl', () => {
       it('builds history URL', () => {
         const url = navigator.getProcedureHistoryUrl('procedure-123');
-        expect(url).toBe('http://example.com/csapi/procedures/procedure-123/history');
+        expect(url).toBe(
+          'http://example.com/csapi/procedures/procedure-123/history'
+        );
       });
 
       it('builds history URL with validTime filter', () => {
@@ -596,9 +629,7 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes deployment ID in URL', () => {
         const url = navigator.getDeploymentUrl('deploy/123');
-        expect(url).toBe(
-          'http://example.com/csapi/deployments/deploy%2F123'
-        );
+        expect(url).toBe('http://example.com/csapi/deployments/deploy%2F123');
       });
 
       it('includes format parameter when specified', () => {
@@ -746,9 +777,14 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('builds URL with datetime parameter', () => {
         const url = navigator.getSystemDeploymentsUrl('system-123', {
-          datetime: { start: new Date('2024-01-01'), end: new Date('2024-12-31') },
+          datetime: {
+            start: new Date('2024-01-01'),
+            end: new Date('2024-12-31'),
+          },
         });
-        expect(url).toContain('datetime=2024-01-01T00%3A00%3A00.000Z%2F2024-12-31T00%3A00%3A00.000Z');
+        expect(url).toContain(
+          'datetime=2024-01-01T00%3A00%3A00.000Z%2F2024-12-31T00%3A00%3A00.000Z'
+        );
       });
 
       it('URL encodes system ID', () => {
@@ -764,7 +800,7 @@ describe('CSAPINavigator - Systems Resource', () => {
           (l) => !l.rel.includes('systems')
         );
         navigator = new CSAPINavigator(mockCollection);
-        
+
         expect(() => navigator.getSystemDeploymentsUrl('system-123')).toThrow(
           'Collection does not support systems resource'
         );
@@ -776,7 +812,7 @@ describe('CSAPINavigator - Systems Resource', () => {
           (l) => !l.rel.includes('deployments')
         );
         navigator = new CSAPINavigator(mockCollection);
-        
+
         expect(() => navigator.getSystemDeploymentsUrl('system-123')).toThrow(
           'Collection does not support deployments resource'
         );
@@ -840,7 +876,9 @@ describe('CSAPINavigator - Systems Resource', () => {
     describe('getSamplingFeatureUrl', () => {
       it('builds URL for specific sampling feature', () => {
         const url = navigator.getSamplingFeatureUrl('station-123');
-        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station-123'
+        );
       });
 
       it('encodes sampling feature ID in URL', () => {
@@ -866,7 +904,9 @@ describe('CSAPINavigator - Systems Resource', () => {
     describe('updateSamplingFeatureUrl', () => {
       it('builds URL for updating sampling feature', () => {
         const url = navigator.updateSamplingFeatureUrl('station-123');
-        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station-123'
+        );
       });
 
       it('encodes sampling feature ID', () => {
@@ -880,24 +920,32 @@ describe('CSAPINavigator - Systems Resource', () => {
     describe('patchSamplingFeatureUrl', () => {
       it('builds URL for patching sampling feature', () => {
         const url = navigator.patchSamplingFeatureUrl('station-123');
-        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station-123'
+        );
       });
 
       it('encodes sampling feature ID', () => {
         const url = navigator.patchSamplingFeatureUrl('station/test');
-        expect(url).toBe('http://example.com/csapi/samplingFeatures/station%2Ftest');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station%2Ftest'
+        );
       });
     });
 
     describe('deleteSamplingFeatureUrl', () => {
       it('builds URL for deleting sampling feature', () => {
         const url = navigator.deleteSamplingFeatureUrl('station-123');
-        expect(url).toBe('http://example.com/csapi/samplingFeatures/station-123');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station-123'
+        );
       });
 
       it('encodes sampling feature ID', () => {
         const url = navigator.deleteSamplingFeatureUrl('station/old');
-        expect(url).toBe('http://example.com/csapi/samplingFeatures/station%2Fold');
+        expect(url).toBe(
+          'http://example.com/csapi/samplingFeatures/station%2Fold'
+        );
       });
     });
 
@@ -972,7 +1020,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         const url = navigator.getDatastreamsUrl({
           phenomenonTime: { start: new Date('2024-01-01') },
         });
-        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain(
+          'phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..'
+        );
       });
 
       it('builds URL with multiple parameters', () => {
@@ -995,9 +1045,7 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes datastream ID in URL', () => {
         const url = navigator.getDatastreamUrl('stream/456');
-        expect(url).toBe(
-          'http://example.com/csapi/datastreams/stream%2F456'
-        );
+        expect(url).toBe('http://example.com/csapi/datastreams/stream%2F456');
       });
 
       it('includes format parameter when specified', () => {
@@ -1123,7 +1171,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         const url = navigator.getDatastreamObservationsUrl('stream-123', {
           phenomenonTime: { start: new Date('2024-01-01') },
         });
-        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain(
+          'phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..'
+        );
       });
 
       it('builds URL with resultTime parameter', () => {
@@ -1148,7 +1198,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         });
         expect(url).toContain('limit=5');
         expect(url).toContain('observedProperty=humidity');
-        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain(
+          'phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..'
+        );
       });
     });
   });
@@ -1252,7 +1304,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         });
         expect(url).toContain('limit=50');
         expect(url).toContain('observedProperty=salinity');
-        expect(url).toContain('phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain(
+          'phenomenonTime=2024-01-01T00%3A00%3A00.000Z%2F..'
+        );
         expect(url).toContain('bbox=-10%2C40%2C10%2C50');
       });
     });
@@ -1265,9 +1319,7 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes observation ID in URL', () => {
         const url = navigator.getObservationUrl('obs/456');
-        expect(url).toBe(
-          'http://example.com/csapi/observations/obs%2F456'
-        );
+        expect(url).toBe('http://example.com/csapi/observations/obs%2F456');
       });
 
       it('includes format parameter when specified', () => {
@@ -1343,7 +1395,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         const url = navigator.getControlStreamsUrl({
           executionTime: { start: new Date('2024-01-01') },
         });
-        expect(url).toContain('executionTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain(
+          'executionTime=2024-01-01T00%3A00%3A00.000Z%2F..'
+        );
       });
 
       it('builds URL with multiple parameters', () => {
@@ -1406,7 +1460,9 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes control stream ID', () => {
         const url = navigator.patchControlStreamUrl('stream/test');
-        expect(url).toBe('http://example.com/csapi/controlStreams/stream%2Ftest');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2Ftest'
+        );
       });
     });
 
@@ -1418,7 +1474,9 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes control stream ID', () => {
         const url = navigator.deleteControlStreamUrl('stream/old');
-        expect(url).toBe('http://example.com/csapi/controlStreams/stream%2Fold');
+        expect(url).toBe(
+          'http://example.com/csapi/controlStreams/stream%2Fold'
+        );
       });
     });
 
@@ -1487,7 +1545,9 @@ describe('CSAPINavigator - Systems Resource', () => {
         const url = navigator.getControlStreamCommandsUrl('stream-123', {
           executionTime: { start: new Date('2024-01-01') },
         });
-        expect(url).toContain('executionTime=2024-01-01T00%3A00%3A00.000Z%2F..');
+        expect(url).toContain(
+          'executionTime=2024-01-01T00%3A00%3A00.000Z%2F..'
+        );
       });
 
       it('builds URL with status parameter', () => {
@@ -1624,9 +1684,7 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes property ID in URL', () => {
         const url = navigator.getPropertyUrl('prop/456');
-        expect(url).toBe(
-          'http://example.com/csapi/properties/prop%2F456'
-        );
+        expect(url).toBe('http://example.com/csapi/properties/prop%2F456');
       });
 
       it('includes format parameter when specified', () => {
@@ -1650,9 +1708,7 @@ describe('CSAPINavigator - Systems Resource', () => {
 
       it('encodes property ID', () => {
         const url = navigator.updatePropertyUrl('prop/special');
-        expect(url).toBe(
-          'http://example.com/csapi/properties/prop%2Fspecial'
-        );
+        expect(url).toBe('http://example.com/csapi/properties/prop%2Fspecial');
       });
     });
 
@@ -1789,7 +1845,7 @@ describe('CSAPINavigator - Systems Resource', () => {
           type: 'application/json',
         });
         const navigatorWithProcedures = new CSAPINavigator(mockCollection);
-        
+
         const url = navigatorWithProcedures.getProceduresUrl({
           observedProperty: 'humidity',
         });
@@ -1804,7 +1860,7 @@ describe('CSAPINavigator - Systems Resource', () => {
           type: 'application/json',
         });
         const navigatorWithProcedures = new CSAPINavigator(mockCollection);
-        
+
         const url = navigatorWithProcedures.getProceduresUrl({
           controlledProperty: 'motor',
         });
@@ -1815,7 +1871,10 @@ describe('CSAPINavigator - Systems Resource', () => {
         const url = navigator.getSamplingFeaturesUrl({
           limit: 25,
           bbox: [0, 0, 10, 10],
-          datetime: { start: new Date('2024-01-01'), end: new Date('2024-12-31') },
+          datetime: {
+            start: new Date('2024-01-01'),
+            end: new Date('2024-12-31'),
+          },
           q: 'search term',
         });
         expect(url).toContain('limit=25');
@@ -1873,7 +1932,9 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
 
       it('applies datetime parameter only to systems', () => {
-        const url = navigator.getSystemsUrl({ datetime: { start: new Date('2024-01-01') } });
+        const url = navigator.getSystemsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
         expect(url).toContain('datetime=');
       });
 
@@ -1893,7 +1954,9 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
 
       it('applies observedProperty parameter only to systems', () => {
-        const url = navigator.getSystemsUrl({ observedProperty: 'temperature' });
+        const url = navigator.getSystemsUrl({
+          observedProperty: 'temperature',
+        });
         expect(url).toContain('observedProperty=temperature');
       });
 
@@ -1919,7 +1982,9 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
 
       it('applies datetime parameter only to sampling features', () => {
-        const url = navigator.getSamplingFeaturesUrl({ datetime: { end: new Date('2024-12-31') } });
+        const url = navigator.getSamplingFeaturesUrl({
+          datetime: { end: new Date('2024-12-31') },
+        });
         expect(url).toContain('datetime=');
       });
 
@@ -1940,12 +2005,16 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
 
       it('applies datetime parameter only to datastreams', () => {
-        const url = navigator.getDatastreamsUrl({ datetime: { start: new Date('2024-01-01') } });
+        const url = navigator.getDatastreamsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
         expect(url).toContain('datetime=');
       });
 
       it('applies observedProperty parameter only to datastreams', () => {
-        const url = navigator.getDatastreamsUrl({ observedProperty: 'temperature' });
+        const url = navigator.getDatastreamsUrl({
+          observedProperty: 'temperature',
+        });
         expect(url).toContain('observedProperty=temperature');
       });
 
@@ -1963,12 +2032,16 @@ describe('CSAPINavigator - Systems Resource', () => {
       });
 
       it('applies datetime parameter only to control streams', () => {
-        const url = navigator.getControlStreamsUrl({ datetime: { start: new Date('2024-01-01') } });
+        const url = navigator.getControlStreamsUrl({
+          datetime: { start: new Date('2024-01-01') },
+        });
         expect(url).toContain('datetime=');
       });
 
       it('applies controlledProperty parameter only to control streams', () => {
-        const url = navigator.getControlStreamsUrl({ controlledProperty: 'valve' });
+        const url = navigator.getControlStreamsUrl({
+          controlledProperty: 'valve',
+        });
         expect(url).toContain('controlledProperty=valve');
       });
 
@@ -2016,7 +2089,9 @@ describe('CSAPINavigator - Systems Resource', () => {
           type: 'application/json',
         });
         const navWithProc = new CSAPINavigator(mockCollection);
-        const url = navWithProc.getProceduresUrl({ observedProperty: 'pressure' });
+        const url = navWithProc.getProceduresUrl({
+          observedProperty: 'pressure',
+        });
         expect(url).toContain('observedProperty=pressure');
       });
 
@@ -2027,7 +2102,9 @@ describe('CSAPINavigator - Systems Resource', () => {
           type: 'application/json',
         });
         const navWithProc = new CSAPINavigator(mockCollection);
-        const url = navWithProc.getProceduresUrl({ controlledProperty: 'actuator' });
+        const url = navWithProc.getProceduresUrl({
+          controlledProperty: 'actuator',
+        });
         expect(url).toContain('controlledProperty=actuator');
       });
     });

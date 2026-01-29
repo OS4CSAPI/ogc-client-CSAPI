@@ -1,11 +1,11 @@
 /**
  * SWE Common validation
- * 
+ *
  * Basic validation for SWE Common data components using type guards.
  * Includes deep constraint validation for AllowedValues, patterns, and intervals.
  * For full JSON schema validation, schemas can be downloaded from
  * https://schemas.opengis.net/sweCommon/3.0/json/
- * 
+ *
  * @module csapi/validation/swe-validator
  */
 
@@ -67,47 +67,53 @@ function hasDataComponentProperties(obj: unknown): boolean {
 
 /**
  * Validates required OGC properties for all SWE Common components (per OGC 24-014)
- * 
+ *
  * All data components must have:
  * - definition: URI that provides the semantic definition
  * - label: Human-readable name for the component
- * 
+ *
  * @param component - The component to validate
  * @param errors - Array to append validation errors to
  */
-function validateRequiredOGCProperties(component: any, errors: ValidationError[]): void {
+function validateRequiredOGCProperties(
+  component: any,
+  errors: ValidationError[]
+): void {
   if (!component.definition) {
-    errors.push({ 
+    errors.push({
       path: 'definition',
-      message: 'Missing required property: definition (URI)' 
+      message: 'Missing required property: definition (URI)',
     });
   } else if (typeof component.definition !== 'string') {
-    errors.push({ 
+    errors.push({
       path: 'definition',
-      message: 'Property definition must be a string (URI)' 
+      message: 'Property definition must be a string (URI)',
     });
   }
 
   if (!component.label) {
-    errors.push({ 
+    errors.push({
       path: 'label',
-      message: 'Missing required property: label' 
+      message: 'Missing required property: label',
     });
   } else if (typeof component.label !== 'string') {
-    errors.push({ 
+    errors.push({
       path: 'label',
-      message: 'Property label must be a string' 
+      message: 'Property label must be a string',
     });
   }
 }
 
 /**
  * Validate QuantityComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateQuantity(data: unknown, validateConstraints = true): ValidationResult {
+export function validateQuantity(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -118,7 +124,9 @@ export function validateQuantity(data: unknown, validateConstraints = true): Val
   const component = data as any;
 
   if (component.type !== 'Quantity') {
-    errors.push({ message: `Expected type 'Quantity', got '${component.type}'` });
+    errors.push({
+      message: `Expected type 'Quantity', got '${component.type}'`,
+    });
   }
 
   // Validate required OGC properties (per OGC 24-014)
@@ -129,23 +137,37 @@ export function validateQuantity(data: unknown, validateConstraints = true): Val
   }
 
   // Perform deep constraint validation if value is present
-  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
-    const constraintResult = validateQuantityConstraint(component as QuantityComponent, component.value);
+  if (
+    validateConstraints &&
+    component.value !== undefined &&
+    component.value !== null &&
+    errors.length === 0
+  ) {
+    const constraintResult = validateQuantityConstraint(
+      component as QuantityComponent,
+      component.value
+    );
     if (!constraintResult.valid && constraintResult.errors) {
       errors.push(...constraintResult.errors);
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate DataRecordComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateNested - Whether to recursively validate nested components (default: true)
  */
-export function validateDataRecord(data: unknown, validateNested = true): ValidationResult {
+export function validateDataRecord(
+  data: unknown,
+  validateNested = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -156,14 +178,18 @@ export function validateDataRecord(data: unknown, validateNested = true): Valida
   const component = data as any;
 
   if (component.type !== 'DataRecord') {
-    errors.push({ message: `Expected type 'DataRecord', got '${component.type}'` });
+    errors.push({
+      message: `Expected type 'DataRecord', got '${component.type}'`,
+    });
   }
 
   // Validate required OGC properties (per OGC 24-014)
   validateRequiredOGCProperties(component, errors);
 
   if (!component.fields || !Array.isArray(component.fields)) {
-    errors.push({ message: 'Missing or invalid property: fields (must be an array)' });
+    errors.push({
+      message: 'Missing or invalid property: fields (must be an array)',
+    });
   } else if (component.fields.length === 0) {
     errors.push({ message: 'DataRecord must have at least one field' });
   } else if (validateNested) {
@@ -171,16 +197,16 @@ export function validateDataRecord(data: unknown, validateNested = true): Valida
     component.fields.forEach((field: any, idx: number) => {
       // Validate field structure
       if (!field.name || typeof field.name !== 'string') {
-        errors.push({ 
+        errors.push({
           path: `fields[${idx}].name`,
-          message: 'Field must have a valid name property' 
+          message: 'Field must have a valid name property',
         });
       }
-      
+
       if (!field.component) {
-        errors.push({ 
+        errors.push({
           path: `fields[${idx}].component`,
-          message: 'Field must have a component property' 
+          message: 'Field must have a component property',
         });
       } else {
         // Recursively validate the nested component
@@ -189,7 +215,7 @@ export function validateDataRecord(data: unknown, validateNested = true): Valida
           nestedResult.errors.forEach((err) => {
             errors.push({
               path: `fields[${idx}].component${err.path ? '.' + err.path : ''}`,
-              message: err.message
+              message: err.message,
             });
           });
         }
@@ -197,16 +223,22 @@ export function validateDataRecord(data: unknown, validateNested = true): Valida
     });
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate DataArrayComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateNested - Whether to recursively validate nested components (default: true)
  */
-export function validateDataArray(data: unknown, validateNested = true): ValidationResult {
+export function validateDataArray(
+  data: unknown,
+  validateNested = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -217,7 +249,9 @@ export function validateDataArray(data: unknown, validateNested = true): Validat
   const component = data as any;
 
   if (component.type !== 'DataArray') {
-    errors.push({ message: `Expected type 'DataArray', got '${component.type}'` });
+    errors.push({
+      message: `Expected type 'DataArray', got '${component.type}'`,
+    });
   }
 
   // Validate required OGC properties (per OGC 24-014)
@@ -236,22 +270,28 @@ export function validateDataArray(data: unknown, validateNested = true): Validat
       nestedResult.errors.forEach((err) => {
         errors.push({
           path: `elementType${err.path ? '.' + err.path : ''}`,
-          message: err.message
+          message: err.message,
         });
       });
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate CountComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateCount(data: unknown, validateConstraints = true): ValidationResult {
+export function validateCount(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -269,23 +309,37 @@ export function validateCount(data: unknown, validateConstraints = true): Valida
   validateRequiredOGCProperties(component, errors);
 
   // Perform deep constraint validation if value is present
-  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
-    const constraintResult = validateCountConstraint(component as CountComponent, component.value);
+  if (
+    validateConstraints &&
+    component.value !== undefined &&
+    component.value !== null &&
+    errors.length === 0
+  ) {
+    const constraintResult = validateCountConstraint(
+      component as CountComponent,
+      component.value
+    );
     if (!constraintResult.valid && constraintResult.errors) {
       errors.push(...constraintResult.errors);
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate TextComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateText(data: unknown, validateConstraints = true): ValidationResult {
+export function validateText(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -303,23 +357,37 @@ export function validateText(data: unknown, validateConstraints = true): Validat
   validateRequiredOGCProperties(component, errors);
 
   // Perform deep constraint validation if value is present
-  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
-    const constraintResult = validateTextConstraint(component as TextComponent, component.value);
+  if (
+    validateConstraints &&
+    component.value !== undefined &&
+    component.value !== null &&
+    errors.length === 0
+  ) {
+    const constraintResult = validateTextConstraint(
+      component as TextComponent,
+      component.value
+    );
     if (!constraintResult.valid && constraintResult.errors) {
       errors.push(...constraintResult.errors);
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate CategoryComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateCategory(data: unknown, validateConstraints = true): ValidationResult {
+export function validateCategory(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -330,30 +398,46 @@ export function validateCategory(data: unknown, validateConstraints = true): Val
   const component = data as any;
 
   if (component.type !== 'Category') {
-    errors.push({ message: `Expected type 'Category', got '${component.type}'` });
+    errors.push({
+      message: `Expected type 'Category', got '${component.type}'`,
+    });
   }
 
   // Validate required OGC properties (per OGC 24-014)
   validateRequiredOGCProperties(component, errors);
 
   // Perform deep constraint validation if value is present
-  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
-    const constraintResult = validateCategoryConstraint(component as CategoryComponent, component.value);
+  if (
+    validateConstraints &&
+    component.value !== undefined &&
+    component.value !== null &&
+    errors.length === 0
+  ) {
+    const constraintResult = validateCategoryConstraint(
+      component as CategoryComponent,
+      component.value
+    );
     if (!constraintResult.valid && constraintResult.errors) {
       errors.push(...constraintResult.errors);
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate TimeComponent
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateTime(data: unknown, validateConstraints = true): ValidationResult {
+export function validateTime(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -375,23 +459,37 @@ export function validateTime(data: unknown, validateConstraints = true): Validat
   }
 
   // Perform deep constraint validation if value is present
-  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
-    const constraintResult = validateTimeConstraint(component as TimeComponent, component.value);
+  if (
+    validateConstraints &&
+    component.value !== undefined &&
+    component.value !== null &&
+    errors.length === 0
+  ) {
+    const constraintResult = validateTimeConstraint(
+      component as TimeComponent,
+      component.value
+    );
     if (!constraintResult.valid && constraintResult.errors) {
       errors.push(...constraintResult.errors);
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate Range Component (QuantityRange, CountRange, TimeRange, CategoryRange)
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateRangeComponent(data: unknown, validateConstraints = true): ValidationResult {
+export function validateRangeComponent(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!hasDataComponentProperties(data)) {
@@ -401,7 +499,12 @@ export function validateRangeComponent(data: unknown, validateConstraints = true
 
   const component = data as any;
 
-  const validRangeTypes = ['QuantityRange', 'CountRange', 'TimeRange', 'CategoryRange'];
+  const validRangeTypes = [
+    'QuantityRange',
+    'CountRange',
+    'TimeRange',
+    'CategoryRange',
+  ];
   if (!validRangeTypes.includes(component.type)) {
     errors.push({ message: `Expected range type, got '${component.type}'` });
   }
@@ -410,15 +513,30 @@ export function validateRangeComponent(data: unknown, validateConstraints = true
   validateRequiredOGCProperties(component, errors);
 
   // Quantity and Time ranges require UOM
-  if ((component.type === 'QuantityRange' || component.type === 'TimeRange') && !component.uom) {
+  if (
+    (component.type === 'QuantityRange' || component.type === 'TimeRange') &&
+    !component.uom
+  ) {
     errors.push({ message: 'Missing required property: uom' });
   }
 
   // Perform deep constraint validation if value is present
-  if (validateConstraints && component.value !== undefined && component.value !== null && errors.length === 0) {
-    if (component.type === 'QuantityRange' || component.type === 'CountRange' || component.type === 'TimeRange') {
+  if (
+    validateConstraints &&
+    component.value !== undefined &&
+    component.value !== null &&
+    errors.length === 0
+  ) {
+    if (
+      component.type === 'QuantityRange' ||
+      component.type === 'CountRange' ||
+      component.type === 'TimeRange'
+    ) {
       const constraintResult = validateRangeConstraint(
-        component as QuantityRangeComponent | CountRangeComponent | TimeRangeComponent,
+        component as
+          | QuantityRangeComponent
+          | CountRangeComponent
+          | TimeRangeComponent,
         component.value
       );
       if (!constraintResult.valid && constraintResult.errors) {
@@ -427,16 +545,22 @@ export function validateRangeComponent(data: unknown, validateConstraints = true
     }
   }
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Generic SWE Common component validator based on type
- * 
+ *
  * @param data - The component to validate
  * @param validateConstraints - Whether to perform deep constraint validation (default: true)
  */
-export function validateSWEComponent(data: unknown, validateConstraints = true): ValidationResult {
+export function validateSWEComponent(
+  data: unknown,
+  validateConstraints = true
+): ValidationResult {
   if (!hasDataComponentProperties(data)) {
     return {
       valid: false,
@@ -509,7 +633,10 @@ export function validateSWEComponent(data: unknown, validateConstraints = true):
 export function validateObservationResult(data: unknown): ValidationResult {
   // Result can be any SWE Common component or simple value
   if (data === null || data === undefined) {
-    return { valid: false, errors: [{ message: 'Observation result cannot be null or undefined' }] };
+    return {
+      valid: false,
+      errors: [{ message: 'Observation result cannot be null or undefined' }],
+    };
   }
 
   // If it's an object with a type property, validate as SWE component
@@ -525,4 +652,3 @@ export function validateObservationResult(data: unknown): ValidationResult {
   // Otherwise, assume it's a simple value (number, string, boolean)
   return { valid: true };
 }
-

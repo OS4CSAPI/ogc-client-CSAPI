@@ -1,12 +1,12 @@
 /**
  * Encoding types for SWE Common
- * 
+ *
  * Encodings specify how data values are serialized:
  * - JSONEncoding: Native JSON representation
  * - TextEncoding: Delimited text (CSV-like)
  * - BinaryEncoding: Efficient binary representation
  * - XMLEncoding: XML representation
- * 
+ *
  * @see https://docs.ogc.org/is/24-014/24-014.html Section 10
  * @see https://schemas.opengis.net/sweCommon/3.0/json/encodings.json
  */
@@ -42,32 +42,32 @@ export interface BinaryComponentEncoding {
    * Reference to the component being encoded
    */
   ref: string;
-  
+
   /**
    * Data type for encoding
    */
   dataType: BinaryDataType;
-  
+
   /**
    * Byte length (for fixed-size types)
    */
   byteLength?: number;
-  
+
   /**
    * Significant bits (for packed data)
    */
   significantBits?: number;
-  
+
   /**
    * Bit length (for bit-packed data)
    */
   bitLength?: number;
-  
+
   /**
    * Byte order
    */
   byteOrder?: ByteOrder;
-  
+
   /**
    * Encryption method
    */
@@ -82,27 +82,27 @@ export interface BinaryBlockEncoding {
    * Compression method
    */
   compression?: string;
-  
+
   /**
    * Encryption method
    */
   encryption?: string;
-  
+
   /**
    * Byte order
    */
   byteOrder?: ByteOrder;
-  
+
   /**
    * Byte length of the block
    */
   byteLength?: number;
-  
+
   /**
    * Byte encoding (e.g., 'base64', 'hex')
    */
   byteEncoding?: string;
-  
+
   /**
    * Member encodings
    */
@@ -111,7 +111,7 @@ export interface BinaryBlockEncoding {
 
 /**
  * Binary encoding for efficient data representation
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/encodings.json
  */
 export interface BinaryEncoding {
@@ -119,17 +119,17 @@ export interface BinaryEncoding {
    * Always 'BinaryEncoding'
    */
   type: 'BinaryEncoding';
-  
+
   /**
    * Byte order for the entire encoding
    */
   byteOrder?: ByteOrder;
-  
+
   /**
    * Byte encoding method
    */
   byteEncoding?: string;
-  
+
   /**
    * Member component encodings
    */
@@ -138,7 +138,7 @@ export interface BinaryEncoding {
 
 /**
  * Text encoding for delimited text data (CSV-like)
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/encodings.json
  */
 export interface TextEncoding {
@@ -146,22 +146,22 @@ export interface TextEncoding {
    * Always 'TextEncoding'
    */
   type: 'TextEncoding';
-  
+
   /**
    * Collapse white space
    */
   collapseWhiteSpaces?: boolean;
-  
+
   /**
    * Decimal separator (default '.')
    */
   decimalSeparator?: string;
-  
+
   /**
    * Token separator (separates values within a record)
    */
   tokenSeparator: string;
-  
+
   /**
    * Block separator (separates records/blocks)
    */
@@ -170,7 +170,7 @@ export interface TextEncoding {
 
 /**
  * XML encoding for XML representation
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/encodings.json
  */
 export interface XMLEncoding {
@@ -182,7 +182,7 @@ export interface XMLEncoding {
 
 /**
  * JSON encoding for native JSON representation
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/encodings.json
  */
 export interface JSONEncoding {
@@ -195,12 +195,18 @@ export interface JSONEncoding {
 /**
  * Union type for all encoding types
  */
-export type Encoding = BinaryEncoding | TextEncoding | XMLEncoding | JSONEncoding;
+export type Encoding =
+  | BinaryEncoding
+  | TextEncoding
+  | XMLEncoding
+  | JSONEncoding;
 
 /**
  * Type guard for BinaryEncoding
  */
-export function isBinaryEncoding(encoding: unknown): encoding is BinaryEncoding {
+export function isBinaryEncoding(
+  encoding: unknown
+): encoding is BinaryEncoding {
   return (
     typeof encoding === 'object' &&
     encoding !== null &&

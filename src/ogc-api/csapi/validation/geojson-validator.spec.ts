@@ -152,7 +152,6 @@ describe('GeoJSON Validators', () => {
     });
   });
 
-
   describe('validateDeploymentFeatureCollection', () => {
     it('should validate valid Deployment collection', () => {
       const collection = {
@@ -223,7 +222,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validateDeploymentFeatureCollection(notCollection as any);
       expect(result.valid).toBe(false);
-      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+      expect(result.errors![0]).toContain(
+        'not a valid GeoJSON FeatureCollection'
+      );
     });
   });
 
@@ -294,7 +295,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validateProcedureFeatureCollection(notCollection as any);
       expect(result.valid).toBe(false);
-      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+      expect(result.errors![0]).toContain(
+        'not a valid GeoJSON FeatureCollection'
+      );
     });
   });
 
@@ -365,7 +368,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validateSamplingFeatureCollection(notCollection as any);
       expect(result.valid).toBe(false);
-      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+      expect(result.errors![0]).toContain(
+        'not a valid GeoJSON FeatureCollection'
+      );
     });
   });
 
@@ -439,7 +444,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validatePropertyFeatureCollection(notCollection as any);
       expect(result.valid).toBe(false);
-      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+      expect(result.errors![0]).toContain(
+        'not a valid GeoJSON FeatureCollection'
+      );
     });
   });
 
@@ -516,7 +523,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validateDatastreamFeatureCollection(notCollection as any);
       expect(result.valid).toBe(false);
-      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+      expect(result.errors![0]).toContain(
+        'not a valid GeoJSON FeatureCollection'
+      );
     });
   });
 
@@ -591,9 +600,13 @@ describe('GeoJSON Validators', () => {
         features: [],
       };
 
-      const result = validateControlStreamFeatureCollection(notCollection as any);
+      const result = validateControlStreamFeatureCollection(
+        notCollection as any
+      );
       expect(result.valid).toBe(false);
-      expect(result.errors![0]).toContain('not a valid GeoJSON FeatureCollection');
+      expect(result.errors![0]).toContain(
+        'not a valid GeoJSON FeatureCollection'
+      );
     });
   });
   describe('validateDeploymentFeature', () => {
@@ -809,7 +822,7 @@ describe('GeoJSON Validators', () => {
         type: 'Feature',
         geometry: null,
         properties: {
-          featureType: 'WrongType',  // Invalid feature type
+          featureType: 'WrongType', // Invalid feature type
           uid: 'urn:test:system',
         },
       };
@@ -858,11 +871,19 @@ describe('GeoJSON Validators', () => {
     });
 
     it('should reject null/invalid properties', () => {
-      const result1 = validateSystemFeature({ type: 'Feature', geometry: null, properties: null } as any);
+      const result1 = validateSystemFeature({
+        type: 'Feature',
+        geometry: null,
+        properties: null,
+      } as any);
       expect(result1.valid).toBe(false);
       expect(result1.errors[0]).toContain('CSAPI properties');
 
-      const result2 = validateSystemFeature({ type: 'Feature', geometry: null, properties: 'invalid' } as any);
+      const result2 = validateSystemFeature({
+        type: 'Feature',
+        geometry: null,
+        properties: 'invalid',
+      } as any);
       expect(result2.valid).toBe(false);
       expect(result2.errors[0]).toContain('CSAPI properties');
     });
@@ -943,7 +964,10 @@ describe('GeoJSON Validators', () => {
       const result1 = validateDatastreamFeature(null);
       expect(result1.valid).toBe(false);
 
-      const result2 = validateDatastreamFeature({ type: 'Feature', properties: 'invalid' } as any);
+      const result2 = validateDatastreamFeature({
+        type: 'Feature',
+        properties: 'invalid',
+      } as any);
       expect(result2.valid).toBe(false);
     });
 
@@ -951,7 +975,10 @@ describe('GeoJSON Validators', () => {
       const result1 = validateControlStreamFeature(null);
       expect(result1.valid).toBe(false);
 
-      const result2 = validateControlStreamFeature({ type: 'Feature', geometry: null } as any);
+      const result2 = validateControlStreamFeature({
+        type: 'Feature',
+        geometry: null,
+      } as any);
       expect(result2.valid).toBe(false);
     });
   });
@@ -986,7 +1013,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validateDeploymentFeatureCollection(collection);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Object is not a valid GeoJSON FeatureCollection');
+      expect(result.errors).toContain(
+        'Object is not a valid GeoJSON FeatureCollection'
+      );
     });
 
     it('should collect errors from invalid Deployment features', () => {
@@ -1040,9 +1069,11 @@ describe('GeoJSON Validators', () => {
     });
 
     it('should reject non-FeatureCollection for Procedures', () => {
-      const result = validateProcedureFeatureCollection({type: 'Feature'});
+      const result = validateProcedureFeatureCollection({ type: 'Feature' });
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Object is not a valid GeoJSON FeatureCollection');
+      expect(result.errors).toContain(
+        'Object is not a valid GeoJSON FeatureCollection'
+      );
     });
 
     it('should collect Procedure feature validation errors', () => {
@@ -1336,7 +1367,9 @@ describe('GeoJSON Validators', () => {
 
       const result = validateCSAPIFeature(feature);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Unknown or unsupported featureType: UnknownType');
+      expect(result.errors).toContain(
+        'Unknown or unsupported featureType: UnknownType'
+      );
     });
 
     it('should reject missing featureType', () => {
@@ -1438,11 +1471,11 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0, 45.0]
+            coordinates: [5.0, 45.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1452,11 +1485,11 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0, 45.0, 100.0]
+            coordinates: [5.0, 45.0, 100.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1466,14 +1499,18 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0, 95.0]  // Invalid latitude
+            coordinates: [5.0, 95.0], // Invalid latitude
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Latitude must be between -90 and 90'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('Latitude must be between -90 and 90')
+          )
+        ).toBe(true);
       });
 
       it('should reject Point with latitude < -90', () => {
@@ -1481,14 +1518,18 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0, -95.0]
+            coordinates: [5.0, -95.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Latitude must be between -90 and 90'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('Latitude must be between -90 and 90')
+          )
+        ).toBe(true);
       });
 
       it('should reject Point with longitude > 180', () => {
@@ -1496,14 +1537,18 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [190.0, 45.0]  // Invalid longitude
+            coordinates: [190.0, 45.0], // Invalid longitude
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Longitude must be between -180 and 180'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('Longitude must be between -180 and 180')
+          )
+        ).toBe(true);
       });
 
       it('should reject Point with longitude < -180', () => {
@@ -1511,14 +1556,18 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [-190.0, 45.0]
+            coordinates: [-190.0, 45.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Longitude must be between -180 and 180'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('Longitude must be between -180 and 180')
+          )
+        ).toBe(true);
       });
 
       it('should reject Point with insufficient coordinates', () => {
@@ -1526,14 +1575,16 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0]  // Only 1 coordinate
+            coordinates: [5.0], // Only 1 coordinate
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('must have 2 or 3 coordinates'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('must have 2 or 3 coordinates'))
+        ).toBe(true);
       });
 
       it('should accept Point at latitude boundaries (-90, 90)', () => {
@@ -1541,20 +1592,20 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [0, -90]
+            coordinates: [0, -90],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const featureMax = {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [0, 90]
+            coordinates: [0, 90],
           },
-          properties: { featureType: 'System', uid: 'urn:test:2' }
+          properties: { featureType: 'System', uid: 'urn:test:2' },
         };
-        
+
         expect(validateSystemFeature(featureMin).valid).toBe(true);
         expect(validateSystemFeature(featureMax).valid).toBe(true);
       });
@@ -1564,20 +1615,20 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [-180, 0]
+            coordinates: [-180, 0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const featureMax = {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [180, 0]
+            coordinates: [180, 0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:2' }
+          properties: { featureType: 'System', uid: 'urn:test:2' },
         };
-        
+
         expect(validateSystemFeature(featureMin).valid).toBe(true);
         expect(validateSystemFeature(featureMax).valid).toBe(true);
       });
@@ -1589,11 +1640,14 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: [[5.0, 45.0], [5.1, 45.1]]
+            coordinates: [
+              [5.0, 45.0],
+              [5.1, 45.1],
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1603,11 +1657,15 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: [[5.0, 45.0], [5.1, 45.1], [5.2, 45.2]]
+            coordinates: [
+              [5.0, 45.0],
+              [5.1, 45.1],
+              [5.2, 45.2],
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1617,14 +1675,16 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: [[5.0, 45.0]]  // Only 1 position
+            coordinates: [[5.0, 45.0]], // Only 1 position
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('at least 2 positions'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('at least 2 positions'))
+        ).toBe(true);
       });
 
       it('should reject LineString with invalid coordinate in position', () => {
@@ -1632,14 +1692,21 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: [[5.0, 45.0], [5.1, 95.0]]  // Second position has invalid latitude
+            coordinates: [
+              [5.0, 45.0],
+              [5.1, 95.0],
+            ], // Second position has invalid latitude
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Position 1:') && e.includes('Latitude'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('Position 1:') && e.includes('Latitude')
+          )
+        ).toBe(true);
       });
     });
 
@@ -1649,11 +1716,19 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]]  // Closed ring
+            coordinates: [
+              [
+                [0, 0],
+                [0, 1],
+                [1, 1],
+                [1, 0],
+                [0, 0],
+              ],
+            ], // Closed ring
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1663,14 +1738,21 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [[[0, 0], [0, 1], [1, 1], [1, 0]]]  // Not closed
+            coordinates: [
+              [
+                [0, 0],
+                [0, 1],
+                [1, 1],
+                [1, 0],
+              ],
+            ], // Not closed
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('not closed'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('not closed'))).toBe(true);
       });
 
       it('should reject Polygon with < 4 positions', () => {
@@ -1678,14 +1760,22 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [[[0, 0], [0, 1], [0, 0]]]  // Only 3 positions
+            coordinates: [
+              [
+                [0, 0],
+                [0, 1],
+                [0, 0],
+              ],
+            ], // Only 3 positions
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('at least 4 positions'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('at least 4 positions'))
+        ).toBe(true);
       });
 
       it('should accept Polygon with hole (multiple rings)', () => {
@@ -1694,13 +1784,25 @@ describe('GeoJSON Validators', () => {
           geometry: {
             type: 'Polygon',
             coordinates: [
-              [[0, 0], [0, 10], [10, 10], [10, 0], [0, 0]],  // Outer ring
-              [[2, 2], [2, 8], [8, 8], [8, 2], [2, 2]]  // Inner ring (hole)
-            ]
+              [
+                [0, 0],
+                [0, 10],
+                [10, 10],
+                [10, 0],
+                [0, 0],
+              ], // Outer ring
+              [
+                [2, 2],
+                [2, 8],
+                [8, 8],
+                [8, 2],
+                [2, 2],
+              ], // Inner ring (hole)
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1710,14 +1812,26 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [[[0, 0], [0, 95], [1, 1], [1, 0], [0, 0]]]  // Invalid latitude
+            coordinates: [
+              [
+                [0, 0],
+                [0, 95],
+                [1, 1],
+                [1, 0],
+                [0, 0],
+              ],
+            ], // Invalid latitude
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Latitude must be between -90 and 90'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('Latitude must be between -90 and 90')
+          )
+        ).toBe(true);
       });
     });
 
@@ -1727,11 +1841,14 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'MultiPoint',
-            coordinates: [[5.0, 45.0], [5.1, 45.1]]
+            coordinates: [
+              [5.0, 45.0],
+              [5.1, 45.1],
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1741,14 +1858,21 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'MultiPoint',
-            coordinates: [[5.0, 45.0], [5.1, 95.0]]  // Second position invalid
+            coordinates: [
+              [5.0, 45.0],
+              [5.1, 95.0],
+            ], // Second position invalid
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Position 1:') && e.includes('Latitude'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('Position 1:') && e.includes('Latitude')
+          )
+        ).toBe(true);
       });
     });
 
@@ -1759,13 +1883,19 @@ describe('GeoJSON Validators', () => {
           geometry: {
             type: 'MultiLineString',
             coordinates: [
-              [[5.0, 45.0], [5.1, 45.1]],
-              [[6.0, 46.0], [6.1, 46.1]]
-            ]
+              [
+                [5.0, 45.0],
+                [5.1, 45.1],
+              ],
+              [
+                [6.0, 46.0],
+                [6.1, 46.1],
+              ],
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1776,16 +1906,24 @@ describe('GeoJSON Validators', () => {
           geometry: {
             type: 'MultiLineString',
             coordinates: [
-              [[5.0, 45.0], [5.1, 45.1]],
-              [[6.0, 46.0]]  // Only 1 position
-            ]
+              [
+                [5.0, 45.0],
+                [5.1, 45.1],
+              ],
+              [[6.0, 46.0]], // Only 1 position
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('LineString 1') && e.includes('at least 2 positions'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) =>
+              e.includes('LineString 1') && e.includes('at least 2 positions')
+          )
+        ).toBe(true);
       });
     });
 
@@ -1796,13 +1934,29 @@ describe('GeoJSON Validators', () => {
           geometry: {
             type: 'MultiPolygon',
             coordinates: [
-              [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]],
-              [[[2, 2], [2, 3], [3, 3], [3, 2], [2, 2]]]
-            ]
+              [
+                [
+                  [0, 0],
+                  [0, 1],
+                  [1, 1],
+                  [1, 0],
+                  [0, 0],
+                ],
+              ],
+              [
+                [
+                  [2, 2],
+                  [2, 3],
+                  [3, 3],
+                  [3, 2],
+                  [2, 2],
+                ],
+              ],
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1813,16 +1967,35 @@ describe('GeoJSON Validators', () => {
           geometry: {
             type: 'MultiPolygon',
             coordinates: [
-              [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]],
-              [[[2, 2], [2, 3], [3, 3], [3, 2]]]  // Not closed
-            ]
+              [
+                [
+                  [0, 0],
+                  [0, 1],
+                  [1, 1],
+                  [1, 0],
+                  [0, 0],
+                ],
+              ],
+              [
+                [
+                  [2, 2],
+                  [2, 3],
+                  [3, 3],
+                  [3, 2],
+                ],
+              ], // Not closed
+            ],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Polygon 1') && e.includes('not closed'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('Polygon 1') && e.includes('not closed')
+          )
+        ).toBe(true);
       });
     });
 
@@ -1831,16 +2004,18 @@ describe('GeoJSON Validators', () => {
         const feature = {
           type: 'Feature',
           geometry: {
-            type: 'Circle',  // Not a valid GeoJSON type
+            type: 'Circle', // Not a valid GeoJSON type
             coordinates: [5.0, 45.0],
-            radius: 1000
+            radius: 1000,
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Unknown geometry type'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('Unknown geometry type'))
+        ).toBe(true);
       });
     });
 
@@ -1849,9 +2024,9 @@ describe('GeoJSON Validators', () => {
         const feature = {
           type: 'Feature',
           geometry: null,
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
-        
+
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(true);
       });
@@ -1863,18 +2038,18 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0, 95.0]  // Invalid latitude
+            coordinates: [5.0, 95.0], // Invalid latitude
           },
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: { href: 'http://example.com/systems/1' }
-          }
+            system: { href: 'http://example.com/systems/1' },
+          },
         };
-        
+
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Latitude'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('Latitude'))).toBe(true);
       });
 
       it('should validate geometry for Datastream features', () => {
@@ -1882,19 +2057,19 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [190.0, 45.0]  // Invalid longitude
+            coordinates: [190.0, 45.0], // Invalid longitude
           },
           properties: {
             featureType: 'Datastream',
             uid: 'urn:test:1',
             system: { href: 'http://example.com/systems/1' },
-            observedProperty: { href: 'http://example.com/props/temp' }
-          }
+            observedProperty: { href: 'http://example.com/props/temp' },
+          },
         };
-        
+
         const result = validateDatastreamFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Longitude'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('Longitude'))).toBe(true);
       });
 
       it('should validate geometry for SamplingFeature', () => {
@@ -1902,17 +2077,24 @@ describe('GeoJSON Validators', () => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [[[0, 0], [0, 1], [1, 1], [1, 0]]]  // Unclosed
+            coordinates: [
+              [
+                [0, 0],
+                [0, 1],
+                [1, 1],
+                [1, 0],
+              ],
+            ], // Unclosed
           },
           properties: {
             featureType: 'SamplingFeature',
-            uid: 'urn:test:1'
-          }
+            uid: 'urn:test:1',
+          },
         };
-        
+
         const result = validateSamplingFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('not closed'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('not closed'))).toBe(true);
       });
     });
   });
@@ -1928,8 +2110,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 'urn:test:system-1'
-          }
+            system: 'urn:test:system-1',
+          },
         };
 
         const result = validateDeploymentFeature(feature);
@@ -1943,8 +2125,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 'http://example.org/systems/1'
-          }
+            system: 'http://example.org/systems/1',
+          },
         };
 
         const result = validateDeploymentFeature(feature);
@@ -1958,8 +2140,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 'https://example.org/systems/1'
-          }
+            system: 'https://example.org/systems/1',
+          },
         };
 
         const result = validateDeploymentFeature(feature);
@@ -1973,13 +2155,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 'http://example.org/systems with spaces/1'
-          }
+            system: 'http://example.org/systems with spaces/1',
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('contains spaces'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('contains spaces'))).toBe(
+          true
+        );
       });
 
       it('should reject malformed URN (missing namespace)', () => {
@@ -1989,13 +2173,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 'urn:system-1'  // Missing namespace separator
-          }
+            system: 'urn:system-1', // Missing namespace separator
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Invalid URI format'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('Invalid URI format'))
+        ).toBe(true);
       });
 
       it('should reject malformed URL (no protocol)', () => {
@@ -2005,13 +2191,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 'example.org/systems/1'  // Missing http:// or https://
-          }
+            system: 'example.org/systems/1', // Missing http:// or https://
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Invalid URI format'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('Invalid URI format'))
+        ).toBe(true);
       });
 
       it('should reject empty string URI', () => {
@@ -2021,13 +2209,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: ''
-          }
+            system: '',
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('cannot be empty'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('cannot be empty'))).toBe(
+          true
+        );
       });
     });
 
@@ -2041,9 +2231,9 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             system: {
               rel: 'related',
-              href: 'http://example.org/systems/1'
-            }
-          }
+              href: 'http://example.org/systems/1',
+            },
+          },
         };
 
         const result = validateDeploymentFeature(feature);
@@ -2058,9 +2248,9 @@ describe('GeoJSON Validators', () => {
             featureType: 'Deployment',
             uid: 'urn:test:1',
             system: {
-              href: 'http://example.org/systems/1'
-            }
-          }
+              href: 'http://example.org/systems/1',
+            },
+          },
         };
 
         const result = validateDeploymentFeature(feature);
@@ -2075,15 +2265,17 @@ describe('GeoJSON Validators', () => {
             featureType: 'Deployment',
             uid: 'urn:test:1',
             system: {
-              rel: 'related'
+              rel: 'related',
               // Missing href
-            }
-          }
+            },
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('must have href'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('must have href'))).toBe(
+          true
+        );
       });
 
       it('should reject link object with non-string href', () => {
@@ -2094,14 +2286,16 @@ describe('GeoJSON Validators', () => {
             featureType: 'Deployment',
             uid: 'urn:test:1',
             system: {
-              href: 123  // Should be string
-            }
-          }
+              href: 123, // Should be string
+            },
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('href must be a string'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('href must be a string'))
+        ).toBe(true);
       });
 
       it('should reject link object with empty rel', () => {
@@ -2113,14 +2307,16 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             system: {
               rel: '',
-              href: 'http://example.org/systems/1'
-            }
-          }
+              href: 'http://example.org/systems/1',
+            },
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('rel cannot be empty'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('rel cannot be empty'))
+        ).toBe(true);
       });
 
       it('should reject non-string, non-object link', () => {
@@ -2130,13 +2326,17 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Deployment',
             uid: 'urn:test:1',
-            system: 123  // Should be string or object
-          }
+            system: 123, // Should be string or object
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('must be a string URI or object with href'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('must be a string URI or object with href')
+          )
+        ).toBe(true);
       });
     });
 
@@ -2150,9 +2350,9 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             links: [
               { rel: 'self', href: 'http://example.org/systems/1' },
-              { rel: 'alternate', href: 'http://example.org/systems/1.json' }
-            ]
-          }
+              { rel: 'alternate', href: 'http://example.org/systems/1.json' },
+            ],
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2168,9 +2368,9 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             links: [
               'http://example.org/systems/1',
-              'http://example.org/systems/1.json'
-            ]
-          }
+              'http://example.org/systems/1.json',
+            ],
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2186,14 +2386,21 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             links: [
               { rel: 'self', href: 'http://example.org/systems/1' },
-              { rel: 'alternate', href: 'http://example with spaces.org/systems/1.json' }  // Invalid
-            ]
-          }
+              {
+                rel: 'alternate',
+                href: 'http://example with spaces.org/systems/1.json',
+              }, // Invalid
+            ],
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('links[1]') && e.includes('contains spaces'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('links[1]') && e.includes('contains spaces')
+          )
+        ).toBe(true);
       });
 
       it('should reject non-array links property', () => {
@@ -2203,13 +2410,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            links: 'not-an-array'
-          }
+            links: 'not-an-array',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('links must be an array'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('links must be an array'))
+        ).toBe(true);
       });
     });
 
@@ -2222,13 +2431,17 @@ describe('GeoJSON Validators', () => {
             featureType: 'Datastream',
             uid: 'urn:test:1',
             system: 'invalid uri with spaces',
-            observedProperty: { href: 'http://example.org/props/temp' }
-          }
+            observedProperty: { href: 'http://example.org/props/temp' },
+          },
         };
 
         const result = validateDatastreamFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('system') && e.includes('contains spaces'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('system') && e.includes('contains spaces')
+          )
+        ).toBe(true);
       });
 
       it('should validate observedProperty link in Datastream features', () => {
@@ -2239,13 +2452,18 @@ describe('GeoJSON Validators', () => {
             featureType: 'Datastream',
             uid: 'urn:test:1',
             system: { href: 'http://example.org/systems/1' },
-            observedProperty: 'malformed url'
-          }
+            observedProperty: 'malformed url',
+          },
         };
 
         const result = validateDatastreamFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('observedProperty') && e.includes('Invalid URI format'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) =>
+              e.includes('observedProperty') && e.includes('Invalid URI format')
+          )
+        ).toBe(true);
       });
 
       it('should validate controlledProperty link in ControlStream features', () => {
@@ -2256,13 +2474,18 @@ describe('GeoJSON Validators', () => {
             featureType: 'ControlStream',
             uid: 'urn:test:1',
             system: { href: 'http://example.org/systems/1' },
-            controlledProperty: { href: '' }  // Empty href
-          }
+            controlledProperty: { href: '' }, // Empty href
+          },
         };
 
         const result = validateControlStreamFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('controlledProperty') && e.includes('cannot be empty'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) =>
+              e.includes('controlledProperty') && e.includes('cannot be empty')
+          )
+        ).toBe(true);
       });
 
       it('should validate sampledFeature link in SamplingFeature', () => {
@@ -2272,13 +2495,17 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'SamplingFeature',
             uid: 'urn:test:1',
-            sampledFeature: { rel: 'sampled' }  // Missing href
-          }
+            sampledFeature: { rel: 'sampled' }, // Missing href
+          },
         };
 
         const result = validateSamplingFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('sampledFeature') && e.includes('must have href'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('sampledFeature') && e.includes('must have href')
+          )
+        ).toBe(true);
       });
     });
   });
@@ -2294,8 +2521,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T10:30:00Z'
-          }
+            validTime: '2024-01-15T10:30:00Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2309,8 +2536,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T10:30:00+05:30'
-          }
+            validTime: '2024-01-15T10:30:00+05:30',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2324,8 +2551,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15'
-          }
+            validTime: '2024-01-15',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2339,8 +2566,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T10:30:00.123Z'
-          }
+            validTime: '2024-01-15T10:30:00.123Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2354,13 +2581,17 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '01/15/2024 10:30 AM'
-          }
+            validTime: '01/15/2024 10:30 AM',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Invalid ISO 8601 timestamp format'))).toBe(true);
+        expect(
+          result.errors?.some((e) =>
+            e.includes('Invalid ISO 8601 timestamp format')
+          )
+        ).toBe(true);
       });
 
       it('should reject impossible date (Feb 30)', () => {
@@ -2370,13 +2601,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-02-30T00:00:00Z'
-          }
+            validTime: '2024-02-30T00:00:00Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('impossible date'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('impossible date'))).toBe(
+          true
+        );
       });
 
       it('should reject impossible date (Month 13)', () => {
@@ -2386,13 +2619,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-13-01T00:00:00Z'
-          }
+            validTime: '2024-13-01T00:00:00Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('impossible date'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('impossible date'))).toBe(
+          true
+        );
       });
 
       it('should warn about missing timezone', () => {
@@ -2402,13 +2637,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T10:30:00'
-          }
+            validTime: '2024-01-15T10:30:00',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('missing timezone'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('missing timezone'))).toBe(
+          true
+        );
       });
 
       it('should reject empty timestamp', () => {
@@ -2418,13 +2655,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: ''
-          }
+            validTime: '',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('cannot be empty'))).toBe(true);
+        expect(result.errors?.some((e) => e.includes('cannot be empty'))).toBe(
+          true
+        );
       });
     });
 
@@ -2436,8 +2675,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T00:00:00Z/2024-01-20T23:59:59Z'
-          }
+            validTime: '2024-01-15T00:00:00Z/2024-01-20T23:59:59Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2451,8 +2690,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '../2024-01-20T23:59:59Z'
-          }
+            validTime: '../2024-01-20T23:59:59Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2466,8 +2705,8 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T00:00:00Z/..'
-          }
+            validTime: '2024-01-15T00:00:00Z/..',
+          },
         };
 
         const result = validateSystemFeature(feature);
@@ -2481,13 +2720,18 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-20T00:00:00Z/2024-01-10T00:00:00Z'
-          }
+            validTime: '2024-01-20T00:00:00Z/2024-01-10T00:00:00Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Start time') && e.includes('must be before end time'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) =>
+              e.includes('Start time') && e.includes('must be before end time')
+          )
+        ).toBe(true);
       });
 
       it('should reject malformed interval (missing end)', () => {
@@ -2497,13 +2741,15 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T00:00:00Z/'
-          }
+            validTime: '2024-01-15T00:00:00Z/',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('Timestamp cannot be empty'))).toBe(true);
+        expect(
+          result.errors?.some((e) => e.includes('Timestamp cannot be empty'))
+        ).toBe(true);
       });
 
       it('should reject interval with invalid start timestamp', () => {
@@ -2513,13 +2759,17 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-02-30T00:00:00Z/2024-03-15T00:00:00Z'
-          }
+            validTime: '2024-02-30T00:00:00Z/2024-03-15T00:00:00Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('(start)') && e.includes('impossible date'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('(start)') && e.includes('impossible date')
+          )
+        ).toBe(true);
       });
 
       it('should reject interval with invalid end timestamp', () => {
@@ -2529,13 +2779,17 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            validTime: '2024-01-15T00:00:00Z/2024-13-01T00:00:00Z'
-          }
+            validTime: '2024-01-15T00:00:00Z/2024-13-01T00:00:00Z',
+          },
         };
 
         const result = validateSystemFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('(end)') && e.includes('impossible date'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('(end)') && e.includes('impossible date')
+          )
+        ).toBe(true);
       });
     });
 
@@ -2548,13 +2802,17 @@ describe('GeoJSON Validators', () => {
             featureType: 'Deployment',
             uid: 'urn:test:1',
             system: { href: 'http://example.org/systems/1' },
-            validTime: '01/15/2024 10:30 AM'  // Invalid format
-          }
+            validTime: '01/15/2024 10:30 AM', // Invalid format
+          },
         };
 
         const result = validateDeploymentFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('validTime') && e.includes('Invalid ISO 8601'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('validTime') && e.includes('Invalid ISO 8601')
+          )
+        ).toBe(true);
       });
 
       it('should validate validTime in Procedure features', () => {
@@ -2564,13 +2822,17 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'Procedure',
             uid: 'urn:test:1',
-            validTime: '2024-02-30T00:00:00Z'  // Impossible date
-          }
+            validTime: '2024-02-30T00:00:00Z', // Impossible date
+          },
         };
 
         const result = validateProcedureFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('validTime') && e.includes('impossible date'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('validTime') && e.includes('impossible date')
+          )
+        ).toBe(true);
       });
 
       it('should validate phenomenonTime in Datastream features', () => {
@@ -2582,13 +2844,18 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             system: { href: 'http://example.org/systems/1' },
             observedProperty: { href: 'http://example.org/props/temp' },
-            phenomenonTime: '2024-01-15T10:30:00'  // Missing timezone
-          }
+            phenomenonTime: '2024-01-15T10:30:00', // Missing timezone
+          },
         };
 
         const result = validateDatastreamFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('phenomenonTime') && e.includes('missing timezone'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) =>
+              e.includes('phenomenonTime') && e.includes('missing timezone')
+          )
+        ).toBe(true);
       });
 
       it('should validate resultTime in Datastream features', () => {
@@ -2600,13 +2867,18 @@ describe('GeoJSON Validators', () => {
             uid: 'urn:test:1',
             system: { href: 'http://example.org/systems/1' },
             observedProperty: { href: 'http://example.org/props/temp' },
-            resultTime: '2024-01-20T00:00:00Z/2024-01-10T00:00:00Z'  // Reversed interval
-          }
+            resultTime: '2024-01-20T00:00:00Z/2024-01-10T00:00:00Z', // Reversed interval
+          },
         };
 
         const result = validateDatastreamFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('resultTime') && e.includes('must be before end time'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) =>
+              e.includes('resultTime') && e.includes('must be before end time')
+          )
+        ).toBe(true);
       });
 
       it('should validate samplingTime in SamplingFeature', () => {
@@ -2616,19 +2888,18 @@ describe('GeoJSON Validators', () => {
           properties: {
             featureType: 'SamplingFeature',
             uid: 'urn:test:1',
-            samplingTime: 'not-a-timestamp'
-          }
+            samplingTime: 'not-a-timestamp',
+          },
         };
 
         const result = validateSamplingFeature(feature);
         expect(result.valid).toBe(false);
-        expect(result.errors?.some(e => e.includes('samplingTime') && e.includes('Invalid ISO 8601'))).toBe(true);
+        expect(
+          result.errors?.some(
+            (e) => e.includes('samplingTime') && e.includes('Invalid ISO 8601')
+          )
+        ).toBe(true);
       });
     });
   });
 });
-
-
-
-
-

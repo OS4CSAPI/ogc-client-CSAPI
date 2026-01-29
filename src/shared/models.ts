@@ -93,7 +93,7 @@ export type FieldSort = ['D' | 'A', FieldName];
  * Special temporal values:
  * - "now": Current time at the server
  * - "latest": Latest available data time
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#rc_datetime-now-latest
  */
 export type DateTimeParameter =

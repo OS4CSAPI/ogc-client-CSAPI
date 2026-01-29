@@ -1,21 +1,21 @@
 /**
  * CSAPI Parsers
- * 
+ *
  * Parsers for all CSAPI formats and resource types.
- * 
+ *
  * Usage:
  * ```typescript
  * import { systemParser } from '@/ogc-api/csapi/parsers';
- * 
+ *
  * const result = systemParser.parse(responseData, {
  *   contentType: 'application/geo+json',
  *   validate: true
  * });
- * 
+ *
  * console.log(result.data); // Typed SystemFeature
  * console.log(result.format); // Format detection result
  * ```
- * 
+ *
  * @module parsers
  */
 

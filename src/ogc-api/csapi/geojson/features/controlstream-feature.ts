@@ -1,10 +1,10 @@
 /**
  * Control Stream feature types for CSAPI
- * 
+ *
  * Control Streams represent a series of commands sent to control a specific property
  * of a system over time. They define what is being controlled, how it's being controlled,
  * and provide metadata about the command series.
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_streams_2
  */
 
@@ -26,22 +26,22 @@ export interface ControlStreamSchema {
    * Command format (e.g., 'application/swe+json')
    */
   commandFormat?: string;
-  
+
   /**
    * Link to command schema
    */
   commandSchema?: string;
-  
+
   /**
    * Inline command schema (SWE Common structure)
    */
   commandSchemaObject?: unknown;
-  
+
   /**
    * Link to encoding specification
    */
   commandEncoding?: string;
-  
+
   /**
    * Inline encoding specification
    */
@@ -50,7 +50,7 @@ export interface ControlStreamSchema {
 
 /**
  * Properties specific to Control Stream features
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource
  */
 export interface ControlStreamFeatureProperties extends CSAPIFeatureProperties {
@@ -58,47 +58,47 @@ export interface ControlStreamFeatureProperties extends CSAPIFeatureProperties {
    * Always 'ControlStream' for control stream features
    */
   featureType: 'ControlStream';
-  
+
   /**
    * ID of the system being controlled
    */
   system: UniqueID;
-  
+
   /**
    * ID of the deployment (if commands are for a specific deployment)
    */
   deployment?: UniqueID;
-  
+
   /**
    * ID of the procedure used to generate commands
    */
   procedure?: UniqueID;
-  
+
   /**
    * ID of the controlled property
    */
   controlledProperty: UniqueID;
-  
+
   /**
    * Definition URI for the controlled property
    */
   controlledPropertyDefinition?: DefinitionURI;
-  
+
   /**
    * Time extent of when commands are issued
    */
   issueTime?: TimeExtent;
-  
+
   /**
    * Time extent of when commands are executed
    */
   executionTime?: TimeExtent;
-  
+
   /**
    * Schema and encoding information for commands
    */
   schema?: ControlStreamSchema;
-  
+
   /**
    * Number of commands in this control stream
    */
@@ -107,7 +107,7 @@ export interface ControlStreamFeatureProperties extends CSAPIFeatureProperties {
 
 /**
  * GeoJSON Feature representing a Control Stream
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_stream_resource
  */
 export interface ControlStreamFeature
@@ -117,7 +117,7 @@ export interface ControlStreamFeature
 
 /**
  * GeoJSON FeatureCollection of Control Streams
- * 
+ *
  * @see https://docs.ogc.org/is/23-002r1/23-002r1.html#_control_streams_2
  */
 export interface ControlStreamFeatureCollection

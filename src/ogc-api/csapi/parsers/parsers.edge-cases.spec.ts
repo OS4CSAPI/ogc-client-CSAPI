@@ -20,7 +20,7 @@ describe('Parser Edge Cases', () => {
       it('should reject Feature without type property', () => {
         const invalid = {
           geometry: null,
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         expect(() => {
@@ -32,7 +32,7 @@ describe('Parser Edge Cases', () => {
         const invalid = {
           type: 'NotAFeature',
           geometry: null,
-          properties: {}
+          properties: {},
         };
 
         expect(() => {
@@ -43,7 +43,7 @@ describe('Parser Edge Cases', () => {
       it('should reject Feature with missing properties', () => {
         const invalid = {
           type: 'Feature',
-          geometry: null
+          geometry: null,
         };
 
         expect(() => {
@@ -53,7 +53,7 @@ describe('Parser Edge Cases', () => {
 
       it('should reject FeatureCollection without features array', () => {
         const invalid = {
-          type: 'FeatureCollection'
+          type: 'FeatureCollection',
         };
 
         expect(() => {
@@ -68,16 +68,18 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: '5.0, 45.0'  // String instead of array
+            coordinates: '5.0, 45.0', // String instead of array
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         // Parser may throw or return with error - either is acceptable
         try {
           const result = parser.parseGeoJSON(invalid as any);
           // If it doesn't throw, geometry should be invalid or undefined
-          expect(result.geometry === undefined || result.geometry === null).toBeTruthy();
+          expect(
+            result.geometry === undefined || result.geometry === null
+          ).toBeTruthy();
         } catch (e) {
           expect(e).toBeDefined();
         }
@@ -87,7 +89,7 @@ describe('Parser Edge Cases', () => {
         const invalid = {
           type: 'Feature',
           geometry: null,
-          properties: 'not an object'
+          properties: 'not an object',
         };
 
         expect(() => {
@@ -101,7 +103,7 @@ describe('Parser Edge Cases', () => {
         const feature = {
           type: 'Feature',
           geometry: null,
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -111,13 +113,15 @@ describe('Parser Edge Cases', () => {
       it('should handle missing (undefined) geometry', () => {
         const feature = {
           type: 'Feature',
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         // Should either provide default null or throw error
         try {
           const result = parser.parseGeoJSON(feature as any);
-          expect(result.geometry === null || result.geometry === undefined).toBeTruthy();
+          expect(
+            result.geometry === null || result.geometry === undefined
+          ).toBeTruthy();
         } catch (e) {
           expect(e).toBeDefined();
         }
@@ -127,11 +131,11 @@ describe('Parser Edge Cases', () => {
         const smlWithNull = {
           type: 'PhysicalSystem',
           uniqueId: 'urn:test:1',
-          position: null
+          position: null,
         };
         const smlWithoutPosition = {
           type: 'PhysicalSystem',
-          uniqueId: 'urn:test:2'
+          uniqueId: 'urn:test:2',
         };
 
         const result1 = parser.parseSensorML(smlWithNull as any);
@@ -155,14 +159,14 @@ describe('Parser Edge Cases', () => {
             id: `system-${i}`,
             geometry: {
               type: 'Point',
-              coordinates: [i * 0.001, i * 0.001, 0]
+              coordinates: [i * 0.001, i * 0.001, 0],
             },
             properties: {
               featureType: 'System',
               uid: `urn:test:system-${i}`,
-              name: `System ${i}`
-            }
-          }))
+              name: `System ${i}`,
+            },
+          })),
         };
       }
 
@@ -174,11 +178,11 @@ describe('Parser Edge Cases', () => {
 
       it('should parse collection with 1000 features', () => {
         const collection = createFeatureCollection(1000);
-        
+
         const start = performance.now();
         const result = collectionParser.parseGeoJSON(collection);
         const end = performance.now();
-        
+
         expect(result).toHaveLength(1000);
         console.log(`Parsed 1000 features in ${(end - start).toFixed(2)}ms`);
       });
@@ -190,9 +194,12 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: Array.from({ length: 1000 }, (_, i) => [i * 0.001, i * 0.001])
+            coordinates: Array.from({ length: 1000 }, (_, i) => [
+              i * 0.001,
+              i * 0.001,
+            ]),
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         const result = parser.parseGeoJSON(largeLineString);
@@ -212,9 +219,9 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: [coords]
+            coordinates: [coords],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         const result = parser.parseGeoJSON(largePolygon);
@@ -228,13 +235,15 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [Number.MAX_SAFE_INTEGER, 45.0]
+            coordinates: [Number.MAX_SAFE_INTEGER, 45.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         const result = parser.parseGeoJSON(feature as any);
-        expect((result.geometry as any)?.coordinates?.[0]).toBe(Number.MAX_SAFE_INTEGER);
+        expect((result.geometry as any)?.coordinates?.[0]).toBe(
+          Number.MAX_SAFE_INTEGER
+        );
       });
 
       it('should handle negative zero', () => {
@@ -242,9 +251,9 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [-0, 45.0]
+            coordinates: [-0, 45.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -256,13 +265,15 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [Number.MIN_VALUE, Number.MIN_VALUE]
+            coordinates: [Number.MIN_VALUE, Number.MIN_VALUE],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         const result = parser.parseGeoJSON(feature as any);
-        expect((result.geometry as any)?.coordinates?.[0]).toBe(Number.MIN_VALUE);
+        expect((result.geometry as any)?.coordinates?.[0]).toBe(
+          Number.MIN_VALUE
+        );
       });
     });
 
@@ -275,8 +286,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            description: longDescription
-          }
+            description: longDescription,
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -291,8 +302,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            name: longName
-          }
+            name: longName,
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -311,8 +322,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:系统-1',
-            name: '温度传感器'
-          }
+            name: '温度传感器',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -328,8 +339,8 @@ describe('Parser Edge Cases', () => {
             featureType: 'System',
             uid: 'urn:test:1',
             name: 'Temperature Sensor',
-            description: 'جهاز استشعار درجة الحرارة'
-          }
+            description: 'جهاز استشعار درجة الحرارة',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -343,8 +354,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            name: '🌡️ Temperature Sensor 🔥'
-          }
+            name: '🌡️ Temperature Sensor 🔥',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -359,8 +370,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            name: 'חיישן טמפרטורה'
-          }
+            name: 'חיישן טמפרטורה',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -375,8 +386,8 @@ describe('Parser Edge Cases', () => {
             featureType: 'System',
             uid: 'urn:test:1',
             name: '温度センサー',
-            description: 'これは温度を測定するセンサーです'
-          }
+            description: 'これは温度を測定するセンサーです',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -392,8 +403,8 @@ describe('Parser Edge Cases', () => {
           geometry: null,
           properties: {
             featureType: 'System',
-            uid: 'urn:test:my sensor 1'
-          }
+            uid: 'urn:test:my sensor 1',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -406,8 +417,8 @@ describe('Parser Edge Cases', () => {
           geometry: null,
           properties: {
             featureType: 'System',
-            uid: 'urn:test:sensor@site#1!_v2.0'
-          }
+            uid: 'urn:test:sensor@site#1!_v2.0',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -422,8 +433,8 @@ describe('Parser Edge Cases', () => {
           geometry: null,
           properties: {
             featureType: 'System',
-            uid: 'urn:test:sensor%20with%20spaces'
-          }
+            uid: 'urn:test:sensor%20with%20spaces',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -439,8 +450,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            name: 'Sensor الحرارة 温度 🌡️'
-          }
+            name: 'Sensor الحرارة 温度 🌡️',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -459,8 +470,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            name: 'Field 1\tField 2'
-          }
+            name: 'Field 1\tField 2',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -474,8 +485,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            description: 'Line 1\nLine 2\r\nLine 3'
-          }
+            description: 'Line 1\nLine 2\r\nLine 3',
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -489,8 +500,8 @@ describe('Parser Edge Cases', () => {
           properties: {
             featureType: 'System',
             uid: 'urn:test:1',
-            name: 'Test\u00A0System'  // \u00A0 is non-breaking space
-          }
+            name: 'Test\u00A0System', // \u00A0 is non-breaking space
+          },
         };
 
         const result = parser.parseGeoJSON(feature as any);
@@ -507,9 +518,9 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [5.0, 95.0]
+            coordinates: [5.0, 95.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         // Without validation, should pass through
@@ -522,9 +533,9 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: [190.0, 45.0]
+            coordinates: [190.0, 45.0],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         // Without validation, should pass through
@@ -539,9 +550,9 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'Point',
-            coordinates: []
+            coordinates: [],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         // May throw or handle gracefully
@@ -558,9 +569,9 @@ describe('Parser Edge Cases', () => {
           type: 'Feature',
           geometry: {
             type: 'LineString',
-            coordinates: [[5.0, 45.0]]
+            coordinates: [[5.0, 45.0]],
           },
-          properties: { featureType: 'System', uid: 'urn:test:1' }
+          properties: { featureType: 'System', uid: 'urn:test:1' },
         };
 
         // GeoJSON spec requires at least 2 points for LineString

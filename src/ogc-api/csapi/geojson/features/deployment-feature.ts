@@ -1,9 +1,9 @@
 /**
  * Deployment feature types for CSAPI
- * 
+ *
  * Deployments represent the act of deploying a system to a location for a specific
  * time period to perform observations or control actions.
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployments_2
  */
 
@@ -24,12 +24,12 @@ export interface DeploymentPlatform {
    * ID of the platform system
    */
   uid: UniqueID;
-  
+
   /**
    * Name of the platform
    */
   name?: string;
-  
+
   /**
    * Type of platform (e.g., 'buoy', 'satellite', 'building')
    */
@@ -38,7 +38,7 @@ export interface DeploymentPlatform {
 
 /**
  * Properties specific to Deployment features
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource
  */
 export interface DeploymentFeatureProperties extends CSAPIFeatureProperties {
@@ -46,27 +46,27 @@ export interface DeploymentFeatureProperties extends CSAPIFeatureProperties {
    * Always 'Deployment' for deployment features
    */
   featureType: 'Deployment';
-  
+
   /**
    * ID of the deployed system
    */
   system: UniqueID;
-  
+
   /**
    * Platform where system is deployed (optional)
    */
   platform?: DeploymentPlatform;
-  
+
   /**
    * Time period of deployment
    */
   deployedTime?: TimeExtent;
-  
+
   /**
    * IDs of datastreams active during this deployment
    */
   datastreams?: UniqueID[];
-  
+
   /**
    * IDs of control streams active during this deployment
    */
@@ -120,7 +120,7 @@ export interface DeploymentFeatureProperties extends CSAPIFeatureProperties {
 
 /**
  * GeoJSON Feature representing a Deployment
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployment_resource
  */
 export interface DeploymentFeature
@@ -130,7 +130,7 @@ export interface DeploymentFeature
 
 /**
  * GeoJSON FeatureCollection of Deployments
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_deployments_2
  */
 export interface DeploymentFeatureCollection
@@ -141,7 +141,9 @@ export interface DeploymentFeatureCollection
 /**
  * Type guard to check if a feature is a Deployment feature
  */
-export function isDeploymentFeature(feature: unknown): feature is DeploymentFeature {
+export function isDeploymentFeature(
+  feature: unknown
+): feature is DeploymentFeature {
   return (
     typeof feature === 'object' &&
     feature !== null &&

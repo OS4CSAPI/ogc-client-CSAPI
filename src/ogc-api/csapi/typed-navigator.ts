@@ -1,9 +1,9 @@
 /**
  * Typed Navigator for CSAPI with automatic response parsing
- * 
+ *
  * Extends CSAPINavigator with typed fetch methods that automatically
  * parse responses using the appropriate parser for each resource type.
- * 
+ *
  * @module csapi/typed-navigator
  */
 
@@ -49,12 +49,12 @@ export interface TypedFetchOptions extends ParserOptions {
    * Custom fetch function (defaults to global fetch)
    */
   fetch?: typeof fetch;
-  
+
   /**
    * Custom headers to add to request
    */
   headers?: Record<string, string>;
-  
+
   /**
    * Accept header override (auto-detected from supportedFormats if not specified)
    */
@@ -68,17 +68,27 @@ export class TypedCSAPINavigator extends CSAPINavigator {
   private systemParser = new SystemParser();
   private systemCollectionParser = new SystemCollectionParser();
   private deploymentParser = new DeploymentParser();
-  private deploymentCollectionParser = new CollectionParser(this.deploymentParser);
+  private deploymentCollectionParser = new CollectionParser(
+    this.deploymentParser
+  );
   private procedureParser = new ProcedureParser();
-  private procedureCollectionParser = new CollectionParser(this.procedureParser);
+  private procedureCollectionParser = new CollectionParser(
+    this.procedureParser
+  );
   private samplingFeatureParser = new SamplingFeatureParser();
-  private samplingFeatureCollectionParser = new CollectionParser(this.samplingFeatureParser);
+  private samplingFeatureCollectionParser = new CollectionParser(
+    this.samplingFeatureParser
+  );
   private propertyParser = new PropertyParser();
   private propertyCollectionParser = new CollectionParser(this.propertyParser);
   private datastreamParser = new DatastreamParser();
-  private datastreamCollectionParser = new CollectionParser(this.datastreamParser);
+  private datastreamCollectionParser = new CollectionParser(
+    this.datastreamParser
+  );
   private controlStreamParser = new ControlStreamParser();
-  private controlStreamCollectionParser = new CollectionParser(this.controlStreamParser);
+  private controlStreamCollectionParser = new CollectionParser(
+    this.controlStreamParser
+  );
 
   /**
    * Get all systems with automatic parsing
@@ -89,7 +99,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getSystemsUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.systemCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -107,7 +117,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getSystemUrl(systemId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.systemParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -124,7 +134,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getDeploymentsUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.deploymentCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -142,7 +152,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getDeploymentUrl(deploymentId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.deploymentParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -159,7 +169,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getProceduresUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.procedureCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -177,7 +187,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getProcedureUrl(procedureId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.procedureParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -194,7 +204,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getSamplingFeaturesUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.samplingFeatureCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -212,7 +222,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getSamplingFeatureUrl(featureId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.samplingFeatureParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -229,7 +239,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getPropertiesUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.propertyCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -247,7 +257,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getPropertyUrl(propertyId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.propertyParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -264,7 +274,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getDatastreamsUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.datastreamCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -282,7 +292,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getDatastreamUrl(datastreamId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.datastreamParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -299,7 +309,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getControlStreamsUrl(options);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.controlStreamCollectionParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -317,7 +327,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     const url = this.getControlStreamUrl(controlStreamId);
     const response = await this._fetch(url, options);
     const data = await response.json();
-    
+
     return this.controlStreamParser.parse(data, {
       validate: options.validate,
       strict: options.strict,
@@ -356,7 +366,7 @@ export class TypedCSAPINavigator extends CSAPINavigator {
     }
 
     const response = await fetchFn(url, { headers });
-    
+
     if (!response.ok) {
       throw new Error(
         `HTTP ${response.status}: ${response.statusText} (${url})`

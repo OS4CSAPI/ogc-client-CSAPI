@@ -36,7 +36,9 @@ export interface ValidationResult {
 /**
  * Base validator for GeoJSON structure
  */
-function isFeature(obj: unknown): obj is { type: 'Feature'; properties: unknown } {
+function isFeature(
+  obj: unknown
+): obj is { type: 'Feature'; properties: unknown } {
   return (
     typeof obj === 'object' &&
     obj !== null &&
@@ -70,7 +72,11 @@ function hasCSAPIProperties(properties: unknown): boolean {
     return false;
   }
   const props = properties as any;
-  return 'featureType' in props && typeof props.featureType === 'string' && 'uid' in props;
+  return (
+    'featureType' in props &&
+    typeof props.featureType === 'string' &&
+    'uid' in props
+  );
 }
 
 // ========== GEOMETRY VALIDATION ==========
@@ -89,7 +95,9 @@ function validatePosition(position: unknown): string[] {
   }
 
   if (position.length < 2 || position.length > 3) {
-    errors.push(`Position must have 2 or 3 coordinates, got ${position.length}`);
+    errors.push(
+      `Position must have 2 or 3 coordinates, got ${position.length}`
+    );
     return errors;
   }
 
@@ -146,13 +154,15 @@ function validateLineStringGeometry(geometry: any): string[] {
   }
 
   if (geometry.coordinates.length < 2) {
-    errors.push(`LineString must have at least 2 positions, got ${geometry.coordinates.length}`);
+    errors.push(
+      `LineString must have at least 2 positions, got ${geometry.coordinates.length}`
+    );
     return errors;
   }
 
   geometry.coordinates.forEach((position: unknown, index: number) => {
     const positionErrors = validatePosition(position);
-    positionErrors.forEach(error => {
+    positionErrors.forEach((error) => {
       errors.push(`Position ${index}: ${error}`);
     });
   });
@@ -183,7 +193,9 @@ function validatePolygonGeometry(geometry: any): string[] {
     }
 
     if (ring.length < 4) {
-      errors.push(`Ring ${ringIndex} must have at least 4 positions (closed), got ${ring.length}`);
+      errors.push(
+        `Ring ${ringIndex} must have at least 4 positions (closed), got ${ring.length}`
+      );
       return;
     }
 
@@ -192,14 +204,16 @@ function validatePolygonGeometry(geometry: any): string[] {
     const last = ring[ring.length - 1];
     if (Array.isArray(first) && Array.isArray(last)) {
       if (first[0] !== last[0] || first[1] !== last[1]) {
-        errors.push(`Ring ${ringIndex} is not closed (first position !== last position)`);
+        errors.push(
+          `Ring ${ringIndex} is not closed (first position !== last position)`
+        );
       }
     }
 
     // Validate each position
     ring.forEach((position: unknown, posIndex: number) => {
       const positionErrors = validatePosition(position);
-      positionErrors.forEach(error => {
+      positionErrors.forEach((error) => {
         errors.push(`Ring ${ringIndex}, Position ${posIndex}: ${error}`);
       });
     });
@@ -226,7 +240,7 @@ function validateMultiPointGeometry(geometry: any): string[] {
 
   geometry.coordinates.forEach((position: unknown, index: number) => {
     const positionErrors = validatePosition(position);
-    positionErrors.forEach(error => {
+    positionErrors.forEach((error) => {
       errors.push(`Position ${index}: ${error}`);
     });
   });
@@ -257,13 +271,15 @@ function validateMultiLineStringGeometry(geometry: any): string[] {
     }
 
     if (lineString.length < 2) {
-      errors.push(`LineString ${lineIndex} must have at least 2 positions, got ${lineString.length}`);
+      errors.push(
+        `LineString ${lineIndex} must have at least 2 positions, got ${lineString.length}`
+      );
       return;
     }
 
     lineString.forEach((position: unknown, posIndex: number) => {
       const positionErrors = validatePosition(position);
-      positionErrors.forEach(error => {
+      positionErrors.forEach((error) => {
         errors.push(`LineString ${lineIndex}, Position ${posIndex}: ${error}`);
       });
     });
@@ -301,12 +317,16 @@ function validateMultiPolygonGeometry(geometry: any): string[] {
 
     polygon.forEach((ring: unknown, ringIndex: number) => {
       if (!Array.isArray(ring)) {
-        errors.push(`Polygon ${polygonIndex}, Ring ${ringIndex} must be an array`);
+        errors.push(
+          `Polygon ${polygonIndex}, Ring ${ringIndex} must be an array`
+        );
         return;
       }
 
       if (ring.length < 4) {
-        errors.push(`Polygon ${polygonIndex}, Ring ${ringIndex} must have at least 4 positions (closed), got ${ring.length}`);
+        errors.push(
+          `Polygon ${polygonIndex}, Ring ${ringIndex} must have at least 4 positions (closed), got ${ring.length}`
+        );
         return;
       }
 
@@ -315,15 +335,19 @@ function validateMultiPolygonGeometry(geometry: any): string[] {
       const last = ring[ring.length - 1];
       if (Array.isArray(first) && Array.isArray(last)) {
         if (first[0] !== last[0] || first[1] !== last[1]) {
-          errors.push(`Polygon ${polygonIndex}, Ring ${ringIndex} is not closed (first position !== last position)`);
+          errors.push(
+            `Polygon ${polygonIndex}, Ring ${ringIndex} is not closed (first position !== last position)`
+          );
         }
       }
 
       // Validate each position
       ring.forEach((position: unknown, posIndex: number) => {
         const positionErrors = validatePosition(position);
-        positionErrors.forEach(error => {
-          errors.push(`Polygon ${polygonIndex}, Ring ${ringIndex}, Position ${posIndex}: ${error}`);
+        positionErrors.forEach((error) => {
+          errors.push(
+            `Polygon ${polygonIndex}, Ring ${ringIndex}, Position ${posIndex}: ${error}`
+          );
         });
       });
     });
@@ -379,7 +403,6 @@ function validateGeometry(geometry: unknown): string[] {
   return errors;
 }
 
-
 // ========== LINK VALIDATION ==========
 
 /**
@@ -403,13 +426,16 @@ function validateURI(uri: string): string[] {
   }
 
   // URN format: urn:namespace:specific
-  const urnPattern = /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$/i;
-  
+  const urnPattern =
+    /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$/i;
+
   // URL format: http:// or https://
   const urlPattern = /^https?:\/\/.+/i;
 
   if (!urnPattern.test(uri) && !urlPattern.test(uri)) {
-    errors.push(`Invalid URI format: "${uri}" (must be URN like "urn:namespace:value" or URL like "http://example.org/resource")`);
+    errors.push(
+      `Invalid URI format: "${uri}" (must be URN like "urn:namespace:value" or URL like "http://example.org/resource")`
+    );
   }
 
   return errors;
@@ -428,7 +454,7 @@ function validateLink(link: unknown, propertyName: string): string[] {
   if (typeof link === 'string') {
     // String link - validate as URI
     const uriErrors = validateURI(link);
-    uriErrors.forEach(error => {
+    uriErrors.forEach((error) => {
       errors.push(`${propertyName}: ${error}`);
     });
     return errors;
@@ -455,7 +481,7 @@ function validateLink(link: unknown, propertyName: string): string[] {
 
   // Validate the href URI
   const hrefErrors = validateURI(linkObj.href);
-  hrefErrors.forEach(error => {
+  hrefErrors.forEach((error) => {
     errors.push(`${propertyName}.href: ${error}`);
   });
 
@@ -492,7 +518,6 @@ function validateLinksArray(links: unknown): string[] {
   return errors;
 }
 
-
 // ========== TEMPORAL VALIDATION ==========
 
 /**
@@ -512,23 +537,34 @@ function validateTimestamp(timestamp: string, propertyName: string): string[] {
 
   // ISO 8601 timestamp pattern
   // Supports: YYYY-MM-DD, YYYY-MM-DDTHH:MM:SSZ, YYYY-MM-DDTHH:MM:SS±HH:MM, YYYY-MM-DDTHH:MM:SS.sssZ
-  const iso8601Pattern = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
+  const iso8601Pattern =
+    /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})?)?$/;
 
   if (!iso8601Pattern.test(timestamp)) {
-    errors.push(`${propertyName}: Invalid ISO 8601 timestamp format "${timestamp}" (expected formats: YYYY-MM-DD, YYYY-MM-DDTHH:MM:SSZ, or YYYY-MM-DDTHH:MM:SS±HH:MM)`);
+    errors.push(
+      `${propertyName}: Invalid ISO 8601 timestamp format "${timestamp}" (expected formats: YYYY-MM-DD, YYYY-MM-DDTHH:MM:SSZ, or YYYY-MM-DDTHH:MM:SS±HH:MM)`
+    );
     return errors;
   }
 
   // Check if date is parseable and valid
   const date = new Date(timestamp);
   if (isNaN(date.getTime())) {
-    errors.push(`${propertyName}: Timestamp "${timestamp}" represents an impossible date`);
+    errors.push(
+      `${propertyName}: Timestamp "${timestamp}" represents an impossible date`
+    );
     return errors;
   }
 
   // Warn if timezone is missing (ambiguous)
-  if (timestamp.includes('T') && !timestamp.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(timestamp)) {
-    errors.push(`${propertyName}: Timestamp "${timestamp}" is missing timezone (should end with Z or ±HH:MM)`);
+  if (
+    timestamp.includes('T') &&
+    !timestamp.endsWith('Z') &&
+    !/[+-]\d{2}:\d{2}$/.test(timestamp)
+  ) {
+    errors.push(
+      `${propertyName}: Timestamp "${timestamp}" is missing timezone (should end with Z or ±HH:MM)`
+    );
   }
 
   return errors;
@@ -540,18 +576,25 @@ function validateTimestamp(timestamp: string, propertyName: string): string[] {
  * @param propertyName - Name of the property for error messages
  * @returns Array of error messages (empty if valid)
  */
-function validateTemporalInterval(interval: string, propertyName: string): string[] {
+function validateTemporalInterval(
+  interval: string,
+  propertyName: string
+): string[] {
   const errors: string[] = [];
 
   // Check for interval separator
   if (!interval.includes('/')) {
-    errors.push(`${propertyName}: Temporal interval must contain "/" separator (format: start/end)`);
+    errors.push(
+      `${propertyName}: Temporal interval must contain "/" separator (format: start/end)`
+    );
     return errors;
   }
 
   const parts = interval.split('/');
   if (parts.length !== 2) {
-    errors.push(`${propertyName}: Temporal interval must have exactly two parts separated by "/" (got ${parts.length} parts)`);
+    errors.push(
+      `${propertyName}: Temporal interval must have exactly two parts separated by "/" (got ${parts.length} parts)`
+    );
     return errors;
   }
 
@@ -575,7 +618,9 @@ function validateTemporalInterval(interval: string, propertyName: string): strin
     const endDate = new Date(end);
 
     if (startDate.getTime() >= endDate.getTime()) {
-      errors.push(`${propertyName}: Start time "${start}" must be before end time "${end}"`);
+      errors.push(
+        `${propertyName}: Start time "${start}" must be before end time "${end}"`
+      );
     }
   }
 
@@ -644,13 +689,18 @@ export function validateSystemFeature(data: unknown): ValidationResult {
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate SystemFeatureCollection
  */
-export function validateSystemFeatureCollection(data: unknown): ValidationResult {
+export function validateSystemFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -666,7 +716,10 @@ export function validateSystemFeatureCollection(data: unknown): ValidationResult
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -687,7 +740,9 @@ export function validateDeploymentFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'Deployment') {
-    errors.push(`Expected featureType 'Deployment', got '${props.featureType}'`);
+    errors.push(
+      `Expected featureType 'Deployment', got '${props.featureType}'`
+    );
   }
 
   // Validate validTime if present
@@ -717,13 +772,18 @@ export function validateDeploymentFeature(data: unknown): ValidationResult {
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate DeploymentFeatureCollection
  */
-export function validateDeploymentFeatureCollection(data: unknown): ValidationResult {
+export function validateDeploymentFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -739,7 +799,10 @@ export function validateDeploymentFeatureCollection(data: unknown): ValidationRe
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -780,13 +843,18 @@ export function validateProcedureFeature(data: unknown): ValidationResult {
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate ProcedureFeatureCollection
  */
-export function validateProcedureFeatureCollection(data: unknown): ValidationResult {
+export function validateProcedureFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -802,7 +870,10 @@ export function validateProcedureFeatureCollection(data: unknown): ValidationRes
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -823,7 +894,9 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'Datastream') {
-    errors.push(`Expected featureType 'Datastream', got '${props.featureType}'`);
+    errors.push(
+      `Expected featureType 'Datastream', got '${props.featureType}'`
+    );
   }
 
   if (!props.system) {
@@ -836,7 +909,10 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
 
   // Validate phenomenonTime if present
   if (props.phenomenonTime) {
-    const phenomenonTimeErrors = validateTemporal(props.phenomenonTime, 'phenomenonTime');
+    const phenomenonTimeErrors = validateTemporal(
+      props.phenomenonTime,
+      'phenomenonTime'
+    );
     errors.push(...phenomenonTimeErrors);
   }
 
@@ -854,7 +930,10 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
 
   // Validate observedProperty link
   if (props.observedProperty !== undefined && props.observedProperty !== null) {
-    const obsPropErrors = validateLink(props.observedProperty, 'observedProperty');
+    const obsPropErrors = validateLink(
+      props.observedProperty,
+      'observedProperty'
+    );
     errors.push(...obsPropErrors);
   }
 
@@ -869,13 +948,18 @@ export function validateDatastreamFeature(data: unknown): ValidationResult {
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate DatastreamFeatureCollection
  */
-export function validateDatastreamFeatureCollection(data: unknown): ValidationResult {
+export function validateDatastreamFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -891,7 +975,10 @@ export function validateDatastreamFeatureCollection(data: unknown): ValidationRe
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -912,12 +999,17 @@ export function validateSamplingFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'SamplingFeature') {
-    errors.push(`Expected featureType 'SamplingFeature', got '${props.featureType}'`);
+    errors.push(
+      `Expected featureType 'SamplingFeature', got '${props.featureType}'`
+    );
   }
 
   // Validate samplingTime if present
   if (props.samplingTime) {
-    const samplingTimeErrors = validateTemporal(props.samplingTime, 'samplingTime');
+    const samplingTimeErrors = validateTemporal(
+      props.samplingTime,
+      'samplingTime'
+    );
     errors.push(...samplingTimeErrors);
   }
 
@@ -926,19 +1018,27 @@ export function validateSamplingFeature(data: unknown): ValidationResult {
 
   // Validate sampledFeature link if present
   if (props.sampledFeature !== undefined && props.sampledFeature !== null) {
-    const sampledFeatureErrors = validateLink(props.sampledFeature, 'sampledFeature');
+    const sampledFeatureErrors = validateLink(
+      props.sampledFeature,
+      'sampledFeature'
+    );
     errors.push(...sampledFeatureErrors);
   }
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate SamplingFeatureCollection
  */
-export function validateSamplingFeatureCollection(data: unknown): ValidationResult {
+export function validateSamplingFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -954,7 +1054,10 @@ export function validateSamplingFeatureCollection(data: unknown): ValidationResu
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -993,13 +1096,18 @@ export function validatePropertyFeature(data: unknown): ValidationResult {
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate PropertyFeatureCollection
  */
-export function validatePropertyFeatureCollection(data: unknown): ValidationResult {
+export function validatePropertyFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -1015,7 +1123,10 @@ export function validatePropertyFeatureCollection(data: unknown): ValidationResu
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -1036,7 +1147,9 @@ export function validateControlStreamFeature(data: unknown): ValidationResult {
 
   const props = data.properties as any;
   if (props.featureType !== 'ControlStream') {
-    errors.push(`Expected featureType 'ControlStream', got '${props.featureType}'`);
+    errors.push(
+      `Expected featureType 'ControlStream', got '${props.featureType}'`
+    );
   }
 
   if (!props.system) {
@@ -1054,8 +1167,14 @@ export function validateControlStreamFeature(data: unknown): ValidationResult {
   }
 
   // Validate controlledProperty link
-  if (props.controlledProperty !== undefined && props.controlledProperty !== null) {
-    const ctrlPropErrors = validateLink(props.controlledProperty, 'controlledProperty');
+  if (
+    props.controlledProperty !== undefined &&
+    props.controlledProperty !== null
+  ) {
+    const ctrlPropErrors = validateLink(
+      props.controlledProperty,
+      'controlledProperty'
+    );
     errors.push(...ctrlPropErrors);
   }
 
@@ -1070,13 +1189,18 @@ export function validateControlStreamFeature(data: unknown): ValidationResult {
   const geometryErrors = validateGeometry(feature.geometry);
   errors.push(...geometryErrors);
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
  * Validate ControlStreamFeatureCollection
  */
-export function validateControlStreamFeatureCollection(data: unknown): ValidationResult {
+export function validateControlStreamFeatureCollection(
+  data: unknown
+): ValidationResult {
   const errors: string[] = [];
 
   if (!isFeatureCollection(data)) {
@@ -1092,7 +1216,10 @@ export function validateControlStreamFeatureCollection(data: unknown): Validatio
     }
   });
 
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  return {
+    valid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  };
 }
 
 /**
@@ -1128,10 +1255,3 @@ export function validateCSAPIFeature(data: unknown): ValidationResult {
       };
   }
 }
-
-
-
-
-
-
-

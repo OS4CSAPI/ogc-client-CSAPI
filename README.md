@@ -87,4 +87,3 @@ Run examples with:
 npm run build
 node examples/stac-query.js
 ```
-

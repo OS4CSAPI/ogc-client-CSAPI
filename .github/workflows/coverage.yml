@@ -14,32 +14,32 @@ permissions:
 jobs:
   coverage:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests with coverage
         run: |
           npm run test:browser -- --coverage --coverageReporters=html --coverageReporters=lcov --coverageReporters=json-summary
           npm run test:node -- --coverage --coverageReporters=html --coverageReporters=lcov --coverageReporters=json-summary
-      
+
       - name: Upload coverage to artifacts
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
           retention-days: 30
-      
+
       - name: Generate coverage summary
         if: github.event_name == 'pull_request'
         run: |
@@ -48,7 +48,7 @@ jobs:
           if [ -f coverage/coverage-summary.json ]; then
             node -e "const fs = require('fs'); const data = JSON.parse(fs.readFileSync('coverage/coverage-summary.json')); const total = data.total; console.log('| Metric | Coverage |'); console.log('|--------|----------|'); console.log('| Statements | ' + total.statements.pct + '% |'); console.log('| Branches | ' + total.branches.pct + '% |'); console.log('| Functions | ' + total.functions.pct + '% |'); console.log('| Lines | ' + total.lines.pct + '% |');" >> $GITHUB_STEP_SUMMARY
           fi
-      
+
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3

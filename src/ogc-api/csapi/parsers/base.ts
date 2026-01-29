@@ -1,14 +1,14 @@
 /**
  * CSAPI Response Parser
- * 
+ *
  * Unified parser for all CSAPI response formats (GeoJSON, SensorML, SWE Common).
  * Automatically detects format and parses to appropriate typed objects.
  */
 
 import type { FeatureCollection, Feature, Point, Geometry } from 'geojson';
-import type { 
-  SystemFeature, 
-  DeploymentFeature, 
+import type {
+  SystemFeature,
+  DeploymentFeature,
   ProcedureFeature,
   SamplingFeature,
   PropertyFeature,
@@ -49,27 +49,23 @@ function extractGeometry(position?: Position): Geometry | undefined {
     position.position &&
     typeof position.position === 'object'
   ) {
-    const pos = position.position as { 
-      lat?: number; 
-      lon?: number; 
+    const pos = position.position as {
+      lat?: number;
+      lon?: number;
       h?: number;
       x?: number;
       y?: number;
       z?: number;
     };
-    
+
     // GeoPose Basic-YPR (lat/lon/h)
     if (pos.lat !== undefined && pos.lon !== undefined) {
       return {
         type: 'Point',
-        coordinates: [
-          pos.lon,
-          pos.lat,
-          pos.h !== undefined ? pos.h : 0,
-        ],
+        coordinates: [pos.lon, pos.lat, pos.h !== undefined ? pos.h : 0],
       } as Point;
     }
-    
+
     // GeoPose with Cartesian coordinates (x/y/z)
     if (pos.x !== undefined && pos.y !== undefined) {
       return {
@@ -105,16 +101,17 @@ function extractGeometry(position?: Position): Geometry | undefined {
   ) {
     const record = position as any;
     if (record.fields) {
-      const lat = record.fields.find((f: any) => 
-        f.name === 'lat' || f.name === 'latitude'
+      const lat = record.fields.find(
+        (f: any) => f.name === 'lat' || f.name === 'latitude'
       )?.value;
-      const lon = record.fields.find((f: any) => 
-        f.name === 'lon' || f.name === 'longitude' || f.name === 'long'
+      const lon = record.fields.find(
+        (f: any) =>
+          f.name === 'lon' || f.name === 'longitude' || f.name === 'long'
       )?.value;
-      const alt = record.fields.find((f: any) => 
-        f.name === 'alt' || f.name === 'altitude' || f.name === 'h'
+      const alt = record.fields.find(
+        (f: any) => f.name === 'alt' || f.name === 'altitude' || f.name === 'h'
       )?.value;
-      
+
       if (lat !== undefined && lon !== undefined) {
         return {
           type: 'Point',
@@ -153,7 +150,9 @@ function extractGeometry(position?: Position): Geometry | undefined {
     typeof position === 'object' &&
     'type' in position &&
     typeof position.type === 'string' &&
-    (position.type.includes('Process') || position.type.includes('Component') || position.type.includes('System'))
+    (position.type.includes('Process') ||
+      position.type.includes('Component') ||
+      position.type.includes('System'))
   ) {
     // Process-based positions would require executing the process
     // Not feasible in synchronous parser
@@ -168,7 +167,11 @@ function extractGeometry(position?: Position): Geometry | undefined {
   ) {
     const array = position as any;
     // For trajectory, extract the latest/current position
-    if (array.values && Array.isArray(array.values) && array.values.length > 0) {
+    if (
+      array.values &&
+      Array.isArray(array.values) &&
+      array.values.length > 0
+    ) {
       const lastValue = array.values[array.values.length - 1];
       if (Array.isArray(lastValue) && lastValue.length >= 2) {
         return {
@@ -198,16 +201,22 @@ function extractCommonProperties(
   if (sml.description) props.description = sml.description;
   // Handle both string[] (schema-compliant) and Keyword[] (enhanced) formats
   if (sml.keywords) {
-    props.keywords = Array.isArray(sml.keywords) && sml.keywords.length > 0 && typeof sml.keywords[0] === 'string'
-      ? sml.keywords as string[]
-      : (sml.keywords as any[]).map(k => typeof k === 'object' && k.value ? k.value : k);
+    props.keywords =
+      Array.isArray(sml.keywords) &&
+      sml.keywords.length > 0 &&
+      typeof sml.keywords[0] === 'string'
+        ? (sml.keywords as string[])
+        : (sml.keywords as any[]).map((k) =>
+            typeof k === 'object' && k.value ? k.value : k
+          );
   }
   if (sml.identifiers) props.identifiers = sml.identifiers;
   if (sml.classifiers) props.classifiers = sml.classifiers;
   if (sml.validTime) props.validTime = sml.validTime;
   if (sml.contacts) props.contacts = sml.contacts;
   if (sml.documents) props.documents = sml.documents;
-  if (sml.securityConstraints) props.securityConstraints = sml.securityConstraints;
+  if (sml.securityConstraints)
+    props.securityConstraints = sml.securityConstraints;
   if (sml.legalConstraints) props.legalConstraints = sml.legalConstraints;
 
   return props;
@@ -245,12 +254,12 @@ export interface ParserOptions {
    * Validate parsed data (requires validators to be initialized)
    */
   validate?: boolean;
-  
+
   /**
    * Strict mode - throw on validation errors
    */
   strict?: boolean;
-  
+
   /**
    * Override content type detection
    */
@@ -264,10 +273,7 @@ export abstract class CSAPIParser<T> {
   /**
    * Parse response with automatic format detection
    */
-  parse(
-    data: unknown,
-    options: ParserOptions = {}
-  ): ParseResult<T> {
+  parse(data: unknown, options: ParserOptions = {}): ParseResult<T> {
     const format = detectFormat(options.contentType || null, data);
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -368,7 +374,7 @@ export abstract class CSAPIParser<T> {
     // Default: no validation
     return { valid: true };
   }
-  
+
   /**
    * Validate SensorML data
    */
@@ -385,7 +391,9 @@ export abstract class CSAPIParser<T> {
 export class SystemParser extends CSAPIParser<SystemFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): SystemFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as SystemFeature;
   }
@@ -394,17 +402,15 @@ export class SystemParser extends CSAPIParser<SystemFeature> {
     const sml = data as unknown as SensorMLProcess;
 
     // Validate it's a physical system/component
-    if (
-      sml.type !== 'PhysicalSystem' &&
-      sml.type !== 'PhysicalComponent'
-    ) {
+    if (sml.type !== 'PhysicalSystem' && sml.type !== 'PhysicalComponent') {
       throw new CSAPIParseError(
         `Expected PhysicalSystem or PhysicalComponent, got ${sml.type}`
       );
     }
 
     // Extract geometry from position
-    const geometry = 'position' in sml ? extractGeometry(sml.position as Position) : undefined;
+    const geometry =
+      'position' in sml ? extractGeometry(sml.position as Position) : undefined;
 
     // Build properties from SensorML metadata
     const properties: Record<string, unknown> = {
@@ -416,10 +422,15 @@ export class SystemParser extends CSAPIParser<SystemFeature> {
     // Add inputs/outputs/parameters if present
     if ('inputs' in sml && sml.inputs) properties.inputs = sml.inputs;
     if ('outputs' in sml && sml.outputs) properties.outputs = sml.outputs;
-    if ('parameters' in sml && sml.parameters) properties.parameters = sml.parameters;
+    if ('parameters' in sml && sml.parameters)
+      properties.parameters = sml.parameters;
 
     // Add components for systems
-    if (sml.type === 'PhysicalSystem' && 'components' in sml && sml.components) {
+    if (
+      sml.type === 'PhysicalSystem' &&
+      'components' in sml &&
+      sml.components
+    ) {
       properties.components = sml.components;
     }
 
@@ -465,7 +476,9 @@ export class SystemCollectionParser extends CSAPIParser<SystemFeature[]> {
 
   parseSensorML(data: Record<string, unknown>): SystemFeature[] {
     // TODO: Implement SensorML collection parsing
-    throw new CSAPIParseError('SensorML collection parsing not yet implemented');
+    throw new CSAPIParseError(
+      'SensorML collection parsing not yet implemented'
+    );
   }
 
   parseSWE(data: Record<string, unknown>): SystemFeature[] {

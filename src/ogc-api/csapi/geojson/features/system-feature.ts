@@ -1,9 +1,9 @@
 /**
  * System feature types for CSAPI
- * 
+ *
  * Systems are the main resource type in CSAPI, representing sensors, platforms,
  * networks, or any physical or virtual entity that can produce observations.
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_systems_2
  */
 
@@ -35,22 +35,22 @@ export interface SystemIdentification {
    * Manufacturer or organization
    */
   manufacturer?: string;
-  
+
   /**
    * Model name or number
    */
   model?: string;
-  
+
   /**
    * Serial number
    */
   serialNumber?: string;
-  
+
   /**
    * Long name
    */
   longName?: string;
-  
+
   /**
    * Short name
    */
@@ -65,12 +65,12 @@ export interface SystemClassification {
    * Definition URI for the classification
    */
   definition: DefinitionURI;
-  
+
   /**
    * Label for the classification
    */
   label?: string;
-  
+
   /**
    * Value or code
    */
@@ -85,22 +85,22 @@ export interface SystemCharacteristic {
    * Name of the characteristic
    */
   name: string;
-  
+
   /**
    * Definition URI
    */
   definition?: DefinitionURI;
-  
+
   /**
    * Label for display
    */
   label?: string;
-  
+
   /**
    * Value of the characteristic
    */
   value: string | number | boolean;
-  
+
   /**
    * Unit of measure
    */
@@ -115,22 +115,22 @@ export interface SystemCapability {
    * Name of the capability
    */
   name: string;
-  
+
   /**
    * Definition URI
    */
   definition?: DefinitionURI;
-  
+
   /**
    * Label for display
    */
   label?: string;
-  
+
   /**
    * Value of the capability
    */
   value?: string | number | boolean;
-  
+
   /**
    * Conditions under which capability applies
    */
@@ -145,52 +145,52 @@ export interface Contact {
    * Individual name
    */
   individualName?: string;
-  
+
   /**
    * Organization name
    */
   organizationName?: string;
-  
+
   /**
    * Position/role
    */
   positionName?: string;
-  
+
   /**
    * Phone number
    */
   phone?: string;
-  
+
   /**
    * Email address
    */
   email?: string;
-  
+
   /**
    * Website URL
    */
   website?: string;
-  
+
   /**
    * Delivery point (street address)
    */
   deliveryPoint?: string;
-  
+
   /**
    * City
    */
   city?: string;
-  
+
   /**
    * Administrative area (state/province)
    */
   administrativeArea?: string;
-  
+
   /**
    * Postal code
    */
   postalCode?: string;
-  
+
   /**
    * Country
    */
@@ -199,7 +199,7 @@ export interface Contact {
 
 /**
  * Properties specific to System features
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource
  */
 export interface SystemFeatureProperties extends CSAPIFeatureProperties {
@@ -207,72 +207,72 @@ export interface SystemFeatureProperties extends CSAPIFeatureProperties {
    * Always 'System' for system features
    */
   featureType: 'System';
-  
+
   /**
    * System type classification
    */
   systemType?: SystemType;
-  
+
   /**
    * Definition URI for the system type
    */
   definition?: DefinitionURI;
-  
+
   /**
    * Identification information
    */
   identification?: SystemIdentification;
-  
+
   /**
    * System classifications
    */
   classifications?: SystemClassification[];
-  
+
   /**
    * System characteristics (permanent properties)
    */
   characteristics?: SystemCharacteristic[];
-  
+
   /**
    * System capabilities (operational capabilities)
    */
   capabilities?: SystemCapability[];
-  
+
   /**
    * Contact information
    */
   contacts?: Contact[];
-  
+
   /**
    * ID of parent system (if this is a subsystem)
    */
   parent?: UniqueID;
-  
+
   /**
    * IDs of subsystems
    */
   members?: UniqueID[];
-  
+
   /**
    * IDs of associated procedures
    */
   procedures?: UniqueID[];
-  
+
   /**
    * IDs of associated deployments
    */
   deployments?: UniqueID[];
-  
+
   /**
    * IDs of associated sampling features
    */
   samplingFeatures?: UniqueID[];
-  
+
   /**
    * IDs of datastreams produced by this system
    */
   datastreams?: UniqueID[];
-  
+
   /**
    * IDs of control streams for this system
    */
@@ -281,19 +281,21 @@ export interface SystemFeatureProperties extends CSAPIFeatureProperties {
 
 /**
  * GeoJSON Feature representing a System
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_system_resource
  */
-export interface SystemFeature extends CSAPIFeature<SystemFeatureProperties, Geometry | null> {
+export interface SystemFeature
+  extends CSAPIFeature<SystemFeatureProperties, Geometry | null> {
   properties: SystemFeatureProperties;
 }
 
 /**
  * GeoJSON FeatureCollection of Systems
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_systems_2
  */
-export interface SystemFeatureCollection extends CSAPIFeatureCollection<SystemFeature> {
+export interface SystemFeatureCollection
+  extends CSAPIFeatureCollection<SystemFeature> {
   features: SystemFeature[];
 }
 

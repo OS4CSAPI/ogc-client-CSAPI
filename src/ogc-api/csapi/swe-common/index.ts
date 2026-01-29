@@ -1,8 +1,8 @@
 /**
  * SWE Common Data Model Types
- * 
+ *
  * TypeScript type definitions for OGC SWE Common Data Model 3.0
- * 
+ *
  * SWE Common provides a framework for describing sensor data and its structure.
  * It includes:
  * - Simple components (Boolean, Text, Category, Count, Quantity, Time)
@@ -11,10 +11,10 @@
  * - Block components (DataArray, Matrix, DataStream)
  * - Geometry components (wrapping GeoJSON geometries)
  * - Encodings (JSON, Text, Binary, XML)
- * 
+ *
  * @see https://docs.ogc.org/is/24-014/24-014.html
  * @see https://schemas.opengis.net/sweCommon/3.0/json/
- * 
+ *
  * @module csapi/swe-common
  */
 

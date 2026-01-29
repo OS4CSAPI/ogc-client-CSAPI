@@ -5,7 +5,9 @@
 describe('SWE Common Type Guards', () => {
   describe('Range Component Type Guards', () => {
     it('should identify CategoryRangeComponent', () => {
-      const { isCategoryRangeComponent } = require('../swe-common/types/range-components.js');
+      const {
+        isCategoryRangeComponent,
+      } = require('../swe-common/types/range-components.js');
       const component = {
         type: 'CategoryRange',
         value: ['min', 'max'],
@@ -17,7 +19,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify CountRangeComponent', () => {
-      const { isCountRangeComponent } = require('../swe-common/types/range-components.js');
+      const {
+        isCountRangeComponent,
+      } = require('../swe-common/types/range-components.js');
       const component = {
         type: 'CountRange',
         value: [0, 100],
@@ -27,7 +31,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify QuantityRangeComponent', () => {
-      const { isQuantityRangeComponent } = require('../swe-common/types/range-components.js');
+      const {
+        isQuantityRangeComponent,
+      } = require('../swe-common/types/range-components.js');
       const component = {
         type: 'QuantityRange',
         uom: { code: 'Cel' },
@@ -38,7 +44,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify TimeRangeComponent', () => {
-      const { isTimeRangeComponent } = require('../swe-common/types/range-components.js');
+      const {
+        isTimeRangeComponent,
+      } = require('../swe-common/types/range-components.js');
       const component = {
         type: 'TimeRange',
         uom: { code: 'ISO-8601' },
@@ -49,7 +57,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify any RangeComponent', () => {
-      const { isRangeComponent } = require('../swe-common/types/range-components.js');
+      const {
+        isRangeComponent,
+      } = require('../swe-common/types/range-components.js');
       expect(isRangeComponent({ type: 'CategoryRange' })).toBe(true);
       expect(isRangeComponent({ type: 'CountRange' })).toBe(true);
       expect(isRangeComponent({ type: 'QuantityRange' })).toBe(true);
@@ -61,7 +71,9 @@ describe('SWE Common Type Guards', () => {
 
   describe('Block Component Type Guards', () => {
     it('should identify DataArrayComponent', () => {
-      const { isDataArrayComponent } = require('../swe-common/types/block-components.js');
+      const {
+        isDataArrayComponent,
+      } = require('../swe-common/types/block-components.js');
       const component = {
         type: 'DataArray',
         elementCount: { type: 'Count', value: 10 },
@@ -76,7 +88,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify MatrixComponent', () => {
-      const { isMatrixComponent } = require('../swe-common/types/block-components.js');
+      const {
+        isMatrixComponent,
+      } = require('../swe-common/types/block-components.js');
       const component = {
         type: 'Matrix',
         elementCount: {
@@ -94,7 +108,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify DataStreamComponent', () => {
-      const { isDataStreamComponent } = require('../swe-common/types/block-components.js');
+      const {
+        isDataStreamComponent,
+      } = require('../swe-common/types/block-components.js');
       const component = {
         type: 'DataStream',
         elementType: {
@@ -111,7 +127,9 @@ describe('SWE Common Type Guards', () => {
     });
 
     it('should identify any BlockComponent', () => {
-      const { isBlockComponent } = require('../swe-common/types/block-components.js');
+      const {
+        isBlockComponent,
+      } = require('../swe-common/types/block-components.js');
       expect(isBlockComponent({ type: 'DataArray' })).toBe(true);
       expect(isBlockComponent({ type: 'Matrix' })).toBe(true);
       expect(isBlockComponent({ type: 'DataStream' })).toBe(true);

@@ -1,6 +1,6 @@
 /**
  * CSAPI Resource Parsers
- * 
+ *
  * Parsers for all CSAPI resource types.
  */
 
@@ -70,11 +70,7 @@ function extractGeometry(position?: Position | Geometry): Geometry | undefined {
     if (pos.lat !== undefined && pos.lon !== undefined) {
       return {
         type: 'Point',
-        coordinates: [
-          pos.lon,
-          pos.lat,
-          pos.h !== undefined ? pos.h : 0,
-        ],
+        coordinates: [pos.lon, pos.lat, pos.h !== undefined ? pos.h : 0],
       };
     }
   }
@@ -97,16 +93,22 @@ function extractCommonProperties(
   if (sml.description) props.description = sml.description;
   // Handle both string[] (schema-compliant) and Keyword[] (enhanced) formats
   if (sml.keywords) {
-    props.keywords = Array.isArray(sml.keywords) && sml.keywords.length > 0 && typeof sml.keywords[0] === 'string'
-      ? sml.keywords as string[]
-      : (sml.keywords as any[]).map(k => typeof k === 'object' && k.value ? k.value : k);
+    props.keywords =
+      Array.isArray(sml.keywords) &&
+      sml.keywords.length > 0 &&
+      typeof sml.keywords[0] === 'string'
+        ? (sml.keywords as string[])
+        : (sml.keywords as any[]).map((k) =>
+            typeof k === 'object' && k.value ? k.value : k
+          );
   }
   if (sml.identifiers) props.identifiers = sml.identifiers;
   if (sml.classifiers) props.classifiers = sml.classifiers;
   if (sml.validTime) props.validTime = sml.validTime;
   if (sml.contacts) props.contacts = sml.contacts;
   if (sml.documents) props.documents = sml.documents;
-  if (sml.securityConstraints) props.securityConstraints = sml.securityConstraints;
+  if (sml.securityConstraints)
+    props.securityConstraints = sml.securityConstraints;
   if (sml.legalConstraints) props.legalConstraints = sml.legalConstraints;
 
   return props;
@@ -118,7 +120,9 @@ function extractCommonProperties(
 export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): DeploymentFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as DeploymentFeature;
   }
@@ -128,9 +132,7 @@ export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
 
     // Validate it's a Deployment
     if (sml.type !== 'Deployment') {
-      throw new CSAPIParseError(
-        `Expected Deployment, got ${sml.type}`
-      );
+      throw new CSAPIParseError(`Expected Deployment, got ${sml.type}`);
     }
 
     // Extract geometry from location
@@ -157,7 +159,9 @@ export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
   }
 
   parseSWE(data: Record<string, unknown>): DeploymentFeature {
-    throw new CSAPIParseError('SWE format not applicable for Deployment resources');
+    throw new CSAPIParseError(
+      'SWE format not applicable for Deployment resources'
+    );
   }
 
   validate(
@@ -182,7 +186,9 @@ export class DeploymentParser extends CSAPIParser<DeploymentFeature> {
 export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): ProcedureFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as ProcedureFeature;
   }
@@ -192,7 +198,8 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
 
     // Procedures can be any process type (SimpleProcess, AggregateProcess, etc.)
     // Extract position if it's a physical process
-    const geometry = 'position' in sml ? extractGeometry(sml.position as Position) : undefined;
+    const geometry =
+      'position' in sml ? extractGeometry(sml.position as Position) : undefined;
 
     // Build properties from SensorML metadata
     const properties: Record<string, unknown> = {
@@ -204,14 +211,17 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
     // Add inputs/outputs/parameters
     if ('inputs' in sml && sml.inputs) properties.inputs = sml.inputs;
     if ('outputs' in sml && sml.outputs) properties.outputs = sml.outputs;
-    if ('parameters' in sml && sml.parameters) properties.parameters = sml.parameters;
+    if ('parameters' in sml && sml.parameters)
+      properties.parameters = sml.parameters;
 
     // Add method if present
     if ('method' in sml && sml.method) properties.method = sml.method;
 
     // Add components for aggregate processes
-    if ('components' in sml && sml.components) properties.components = sml.components;
-    if ('connections' in sml && sml.connections) properties.connections = sml.connections;
+    if ('components' in sml && sml.components)
+      properties.components = sml.components;
+    if ('connections' in sml && sml.connections)
+      properties.connections = sml.connections;
 
     return {
       type: 'Feature',
@@ -222,7 +232,9 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
   }
 
   parseSWE(data: Record<string, unknown>): ProcedureFeature {
-    throw new CSAPIParseError('SWE format not applicable for Procedure resources');
+    throw new CSAPIParseError(
+      'SWE format not applicable for Procedure resources'
+    );
   }
 
   validate(
@@ -247,17 +259,23 @@ export class ProcedureParser extends CSAPIParser<ProcedureFeature> {
 export class SamplingFeatureParser extends CSAPIParser<SamplingFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): SamplingFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as SamplingFeature;
   }
 
   parseSensorML(data: Record<string, unknown>): SamplingFeature {
-    throw new CSAPIParseError('SensorML format not applicable for Sampling Features');
+    throw new CSAPIParseError(
+      'SensorML format not applicable for Sampling Features'
+    );
   }
 
   parseSWE(data: Record<string, unknown>): SamplingFeature {
-    throw new CSAPIParseError('SWE format not applicable for Sampling Features');
+    throw new CSAPIParseError(
+      'SWE format not applicable for Sampling Features'
+    );
   }
 
   validate(
@@ -282,7 +300,9 @@ export class SamplingFeatureParser extends CSAPIParser<SamplingFeature> {
 export class PropertyParser extends CSAPIParser<PropertyFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): PropertyFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as PropertyFeature;
   }
@@ -309,7 +329,9 @@ export class PropertyParser extends CSAPIParser<PropertyFeature> {
   }
 
   parseSWE(data: Record<string, unknown>): PropertyFeature {
-    throw new CSAPIParseError('SWE format not applicable for Property resources');
+    throw new CSAPIParseError(
+      'SWE format not applicable for Property resources'
+    );
   }
 
   validate(
@@ -334,7 +356,9 @@ export class PropertyParser extends CSAPIParser<PropertyFeature> {
 export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): DatastreamFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as DatastreamFeature;
   }
@@ -345,10 +369,10 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
 
   /**
    * Parse Datastream from SWE Common format.
-   * 
+   *
    * Extracts schema information from SWE DataStream or DataRecord components
    * and converts to GeoJSON Feature format with schema as properties.
-   * 
+   *
    * @param data - SWE Common component (DataStream, DataRecord, etc.)
    * @returns GeoJSON Feature with schema information in properties
    * @throws CSAPIParseError if SWE component is invalid or cannot be parsed
@@ -357,7 +381,7 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
     try {
       // Parse SWE DataStream or DataRecord component
       let parsedComponent: any;
-      
+
       if (data.type === 'DataStream') {
         parsedComponent = parseDataStreamComponent(data);
       } else if (data.type === 'DataRecord') {
@@ -383,7 +407,10 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
       }
 
       // Add elementCount if present (for DataStream)
-      if ('elementCount' in parsedComponent && parsedComponent.elementCount !== undefined) {
+      if (
+        'elementCount' in parsedComponent &&
+        parsedComponent.elementCount !== undefined
+      ) {
         properties.elementCount = parsedComponent.elementCount;
       }
 
@@ -394,7 +421,6 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
         geometry: null, // Datastreams don't have geometry
         properties,
       } as unknown as DatastreamFeature;
-      
     } catch (error) {
       if (error instanceof Error) {
         throw new CSAPIParseError(
@@ -421,7 +447,8 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
     // For DataStream, extract elementType schema
     if (component.type === 'DataStream' && component.elementType) {
       // elementType has a "component" wrapper, extract the actual component
-      const actualComponent = component.elementType.component || component.elementType;
+      const actualComponent =
+        component.elementType.component || component.elementType;
       schema.elementType = this.extractSchema(actualComponent);
     }
 
@@ -442,7 +469,8 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
       schema.elementCount = component.elementCount;
       if (component.elementType) {
         // elementType has a "component" wrapper, extract the actual component
-        const actualComponent = component.elementType.component || component.elementType;
+        const actualComponent =
+          component.elementType.component || component.elementType;
         schema.elementType = this.extractSchema(actualComponent);
       }
     }
@@ -496,7 +524,9 @@ export class DatastreamParser extends CSAPIParser<DatastreamFeature> {
 export class ControlStreamParser extends CSAPIParser<ControlStreamFeature> {
   parseGeoJSON(data: Feature | FeatureCollection): ControlStreamFeature {
     if (data.type === 'FeatureCollection') {
-      throw new CSAPIParseError('Expected single Feature, got FeatureCollection');
+      throw new CSAPIParseError(
+        'Expected single Feature, got FeatureCollection'
+      );
     }
     return data as ControlStreamFeature;
   }
@@ -506,7 +536,9 @@ export class ControlStreamParser extends CSAPIParser<ControlStreamFeature> {
   }
 
   parseSWE(data: Record<string, unknown>): ControlStreamFeature {
-    throw new CSAPIParseError('SWE format not applicable for ControlStream resources');
+    throw new CSAPIParseError(
+      'SWE format not applicable for ControlStream resources'
+    );
   }
 
   validate(
@@ -587,21 +619,21 @@ export class CollectionParser<T> extends CSAPIParser<T[]> {
     if (data.type === 'Feature') {
       return [this.itemParser.parseGeoJSON(data)];
     }
-    return (data as FeatureCollection).features.map(feature =>
+    return (data as FeatureCollection).features.map((feature) =>
       this.itemParser.parseGeoJSON(feature)
     );
   }
 
   parseSensorML(data: Record<string, unknown>): T[] {
     if (Array.isArray(data)) {
-      return data.map(item => this.itemParser.parseSensorML(item));
+      return data.map((item) => this.itemParser.parseSensorML(item));
     }
     return [this.itemParser.parseSensorML(data)];
   }
 
   parseSWE(data: Record<string, unknown>): T[] {
     if (Array.isArray(data)) {
-      return data.map(item => this.itemParser.parseSWE(item));
+      return data.map((item) => this.itemParser.parseSWE(item));
     }
     return [this.itemParser.parseSWE(data)];
   }
@@ -618,9 +650,17 @@ export const observationParser = new ObservationParser();
 export const commandParser = new CommandParser();
 
 // Collection parsers
-export const deploymentCollectionParser = new CollectionParser(deploymentParser);
+export const deploymentCollectionParser = new CollectionParser(
+  deploymentParser
+);
 export const procedureCollectionParser = new CollectionParser(procedureParser);
-export const samplingFeatureCollectionParser = new CollectionParser(samplingFeatureParser);
+export const samplingFeatureCollectionParser = new CollectionParser(
+  samplingFeatureParser
+);
 export const propertyCollectionParser = new CollectionParser(propertyParser);
-export const datastreamCollectionParser = new CollectionParser(datastreamParser);
-export const controlStreamCollectionParser = new CollectionParser(controlStreamParser);
+export const datastreamCollectionParser = new CollectionParser(
+  datastreamParser
+);
+export const controlStreamCollectionParser = new CollectionParser(
+  controlStreamParser
+);

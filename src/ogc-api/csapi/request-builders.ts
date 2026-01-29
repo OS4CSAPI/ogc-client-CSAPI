@@ -1,9 +1,9 @@
 /**
  * Request Body Builders for CSAPI
- * 
+ *
  * Helpers to construct valid request bodies for POST/PUT/PATCH operations.
  * Includes validation to ensure bodies conform to CSAPI requirements.
- * 
+ *
  * @module csapi/request-builders
  */
 
@@ -24,10 +24,7 @@ import type {
   ControlStreamFeature,
   ControlStreamFeatureProperties,
 } from './geojson/index.js';
-import type {
-  PhysicalSystem,
-  PhysicalComponent,
-} from './sensorml/index.js';
+import type { PhysicalSystem, PhysicalComponent } from './sensorml/index.js';
 import type { Deployment } from './sensorml/deployment.js';
 import type { SimpleProcess, AggregateProcess } from './sensorml/index.js';
 import type { DerivedProperty } from './sensorml/derived-property.js';
@@ -131,7 +128,10 @@ export function buildSystemBodySensorML(
  * Build a Deployment request body (GeoJSON format)
  */
 export function buildDeploymentBody(
-  properties: Omit<Partial<DeploymentFeatureProperties>, 'featureType' | 'uid' | 'system'> & {
+  properties: Omit<
+    Partial<DeploymentFeatureProperties>,
+    'featureType' | 'uid' | 'system'
+  > & {
     featureType?: 'Deployment';
     uid: string;
     system: string;
@@ -186,7 +186,10 @@ export function buildDeploymentBodySensorML(
  * Build a Procedure request body (GeoJSON format)
  */
 export function buildProcedureBody(
-  properties: Omit<Partial<ProcedureFeatureProperties>, 'featureType' | 'uid'> & {
+  properties: Omit<
+    Partial<ProcedureFeatureProperties>,
+    'featureType' | 'uid'
+  > & {
     featureType?: 'Procedure';
     uid: string;
   },
@@ -226,9 +229,15 @@ export function buildProcedureBody(
  * Build a Procedure request body in SensorML format
  */
 export function buildProcedureBodySensorML(
-  procedure: SimpleProcess | AggregateProcess | PhysicalSystem | PhysicalComponent,
+  procedure:
+    | SimpleProcess
+    | AggregateProcess
+    | PhysicalSystem
+    | PhysicalComponent,
   options: RequestBuilderOptions = {}
-): RequestBodyResult<SimpleProcess | AggregateProcess | PhysicalSystem | PhysicalComponent> {
+): RequestBodyResult<
+  SimpleProcess | AggregateProcess | PhysicalSystem | PhysicalComponent
+> {
   return {
     body: procedure,
     contentType: 'application/sml+json',
@@ -239,7 +248,10 @@ export function buildProcedureBodySensorML(
  * Build a SamplingFeature request body
  */
 export function buildSamplingFeatureBody(
-  properties: Omit<Partial<SamplingFeatureProperties>, 'featureType' | 'uid'> & {
+  properties: Omit<
+    Partial<SamplingFeatureProperties>,
+    'featureType' | 'uid'
+  > & {
     featureType?: 'SamplingFeature';
     uid: string;
   },
@@ -267,7 +279,9 @@ export function buildSamplingFeatureBody(
     result.validation = validateSamplingFeature(feature);
     if (!result.validation.valid && strict) {
       throw new Error(
-        `SamplingFeature validation failed: ${result.validation.errors?.join(', ')}`
+        `SamplingFeature validation failed: ${result.validation.errors?.join(
+          ', '
+        )}`
       );
     }
   }
@@ -279,7 +293,10 @@ export function buildSamplingFeatureBody(
  * Build a Property request body
  */
 export function buildPropertyBody(
-  properties: Omit<Partial<PropertyFeatureProperties>, 'featureType' | 'uid' | 'definition'> & {
+  properties: Omit<
+    Partial<PropertyFeatureProperties>,
+    'featureType' | 'uid' | 'definition'
+  > & {
     featureType?: 'Property';
     uid: string;
     definition: string;
@@ -333,7 +350,10 @@ export function buildPropertyBodySensorML(
  * Build a Datastream request body
  */
 export function buildDatastreamBody(
-  properties: Omit<Partial<DatastreamFeatureProperties>, 'featureType' | 'uid' | 'system' | 'observedProperty'> & {
+  properties: Omit<
+    Partial<DatastreamFeatureProperties>,
+    'featureType' | 'uid' | 'system' | 'observedProperty'
+  > & {
     featureType?: 'Datastream';
     uid: string;
     system: string;
@@ -377,7 +397,10 @@ export function buildDatastreamBody(
  * Build a ControlStream request body
  */
 export function buildControlStreamBody(
-  properties: Omit<Partial<ControlStreamFeatureProperties>, 'featureType' | 'uid' | 'system' | 'controlledProperty'> & {
+  properties: Omit<
+    Partial<ControlStreamFeatureProperties>,
+    'featureType' | 'uid' | 'system' | 'controlledProperty'
+  > & {
     featureType?: 'ControlStream';
     uid: string;
     system: string;
@@ -409,7 +432,9 @@ export function buildControlStreamBody(
     result.validation = validateControlStreamFeature(feature);
     if (!result.validation.valid && strict) {
       throw new Error(
-        `ControlStream validation failed: ${result.validation.errors?.join(', ')}`
+        `ControlStream validation failed: ${result.validation.errors?.join(
+          ', '
+        )}`
       );
     }
   }

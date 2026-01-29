@@ -1,27 +1,36 @@
 /**
  * SensorML JSON Schema Validation
- * 
+ *
  * Validates SensorML 3.0 documents against official OGC JSON schemas.
  * Schemas are fetched from https://schemas.opengis.net/sensorML/3.0/json/
- * 
+ *
  * @module csapi/validation/sensorml-validator
  */
 
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import type { ValidationResult } from './geojson-validator.js';
-import type { SensorMLProcess, Deployment, DerivedProperty } from '../sensorml/index.js';
+import type {
+  SensorMLProcess,
+  Deployment,
+  DerivedProperty,
+} from '../sensorml/index.js';
 
 /**
  * OGC SensorML 3.0 JSON Schema URLs
  */
 export const SENSORML_SCHEMA_URLS = {
-  PhysicalSystem: 'https://schemas.opengis.net/sensorML/3.0/json/physicalSystem.json',
-  PhysicalComponent: 'https://schemas.opengis.net/sensorML/3.0/json/physicalComponent.json',
-  SimpleProcess: 'https://schemas.opengis.net/sensorML/3.0/json/simpleProcess.json',
-  AggregateProcess: 'https://schemas.opengis.net/sensorML/3.0/json/aggregateProcess.json',
+  PhysicalSystem:
+    'https://schemas.opengis.net/sensorML/3.0/json/physicalSystem.json',
+  PhysicalComponent:
+    'https://schemas.opengis.net/sensorML/3.0/json/physicalComponent.json',
+  SimpleProcess:
+    'https://schemas.opengis.net/sensorML/3.0/json/simpleProcess.json',
+  AggregateProcess:
+    'https://schemas.opengis.net/sensorML/3.0/json/aggregateProcess.json',
   Deployment: 'https://schemas.opengis.net/sensorML/3.0/json/deployment.json',
-  DerivedProperty: 'https://schemas.opengis.net/sensorML/3.0/json/derivedProperty.json',
+  DerivedProperty:
+    'https://schemas.opengis.net/sensorML/3.0/json/derivedProperty.json',
 } as const;
 
 /**
@@ -43,13 +52,13 @@ async function initializeValidator(): Promise<Ajv> {
     allErrors: true,
     verbose: true,
   });
-  
+
   addFormats(ajvInstance);
 
   // In a real implementation, schemas would be fetched and cached
   // For now, we'll do basic structural validation
   schemasLoaded = true;
-  
+
   return ajvInstance;
 }
 
@@ -88,7 +97,6 @@ export async function validateSensorMLProcess(
 
     // Validate common DescribedObject properties
     validateDescribedObject(process, errors, warnings);
-
   } catch (error) {
     errors.push(`Validation error: ${error}`);
   }
@@ -248,7 +256,10 @@ function validateAbstractPhysicalProcess(
     errors.push('position must be an object');
   }
 
-  if (process.localReferenceFrames && !Array.isArray(process.localReferenceFrames)) {
+  if (
+    process.localReferenceFrames &&
+    !Array.isArray(process.localReferenceFrames)
+  ) {
     errors.push('localReferenceFrames must be an array');
   }
 
@@ -348,6 +359,8 @@ function isValidURI(uri: string): boolean {
     return true;
   } catch {
     // Check for URN format
-    return /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$/i.test(uri);
+    return /^urn:[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\-.:=@;$_!*'%/?#]+$/i.test(
+      uri
+    );
   }
 }

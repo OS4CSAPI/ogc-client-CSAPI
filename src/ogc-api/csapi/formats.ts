@@ -1,6 +1,6 @@
 /**
  * CSAPI Format Detection and Constants
- * 
+ *
  * Handles detection and management of different response formats
  * used by OGC API Connected Systems.
  */
@@ -32,7 +32,9 @@ export interface FormatDetectionResult {
 /**
  * Detect format from Content-Type header
  */
-export function detectFormatFromContentType(contentType: string | null): FormatDetectionResult | null {
+export function detectFormatFromContentType(
+  contentType: string | null
+): FormatDetectionResult | null {
   if (!contentType) {
     return null;
   }
@@ -62,7 +64,7 @@ export function detectFormatFromContentType(contentType: string | null): FormatD
 
 /**
  * Detect format from response body structure
- * 
+ *
  * This is used as a fallback when Content-Type header is missing or ambiguous.
  */
 export function detectFormatFromBody(body: unknown): FormatDetectionResult {
@@ -74,7 +76,11 @@ export function detectFormatFromBody(body: unknown): FormatDetectionResult {
 
   // GeoJSON detection
   if (obj.type === 'Feature' || obj.type === 'FeatureCollection') {
-    return { format: 'geojson', mediaType: CSAPI_MEDIA_TYPES.GEOJSON, confidence: 'high' };
+    return {
+      format: 'geojson',
+      mediaType: CSAPI_MEDIA_TYPES.GEOJSON,
+      confidence: 'high',
+    };
   }
 
   // SensorML detection - look for type field with SensorML values
@@ -87,7 +93,11 @@ export function detectFormatFromBody(body: unknown): FormatDetectionResult {
       type === 'AggregateProcess' ||
       type === 'Deployment'
     ) {
-      return { format: 'sensorml', mediaType: CSAPI_MEDIA_TYPES.SENSORML_JSON, confidence: 'high' };
+      return {
+        format: 'sensorml',
+        mediaType: CSAPI_MEDIA_TYPES.SENSORML_JSON,
+        confidence: 'high',
+      };
     }
   }
 
@@ -108,7 +118,11 @@ export function detectFormatFromBody(body: unknown): FormatDetectionResult {
       type === 'Matrix' ||
       type === 'DataStream'
     ) {
-      return { format: 'swe', mediaType: CSAPI_MEDIA_TYPES.SWE_JSON, confidence: 'medium' };
+      return {
+        format: 'swe',
+        mediaType: CSAPI_MEDIA_TYPES.SWE_JSON,
+        confidence: 'medium',
+      };
     }
   }
 
@@ -118,7 +132,7 @@ export function detectFormatFromBody(body: unknown): FormatDetectionResult {
 
 /**
  * Detect format from both Content-Type header and body
- * 
+ *
  * Prefers Content-Type header when available and unambiguous,
  * falls back to body inspection when needed.
  */

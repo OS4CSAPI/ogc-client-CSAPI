@@ -1,9 +1,9 @@
 /**
  * Procedure feature types for CSAPI
- * 
+ *
  * Procedures describe how observations are made or how control actions are performed.
  * They can include sensor descriptions, processing algorithms, or control protocols.
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedures_2
  */
 
@@ -26,7 +26,7 @@ export type ProcedureType =
 
 /**
  * Properties specific to Procedure features
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource
  */
 export interface ProcedureFeatureProperties extends CSAPIFeatureProperties {
@@ -34,27 +34,27 @@ export interface ProcedureFeatureProperties extends CSAPIFeatureProperties {
    * Always 'Procedure' for procedure features
    */
   featureType: 'Procedure';
-  
+
   /**
    * Procedure type classification
    */
   procedureType?: ProcedureType;
-  
+
   /**
    * Definition URI for the procedure
    */
   definition?: DefinitionURI;
-  
+
   /**
    * IDs of systems that implement this procedure
    */
   implementedBy?: UniqueID[];
-  
+
   /**
    * IDs of datastreams that use this procedure
    */
   datastreams?: UniqueID[];
-  
+
   /**
    * IDs of control streams that use this procedure
    */
@@ -93,7 +93,7 @@ export interface ProcedureFeatureProperties extends CSAPIFeatureProperties {
 
 /**
  * GeoJSON Feature representing a Procedure
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedure_resource
  */
 export interface ProcedureFeature
@@ -103,7 +103,7 @@ export interface ProcedureFeature
 
 /**
  * GeoJSON FeatureCollection of Procedures
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_procedures_2
  */
 export interface ProcedureFeatureCollection
@@ -114,7 +114,9 @@ export interface ProcedureFeatureCollection
 /**
  * Type guard to check if a feature is a Procedure feature
  */
-export function isProcedureFeature(feature: unknown): feature is ProcedureFeature {
+export function isProcedureFeature(
+  feature: unknown
+): feature is ProcedureFeature {
   return (
     typeof feature === 'object' &&
     feature !== null &&

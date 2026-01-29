@@ -25,9 +25,11 @@ describe('OGC Property Validation (definition and label)', () => {
       const result = validateQuantity(quantity as any);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
-      const defError = result.errors!.find(e => e.path === 'definition');
+      const defError = result.errors!.find((e) => e.path === 'definition');
       expect(defError).toBeDefined();
-      expect(defError!.message).toContain('Missing required property: definition');
+      expect(defError!.message).toContain(
+        'Missing required property: definition'
+      );
     });
 
     it('should reject Quantity without label', () => {
@@ -40,7 +42,7 @@ describe('OGC Property Validation (definition and label)', () => {
       const result = validateQuantity(quantity as any);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
-      const labelError = result.errors!.find(e => e.path === 'label');
+      const labelError = result.errors!.find((e) => e.path === 'label');
       expect(labelError).toBeDefined();
       expect(labelError!.message).toContain('Missing required property: label');
     });
@@ -56,7 +58,7 @@ describe('OGC Property Validation (definition and label)', () => {
       const result = validateQuantity(quantity as any);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
-      const defError = result.errors!.find(e => e.path === 'definition');
+      const defError = result.errors!.find((e) => e.path === 'definition');
       expect(defError).toBeDefined();
       expect(defError!.message).toContain('must be a string');
     });
@@ -72,7 +74,7 @@ describe('OGC Property Validation (definition and label)', () => {
       const result = validateQuantity(quantity as any);
       expect(result.valid).toBe(false);
       expect(result.errors).toBeDefined();
-      const labelError = result.errors!.find(e => e.path === 'label');
+      const labelError = result.errors!.find((e) => e.path === 'label');
       expect(labelError).toBeDefined();
       expect(labelError!.message).toContain('must be a string');
     });
@@ -99,7 +101,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateCount(count as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject Count without label', () => {
@@ -110,7 +112,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateCount(count as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate Count with all required properties', () => {
@@ -134,7 +136,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateText(text as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject Text without label', () => {
@@ -145,7 +147,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateText(text as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate Text with all required properties', () => {
@@ -169,7 +171,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateCategory(category as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject Category without label', () => {
@@ -180,7 +182,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateCategory(category as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate Category with all required properties', () => {
@@ -205,7 +207,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateTime(time as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject Time without label', () => {
@@ -217,7 +219,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateTime(time as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate Time with all required properties', () => {
@@ -243,7 +245,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateRangeComponent(range as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject CountRange without label', () => {
@@ -254,7 +256,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateRangeComponent(range as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate QuantityRange with all required properties', () => {
@@ -290,7 +292,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateDataRecord(dataRecord as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject DataRecord without label', () => {
@@ -312,7 +314,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateDataRecord(dataRecord as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate DataRecord with all required properties', () => {
@@ -354,7 +356,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateDataArray(dataArray as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'definition')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'definition')).toBeDefined();
     });
 
     it('should reject DataArray without label', () => {
@@ -372,7 +374,7 @@ describe('OGC Property Validation (definition and label)', () => {
 
       const result = validateDataArray(dataArray as any);
       expect(result.valid).toBe(false);
-      expect(result.errors!.find(e => e.path === 'label')).toBeDefined();
+      expect(result.errors!.find((e) => e.path === 'label')).toBeDefined();
     });
 
     it('should validate DataArray with all required properties', () => {

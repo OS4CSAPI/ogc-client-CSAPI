@@ -1,9 +1,9 @@
 /**
  * Base types for CSAPI GeoJSON features
- * 
+ *
  * CSAPI uses GeoJSON (RFC 7946) as one of its primary formats for resource representation.
  * All resources except Observations and Commands are represented as GeoJSON features.
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html (Part 1: Feature Resources)
  * @see https://tools.ietf.org/html/rfc7946 (GeoJSON Specification)
  */
@@ -24,7 +24,7 @@ export interface TimeExtent {
    * Start of time period (ISO 8601)
    */
   start?: ISODateTime;
-  
+
   /**
    * End of time period (ISO 8601)
    */
@@ -50,22 +50,22 @@ export interface Link {
    * Link relation type
    */
   rel: string;
-  
+
   /**
    * Target URI
    */
   href: string;
-  
+
   /**
    * MIME type of the linked resource
    */
   type?: string;
-  
+
   /**
    * Human-readable title
    */
   title?: string;
-  
+
   /**
    * Language of the linked resource (RFC 5646)
    */
@@ -74,7 +74,7 @@ export interface Link {
 
 /**
  * Common properties shared by all CSAPI feature types
- * 
+ *
  * @see https://docs.ogc.org/is/23-001r2/23-001r2.html#_common_properties
  */
 export interface CSAPIFeatureProperties {
@@ -83,28 +83,28 @@ export interface CSAPIFeatureProperties {
    * Examples: 'System', 'Deployment', 'Procedure', 'SamplingFeature', etc.
    */
   featureType: string;
-  
+
   /**
    * Unique identifier for this resource
    * Required by CSAPI specification
    */
   uid: UniqueID;
-  
+
   /**
    * Human-readable name
    */
   name?: string;
-  
+
   /**
    * Detailed description
    */
   description?: string;
-  
+
   /**
    * Time period during which this resource is/was valid
    */
   validTime?: TimeExtent;
-  
+
   /**
    * Links to related resources (self, alternate, collection, etc.)
    */
@@ -113,7 +113,7 @@ export interface CSAPIFeatureProperties {
 
 /**
  * Base type for all CSAPI GeoJSON features
- * 
+ *
  * @template P - Properties type extending CSAPIFeatureProperties
  * @template G - Geometry type (defaults to any GeoJSON geometry)
  */
@@ -125,17 +125,17 @@ export interface CSAPIFeature<
    * Always 'Feature' for GeoJSON features
    */
   type: 'Feature';
-  
+
   /**
    * Feature ID (may differ from properties.uid)
    */
   id?: string | number;
-  
+
   /**
    * Geometry (can be null for features without location)
    */
   geometry: G;
-  
+
   /**
    * CSAPI-specific properties
    */
@@ -144,7 +144,7 @@ export interface CSAPIFeature<
 
 /**
  * Base type for CSAPI GeoJSON feature collections
- * 
+ *
  * @template F - Feature type extending CSAPIFeature
  */
 export interface CSAPIFeatureCollection<F extends CSAPIFeature = CSAPIFeature>
@@ -153,27 +153,27 @@ export interface CSAPIFeatureCollection<F extends CSAPIFeature = CSAPIFeature>
    * Always 'FeatureCollection'
    */
   type: 'FeatureCollection';
-  
+
   /**
    * Array of features
    */
   features: F[];
-  
+
   /**
    * Optional links for pagination and related resources
    */
   links?: Link[];
-  
+
   /**
    * Number of features returned (may be less than total)
    */
   numberReturned?: number;
-  
+
   /**
    * Total number of features available (if known)
    */
   numberMatched?: number;
-  
+
   /**
    * Timestamp when collection was generated
    */
@@ -200,7 +200,9 @@ export function isCSAPIFeature(obj: unknown): obj is CSAPIFeature {
 /**
  * Type guard to check if object is a CSAPI feature collection
  */
-export function isCSAPIFeatureCollection(obj: unknown): obj is CSAPIFeatureCollection {
+export function isCSAPIFeatureCollection(
+  obj: unknown
+): obj is CSAPIFeatureCollection {
   return (
     typeof obj === 'object' &&
     obj !== null &&

@@ -7,12 +7,15 @@ import type { ParseResult } from './parsers/index.js';
 import type { OgcApiCollectionInfo } from '../model.js';
 
 // Helper to create mock Response objects
-function createMockResponse(data: any, contentType = 'application/geo+json'): any {
+function createMockResponse(
+  data: any,
+  contentType = 'application/geo+json'
+): any {
   return {
     ok: true,
     status: 200,
     headers: {
-      get: (name: string) => name === 'content-type' ? contentType : null,
+      get: (name: string) => (name === 'content-type' ? contentType : null),
     },
     json: async () => data,
   };
@@ -73,7 +76,7 @@ describe('TypedCSAPINavigator', () => {
     };
 
     navigator = new TypedCSAPINavigator(mockCollection);
-    
+
     // Mock fetch globally
     mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
     global.fetch = mockFetch as any;
@@ -474,7 +477,7 @@ describe('TypedCSAPINavigator', () => {
       );
 
       const result = await navigator.getSystem('system-1');
-      
+
       // Parser will return the data even if invalid, without strict validation
       expect(result.data).toBeDefined();
     });
@@ -482,7 +485,9 @@ describe('TypedCSAPINavigator', () => {
     it('should handle fetch errors', async () => {
       mockFetch.mockRejectedValue(new Error('Network error'));
 
-      await expect(navigator.getSystem('system-1')).rejects.toThrow('Network error');
+      await expect(navigator.getSystem('system-1')).rejects.toThrow(
+        'Network error'
+      );
     });
   });
 
@@ -576,7 +581,7 @@ describe('TypedCSAPINavigator', () => {
         uniqueId: 'urn:test:system-1',
         name: 'Test System',
       };
-      
+
       mockFetch.mockResolvedValue(
         createMockResponse(validSensorML, 'application/sml+json')
       );
@@ -645,7 +650,9 @@ describe('TypedCSAPINavigator', () => {
         statusText: 'Not Found',
       } as any);
 
-      await expect(navigator.getSystem('nonexistent')).rejects.toThrow('HTTP 404');
+      await expect(navigator.getSystem('nonexistent')).rejects.toThrow(
+        'HTTP 404'
+      );
     });
   });
 });

@@ -1,6 +1,6 @@
 /**
  * JSON Schema Alignment Tests
- * 
+ *
  * Tests to verify TypeScript types align with OGC SensorML 3.0 JSON schemas.
  * Based on issue #24 findings.
  */
@@ -15,7 +15,7 @@ describe('SensorML JSON Schema Alignment', () => {
         label: 'Test Object',
         lang: 'en',
       };
-      
+
       expect(obj.lang).toBe('en');
     });
 
@@ -24,7 +24,7 @@ describe('SensorML JSON Schema Alignment', () => {
         label: 'Test Object',
         keywords: ['sensor', 'temperature', 'weather'],
       };
-      
+
       expect(Array.isArray(obj.keywords)).toBe(true);
       expect(obj.keywords).toEqual(['sensor', 'temperature', 'weather']);
     });
@@ -34,12 +34,12 @@ describe('SensorML JSON Schema Alignment', () => {
         { value: 'sensor', label: 'Type' },
         { value: 'temperature' },
       ];
-      
+
       const obj: DescribedObject = {
         label: 'Test Object',
         keywords,
       };
-      
+
       expect(Array.isArray(obj.keywords)).toBe(true);
       expect(obj.keywords[0]).toHaveProperty('value');
     });
@@ -57,12 +57,12 @@ describe('SensorML JSON Schema Alignment', () => {
           classification: [{ value: 'maintenance' }],
         },
       ];
-      
+
       const obj: DescribedObject = {
         label: 'Test System',
         history: events,
       };
-      
+
       expect(obj.history).toBeDefined();
       expect(obj.history?.length).toBe(2);
       expect(obj.history?.[0].type).toBe('Event');
@@ -84,7 +84,7 @@ describe('SensorML JSON Schema Alignment', () => {
           },
         ],
       };
-      
+
       expect(obj.lang).toBe('en');
       expect(obj.keywords).toEqual(['weather', 'sensor', 'automated']);
       expect(obj.history?.length).toBe(1);
@@ -107,7 +107,7 @@ describe('SensorML JSON Schema Alignment', () => {
         ],
         components: [],
       };
-      
+
       expect(system.lang).toBe('fr');
       expect(system.keywords).toContain('capteur');
       expect(system.history?.[0].classification?.[0].value).toBe('calibration');
@@ -116,14 +116,12 @@ describe('SensorML JSON Schema Alignment', () => {
 
   describe('Backward compatibility', () => {
     it('should work with existing code using Keyword[]', () => {
-      const keywords: Keyword[] = [
-        { value: 'test', label: 'Test Keyword' },
-      ];
-      
+      const keywords: Keyword[] = [{ value: 'test', label: 'Test Keyword' }];
+
       const obj: DescribedObject = {
         keywords,
       };
-      
+
       // Both formats should be valid
       expect(obj.keywords).toBeDefined();
     });
@@ -133,7 +131,7 @@ describe('SensorML JSON Schema Alignment', () => {
         label: 'Minimal Object',
         description: 'Object without new properties',
       };
-      
+
       // Should compile and work fine without lang, history
       expect(obj.label).toBe('Minimal Object');
       expect(obj.lang).toBeUndefined();

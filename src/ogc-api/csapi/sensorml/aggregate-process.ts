@@ -1,6 +1,6 @@
 /**
  * SensorML 3.0 Aggregate Process
- * 
+ *
  * A process composed of multiple sub-processes with data connections.
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
  */

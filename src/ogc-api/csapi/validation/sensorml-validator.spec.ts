@@ -7,7 +7,12 @@ import {
   validateDeployment,
   validateDerivedProperty,
 } from './sensorml-validator.js';
-import type { PhysicalSystem, PhysicalComponent, Deployment, DerivedProperty } from '../sensorml/index.js';
+import type {
+  PhysicalSystem,
+  PhysicalComponent,
+  Deployment,
+  DerivedProperty,
+} from '../sensorml/index.js';
 
 describe('SensorML Validator', () => {
   describe('validateSensorMLProcess', () => {
@@ -58,8 +63,12 @@ describe('SensorML Validator', () => {
       };
 
       const result = await validateSensorMLProcess(system);
-      expect(result.warnings).toContain('Object should have uniqueId or id for identification');
-      expect(result.warnings).toContain('Object should have label or description for clarity');
+      expect(result.warnings).toContain(
+        'Object should have uniqueId or id for identification'
+      );
+      expect(result.warnings).toContain(
+        'Object should have label or description for clarity'
+      );
     });
 
     it('should detect invalid components array', async () => {
@@ -120,7 +129,9 @@ describe('SensorML Validator', () => {
 
       const result = await validateDeployment(invalid);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain("Expected type 'Deployment', got 'PhysicalSystem'");
+      expect(result.errors).toContain(
+        "Expected type 'Deployment', got 'PhysicalSystem'"
+      );
     });
 
     it('should warn about missing validTime and location', async () => {
@@ -130,7 +141,9 @@ describe('SensorML Validator', () => {
       };
 
       const result = await validateDeployment(deployment);
-      expect(result.warnings).toContain('Deployment should have validTime or location');
+      expect(result.warnings).toContain(
+        'Deployment should have validTime or location'
+      );
     });
 
     it('should warn about empty deployed systems', async () => {
@@ -169,7 +182,9 @@ describe('SensorML Validator', () => {
 
       const result = await validateDerivedProperty(invalid);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Missing required property: baseProperty');
+      expect(result.errors).toContain(
+        'Missing required property: baseProperty'
+      );
     });
 
     it('should warn about invalid URI format', async () => {

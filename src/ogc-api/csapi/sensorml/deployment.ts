@@ -1,12 +1,17 @@
 /**
  * SensorML 3.0 Deployment
- * 
+ *
  * Describes the deployment of one or more systems for a particular purpose.
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
  */
 
 import type { Geometry } from 'geojson';
-import type { DescribedObject, XLink, ValidTime, Configuration } from './base-types';
+import type {
+  DescribedObject,
+  XLink,
+  ValidTime,
+  Configuration,
+} from './base-types';
 
 /**
  * Deployed system with optional configuration
@@ -18,7 +23,7 @@ export interface DeployedSystem {
 
 /**
  * Deployment information
- * 
+ *
  * Describes how systems are deployed, typically with:
  * - Temporal extent (when)
  * - Spatial extent (where)

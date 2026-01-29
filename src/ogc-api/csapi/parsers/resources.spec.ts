@@ -46,7 +46,9 @@ describe('Resource Parsers', () => {
         deployedSystems: [{ href: 'http://example.com/systems/1' }],
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data).toBeDefined();
       expect(result.data.properties.featureType).toBe('Deployment');
     });
@@ -63,7 +65,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry).toBeDefined();
       expect(result.data.geometry?.type).toBe('Point');
     });
@@ -77,7 +81,9 @@ describe('Resource Parsers', () => {
         links: [{ href: 'http://example.com/docs', rel: 'documentation' }],
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.platform).toBeDefined();
       expect(result.data.properties.links).toBeDefined();
     });
@@ -92,11 +98,15 @@ describe('Resource Parsers', () => {
         },
       };
 
-      expect(() => parser.parse(invalid, { validate: true, strict: true })).toThrow();
+      expect(() =>
+        parser.parse(invalid, { validate: true, strict: true })
+      ).toThrow();
     });
 
     it('should throw on SWE format (not supported)', () => {
-      expect(() => parser.parse({}, { contentType: 'application/swe+json' })).toThrow('SWE format not applicable');
+      expect(() =>
+        parser.parse({}, { contentType: 'application/swe+json' })
+      ).toThrow('SWE format not applicable');
     });
   });
 
@@ -126,7 +136,9 @@ describe('Resource Parsers', () => {
         definition: 'http://example.com/process/1',
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data).toBeDefined();
       expect(result.data.properties.featureType).toBe('Procedure');
     });
@@ -141,7 +153,9 @@ describe('Resource Parsers', () => {
         method: { href: 'http://example.com/method' },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.inputs).toBeDefined();
       expect(result.data.properties.outputs).toBeDefined();
       expect(result.data.properties.parameters).toBeDefined();
@@ -156,7 +170,9 @@ describe('Resource Parsers', () => {
         connections: [{ source: 'comp1.out', dest: 'comp2.in' }],
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.components).toBeDefined();
       expect(result.data.properties.connections).toBeDefined();
     });
@@ -171,13 +187,17 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry).toBeDefined();
       expect(result.data.geometry?.type).toBe('Point');
     });
 
     it('should throw on SWE format (not supported)', () => {
-      expect(() => parser.parse({}, { contentType: 'application/swe+json' })).toThrow('SWE format not applicable');
+      expect(() =>
+        parser.parse({}, { contentType: 'application/swe+json' })
+      ).toThrow('SWE format not applicable');
     });
   });
 
@@ -207,11 +227,15 @@ describe('Resource Parsers', () => {
         id: 'sf-sml-1',
       };
 
-      expect(() => parser.parse(sensorml, { contentType: 'application/sml+json' })).toThrow('SensorML format not applicable');
+      expect(() =>
+        parser.parse(sensorml, { contentType: 'application/sml+json' })
+      ).toThrow('SensorML format not applicable');
     });
 
     it('should throw on SWE format (not supported)', () => {
-      expect(() => parser.parse({}, { contentType: 'application/swe+json' })).toThrow('SWE format not applicable');
+      expect(() =>
+        parser.parse({}, { contentType: 'application/swe+json' })
+      ).toThrow('SWE format not applicable');
     });
   });
 
@@ -244,7 +268,9 @@ describe('Resource Parsers', () => {
         label: 'Computed Temperature',
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data).toBeDefined();
       expect(result.data.properties.featureType).toBe('Property');
     });
@@ -259,13 +285,17 @@ describe('Resource Parsers', () => {
         statistic: 'mean',
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.baseProperty).toBeDefined();
       expect(result.data.properties.statistic).toBe('mean');
     });
 
     it('should throw on SWE format (not supported)', () => {
-      expect(() => parser.parse({}, { contentType: 'application/swe+json' })).toThrow('SWE format not applicable');
+      expect(() =>
+        parser.parse({}, { contentType: 'application/swe+json' })
+      ).toThrow('SWE format not applicable');
     });
   });
 
@@ -296,7 +326,9 @@ describe('Resource Parsers', () => {
         id: 'ds-sml-1',
       };
 
-      expect(() => parser.parse(sensorml, { contentType: 'application/sml+json' })).toThrow('Datastreams not defined in SensorML format');
+      expect(() =>
+        parser.parse(sensorml, { contentType: 'application/sml+json' })
+      ).toThrow('Datastreams not defined in SensorML format');
     });
 
     describe('parseSWE', () => {
@@ -317,12 +349,13 @@ describe('Resource Parsers', () => {
                   name: 'timestamp',
                   component: {
                     type: 'Time',
-                    definition: 'http://www.opengis.net/def/property/OGC/0/SamplingTime',
+                    definition:
+                      'http://www.opengis.net/def/property/OGC/0/SamplingTime',
                     label: 'Sampling Time',
                     uom: {
-                      code: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian'
-                    }
-                  }
+                      code: 'http://www.opengis.net/def/uom/ISO-8601/0/Gregorian',
+                    },
+                  },
                 },
                 {
                   name: 'temperature',
@@ -330,18 +363,20 @@ describe('Resource Parsers', () => {
                     type: 'Quantity',
                     definition: 'http://example.org/def/temperature',
                     label: 'Temperature',
-                    uom: { code: 'Cel' }
-                  }
-                }
-              ]
-            }
+                    uom: { code: 'Cel' },
+                  },
+                },
+              ],
+            },
           },
           encoding: {
-            type: 'JSONEncoding'
-          }
+            type: 'JSONEncoding',
+          },
         };
 
-        const result = parser.parse(sweDataStream, { contentType: 'application/swe+json' });
+        const result = parser.parse(sweDataStream, {
+          contentType: 'application/swe+json',
+        });
 
         expect(result.data.type).toBe('Feature');
         expect(result.data.geometry).toBeNull();
@@ -349,13 +384,27 @@ describe('Resource Parsers', () => {
         expect(result.data.properties.name).toBe('Temperature and Humidity');
         expect(result.data.properties.schema).toBeDefined();
         expect(result.data.properties.schema.type).toBe('DataStream');
-        expect((result.data.properties.schema.elementType as any).type).toBe('DataRecord');
-        expect((result.data.properties.schema.elementType as any).fields).toHaveLength(2);
-        expect((result.data.properties.schema.elementType as any).fields[0].name).toBe('timestamp');
-        expect((result.data.properties.schema.elementType as any).fields[0].type).toBe('Time');
-        expect((result.data.properties.schema.elementType as any).fields[1].name).toBe('temperature');
-        expect((result.data.properties.schema.elementType as any).fields[1].type).toBe('Quantity');
-        expect(result.data.properties.encoding).toEqual({ type: 'JSONEncoding' });
+        expect((result.data.properties.schema.elementType as any).type).toBe(
+          'DataRecord'
+        );
+        expect(
+          (result.data.properties.schema.elementType as any).fields
+        ).toHaveLength(2);
+        expect(
+          (result.data.properties.schema.elementType as any).fields[0].name
+        ).toBe('timestamp');
+        expect(
+          (result.data.properties.schema.elementType as any).fields[0].type
+        ).toBe('Time');
+        expect(
+          (result.data.properties.schema.elementType as any).fields[1].name
+        ).toBe('temperature');
+        expect(
+          (result.data.properties.schema.elementType as any).fields[1].type
+        ).toBe('Quantity');
+        expect(result.data.properties.encoding).toEqual({
+          type: 'JSONEncoding',
+        });
         expect(result.format.format).toBe('swe');
       });
 
@@ -372,20 +421,28 @@ describe('Resource Parsers', () => {
                 type: 'Quantity',
                 definition: 'http://example.org/def/measurement',
                 label: 'Measurement',
-                uom: { code: 'm' }
-              }
-            }
-          ]
+                uom: { code: 'm' },
+              },
+            },
+          ],
         };
 
-        const result = parser.parse(sweDataRecord, { contentType: 'application/swe+json' });
+        const result = parser.parse(sweDataRecord, {
+          contentType: 'application/swe+json',
+        });
 
         expect(result.data.type).toBe('Feature');
         expect(result.data.properties.schema.type).toBe('DataRecord');
         expect(result.data.properties.schema.fields).toHaveLength(1);
-        expect((result.data.properties.schema.fields as any)[0].name).toBe('value');
-        expect((result.data.properties.schema.fields as any)[0].type).toBe('Quantity');
-        expect((result.data.properties.schema.fields as any)[0].uom).toEqual({ code: 'm' });
+        expect((result.data.properties.schema.fields as any)[0].name).toBe(
+          'value'
+        );
+        expect((result.data.properties.schema.fields as any)[0].type).toBe(
+          'Quantity'
+        );
+        expect((result.data.properties.schema.fields as any)[0].uom).toEqual({
+          code: 'm',
+        });
       });
 
       it('should handle nested DataRecord in DataStream', () => {
@@ -411,21 +468,27 @@ describe('Resource Parsers', () => {
                         component: {
                           type: 'Text',
                           definition: 'http://example.org/quality',
-                          label: 'Quality Flag'
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          }
+                          label: 'Quality Flag',
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
         };
 
-        const result = parser.parse(nestedSchema, { contentType: 'application/swe+json' });
+        const result = parser.parse(nestedSchema, {
+          contentType: 'application/swe+json',
+        });
 
-        expect((result.data.properties.schema.elementType as any).fields[0].name).toBe('metadata');
-        expect((result.data.properties.schema.elementType as any).fields[0].type).toBe('DataRecord');
+        expect(
+          (result.data.properties.schema.elementType as any).fields[0].name
+        ).toBe('metadata');
+        expect(
+          (result.data.properties.schema.elementType as any).fields[0].type
+        ).toBe('DataRecord');
       });
 
       it('should handle DataArray elementType', () => {
@@ -452,21 +515,29 @@ describe('Resource Parsers', () => {
                         type: 'Quantity',
                         definition: 'http://example.org/latitude',
                         label: 'Latitude',
-                        uom: { code: 'deg' }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
+                        uom: { code: 'deg' },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
         };
 
-        const result = parser.parse(dataArraySchema, { contentType: 'application/swe+json' });
+        const result = parser.parse(dataArraySchema, {
+          contentType: 'application/swe+json',
+        });
 
-        expect((result.data.properties.schema.elementType as any).type).toBe('DataArray');
-        expect((result.data.properties.schema.elementType as any).elementCount).toBe(100);
-        expect((result.data.properties.schema.elementType as any).elementType.type).toBe('Vector');
+        expect((result.data.properties.schema.elementType as any).type).toBe(
+          'DataArray'
+        );
+        expect(
+          (result.data.properties.schema.elementType as any).elementCount
+        ).toBe(100);
+        expect(
+          (result.data.properties.schema.elementType as any).elementType.type
+        ).toBe('Vector');
       });
 
       it('should preserve constraints in schema', () => {
@@ -484,18 +555,22 @@ describe('Resource Parsers', () => {
                 uom: { code: 'Cel' },
                 constraint: {
                   intervals: [[-40, 60]],
-                  significantFigures: 2
-                }
-              }
-            }
-          ]
+                  significantFigures: 2,
+                },
+              },
+            },
+          ],
         };
 
-        const result = parser.parse(constrainedSchema, { contentType: 'application/swe+json' });
+        const result = parser.parse(constrainedSchema, {
+          contentType: 'application/swe+json',
+        });
 
-        expect((result.data.properties.schema.fields as any)[0].constraint).toEqual({
+        expect(
+          (result.data.properties.schema.fields as any)[0].constraint
+        ).toEqual({
           intervals: [[-40, 60]],
-          significantFigures: 2
+          significantFigures: 2,
         });
       });
 
@@ -520,22 +595,24 @@ describe('Resource Parsers', () => {
               type: 'Quantity',
               definition: 'http://example.org/value',
               label: 'Value',
-              uom: { code: 'm' }
-            }
+              uom: { code: 'm' },
+            },
           },
           encoding: {
             type: 'TextEncoding',
             tokenSeparator: ',',
-            blockSeparator: '\n'
-          }
+            blockSeparator: '\n',
+          },
         };
 
-        const result = parser.parse(streamWithEncoding, { contentType: 'application/swe+json' });
+        const result = parser.parse(streamWithEncoding, {
+          contentType: 'application/swe+json',
+        });
 
         expect(result.data.properties.encoding).toEqual({
           type: 'TextEncoding',
           tokenSeparator: ',',
-          blockSeparator: '\n'
+          blockSeparator: '\n',
         });
       });
 
@@ -557,8 +634,8 @@ describe('Resource Parsers', () => {
                     type: 'Quantity',
                     definition: 'http://example.org/longitude',
                     label: 'Longitude',
-                    uom: { code: 'deg' }
-                  }
+                    uom: { code: 'deg' },
+                  },
                 },
                 {
                   name: 'lat',
@@ -566,21 +643,33 @@ describe('Resource Parsers', () => {
                     type: 'Quantity',
                     definition: 'http://example.org/latitude',
                     label: 'Latitude',
-                    uom: { code: 'deg' }
-                  }
-                }
-              ]
-            }
-          }
+                    uom: { code: 'deg' },
+                  },
+                },
+              ],
+            },
+          },
         };
 
-        const result = parser.parse(vectorSchema, { contentType: 'application/swe+json' });
+        const result = parser.parse(vectorSchema, {
+          contentType: 'application/swe+json',
+        });
 
-        expect((result.data.properties.schema.elementType as any).type).toBe('Vector');
-        expect((result.data.properties.schema.elementType as any).referenceFrame).toBe('http://www.opengis.net/def/crs/EPSG/0/4326');
-        expect((result.data.properties.schema.elementType as any).coordinates).toHaveLength(2);
-        expect((result.data.properties.schema.elementType as any).coordinates[0].name).toBe('lon');
-        expect((result.data.properties.schema.elementType as any).coordinates[1].name).toBe('lat');
+        expect((result.data.properties.schema.elementType as any).type).toBe(
+          'Vector'
+        );
+        expect(
+          (result.data.properties.schema.elementType as any).referenceFrame
+        ).toBe('http://www.opengis.net/def/crs/EPSG/0/4326');
+        expect(
+          (result.data.properties.schema.elementType as any).coordinates
+        ).toHaveLength(2);
+        expect(
+          (result.data.properties.schema.elementType as any).coordinates[0].name
+        ).toBe('lon');
+        expect(
+          (result.data.properties.schema.elementType as any).coordinates[1].name
+        ).toBe('lat');
       });
     });
   });
@@ -612,11 +701,15 @@ describe('Resource Parsers', () => {
         id: 'cs-sml-1',
       };
 
-      expect(() => parser.parse(sensorml, { contentType: 'application/sml+json' })).toThrow('ControlStreams not defined in SensorML format');
+      expect(() =>
+        parser.parse(sensorml, { contentType: 'application/sml+json' })
+      ).toThrow('ControlStreams not defined in SensorML format');
     });
 
     it('should throw on SWE format (not supported)', () => {
-      expect(() => parser.parse({}, { contentType: 'application/swe+json' })).toThrow('SWE format not applicable');
+      expect(() =>
+        parser.parse({}, { contentType: 'application/swe+json' })
+      ).toThrow('SWE format not applicable');
     });
   });
 
@@ -637,7 +730,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.name).toBe('Test Deployment');
       expect(result.data.properties.description).toBe('A test deployment');
       expect(result.data.properties.validTime).toBeDefined();
@@ -647,8 +742,10 @@ describe('Resource Parsers', () => {
   describe('Error handling', () => {
     it('should throw CSAPIParseError on invalid data', () => {
       const parser = new DeploymentParser();
-      
-      expect(() => parser.parseGeoJSON({ type: 'FeatureCollection', features: [] } as any)).toThrow();
+
+      expect(() =>
+        parser.parseGeoJSON({ type: 'FeatureCollection', features: [] } as any)
+      ).toThrow();
     });
 
     it('should handle validation errors', () => {
@@ -682,8 +779,10 @@ describe('Resource Parsers', () => {
         new ControlStreamParser(),
       ];
 
-      parsers.forEach(parser => {
-        expect(() => parser.parseGeoJSON(featureCollection as any)).toThrow('Expected single Feature');
+      parsers.forEach((parser) => {
+        expect(() => parser.parseGeoJSON(featureCollection as any)).toThrow(
+          'Expected single Feature'
+        );
       });
     });
   });
@@ -699,7 +798,9 @@ describe('Resource Parsers', () => {
         location: undefined,
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry).toBeNull();
     });
 
@@ -714,9 +815,13 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('Point');
-      expect((result.data.geometry as any)?.coordinates).toEqual([10.5, 45.2, 100]);
+      expect((result.data.geometry as any)?.coordinates).toEqual([
+        10.5, 45.2, 100,
+      ]);
     });
 
     it('should handle GeoJSON LineString geometry', () => {
@@ -726,11 +831,17 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
         location: {
           type: 'LineString',
-          coordinates: [[0, 0], [1, 1], [2, 2]],
+          coordinates: [
+            [0, 0],
+            [1, 1],
+            [2, 2],
+          ],
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('LineString');
     });
 
@@ -741,11 +852,21 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
         location: {
           type: 'Polygon',
-          coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],
+          coordinates: [
+            [
+              [0, 0],
+              [1, 0],
+              [1, 1],
+              [0, 1],
+              [0, 0],
+            ],
+          ],
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('Polygon');
     });
 
@@ -756,11 +877,16 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
         location: {
           type: 'MultiPoint',
-          coordinates: [[0, 0], [1, 1]],
+          coordinates: [
+            [0, 0],
+            [1, 1],
+          ],
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('MultiPoint');
     });
 
@@ -771,11 +897,22 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
         location: {
           type: 'MultiLineString',
-          coordinates: [[[0, 0], [1, 1]], [[2, 2], [3, 3]]],
+          coordinates: [
+            [
+              [0, 0],
+              [1, 1],
+            ],
+            [
+              [2, 2],
+              [3, 3],
+            ],
+          ],
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('MultiLineString');
     });
 
@@ -786,11 +923,23 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
         location: {
           type: 'MultiPolygon',
-          coordinates: [[[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]],
+          coordinates: [
+            [
+              [
+                [0, 0],
+                [1, 0],
+                [1, 1],
+                [0, 1],
+                [0, 0],
+              ],
+            ],
+          ],
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('MultiPolygon');
     });
 
@@ -808,9 +957,13 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('Point');
-      expect((result.data.geometry as any)?.coordinates).toEqual([10.2, 45.5, 150]);
+      expect((result.data.geometry as any)?.coordinates).toEqual([
+        10.2, 45.5, 150,
+      ]);
     });
 
     it('should convert Pose without height to Point with 0 elevation', () => {
@@ -826,9 +979,13 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry?.type).toBe('Point');
-      expect((result.data.geometry as any)?.coordinates).toEqual([10.2, 45.5, 0]);
+      expect((result.data.geometry as any)?.coordinates).toEqual([
+        10.2, 45.5, 0,
+      ]);
     });
 
     it('should return undefined for Pose missing lat or lon', () => {
@@ -844,7 +1001,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry).toBeNull();
     });
 
@@ -859,7 +1018,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.geometry).toBeNull();
     });
   });
@@ -885,7 +1046,9 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       const props = result.data.properties;
 
       expect(props.id).toBe('dep-full');
@@ -911,9 +1074,9 @@ describe('Resource Parsers', () => {
         id: 'wrong-1',
       };
 
-      expect(() => parser.parse(wrongType, { contentType: 'application/sml+json' })).toThrow(
-        'Expected Deployment'
-      );
+      expect(() =>
+        parser.parse(wrongType, { contentType: 'application/sml+json' })
+      ).toThrow('Expected Deployment');
     });
 
     it('should parse Procedure SensorML with any process type', () => {
@@ -925,7 +1088,9 @@ describe('Resource Parsers', () => {
       };
 
       // ProcedureParser accepts any type and uses it as procedureType
-      const result = parser.parse(deployment, { contentType: 'application/sml+json' });
+      const result = parser.parse(deployment, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.procedureType).toBe('Deployment');
     });
   });
@@ -939,7 +1104,9 @@ describe('Resource Parsers', () => {
         id: 'proc-full',
         uniqueId: 'urn:test:procedure-full',
         inputs: [{ name: 'temperature', href: 'http://example.com/temp' }],
-        outputs: [{ name: 'calibrated_temp', href: 'http://example.com/cal_temp' }],
+        outputs: [
+          { name: 'calibrated_temp', href: 'http://example.com/cal_temp' },
+        ],
         parameters: [{ name: 'calibration_factor', value: 1.5 }],
         position: {
           position: {
@@ -950,7 +1117,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.inputs).toBeDefined();
       expect(result.data.properties.outputs).toBeDefined();
       expect(result.data.properties.parameters).toBeDefined();
@@ -968,7 +1137,9 @@ describe('Resource Parsers', () => {
         connections: [{ source: 'proc1', destination: 'proc2' }],
       };
 
-      const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+      const result = parser.parse(sensorml, {
+        contentType: 'application/sml+json',
+      });
       expect(result.data.properties.components).toBeDefined();
       expect(result.data.properties.connections).toBeDefined();
     });
@@ -984,9 +1155,9 @@ describe('Resource Parsers', () => {
         properties: {},
       };
 
-      expect(() => parser.parse(feature, { contentType: 'application/geo+json' })).toThrow(
-        'Observations are not GeoJSON features'
-      );
+      expect(() =>
+        parser.parse(feature, { contentType: 'application/geo+json' })
+      ).toThrow('Observations are not GeoJSON features');
     });
 
     it('should throw on SensorML format', () => {
@@ -995,9 +1166,9 @@ describe('Resource Parsers', () => {
         id: 'obs-1',
       };
 
-      expect(() => parser.parse(sensorml, { contentType: 'application/sml+json' })).toThrow(
-        'Observations not defined in SensorML format'
-      );
+      expect(() =>
+        parser.parse(sensorml, { contentType: 'application/sml+json' })
+      ).toThrow('Observations not defined in SensorML format');
     });
 
     it('should parse SWE format observations', () => {
@@ -1013,7 +1184,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sweData, { contentType: 'application/swe+json' });
+      const result = parser.parse(sweData, {
+        contentType: 'application/swe+json',
+      });
       expect(result.data).toEqual(sweData);
       expect(result.data.result).toBeDefined();
     });
@@ -1026,7 +1199,9 @@ describe('Resource Parsers', () => {
         unit: 'degC',
       };
 
-      const result = parser.parse(jsonData, { contentType: 'application/json' });
+      const result = parser.parse(jsonData, {
+        contentType: 'application/json',
+      });
       expect(result.data).toEqual(jsonData);
       expect(result.data.value).toBe(23.5);
     });
@@ -1051,7 +1226,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(complexSWE, { contentType: 'application/swe+json' });
+      const result = parser.parse(complexSWE, {
+        contentType: 'application/swe+json',
+      });
       expect((result.data.result as any).type).toBe('DataArray');
       expect((result.data.result as any).elementCount).toBe(3);
     });
@@ -1067,9 +1244,9 @@ describe('Resource Parsers', () => {
         properties: {},
       };
 
-      expect(() => parser.parse(feature, { contentType: 'application/geo+json' })).toThrow(
-        'Commands are not GeoJSON features'
-      );
+      expect(() =>
+        parser.parse(feature, { contentType: 'application/geo+json' })
+      ).toThrow('Commands are not GeoJSON features');
     });
 
     it('should throw on SensorML format', () => {
@@ -1078,9 +1255,9 @@ describe('Resource Parsers', () => {
         id: 'cmd-1',
       };
 
-      expect(() => parser.parse(sensorml, { contentType: 'application/sml+json' })).toThrow(
-        'Commands not defined in SensorML format'
-      );
+      expect(() =>
+        parser.parse(sensorml, { contentType: 'application/sml+json' })
+      ).toThrow('Commands not defined in SensorML format');
     });
 
     it('should parse SWE format commands', () => {
@@ -1095,7 +1272,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(sweCommand, { contentType: 'application/swe+json' });
+      const result = parser.parse(sweCommand, {
+        contentType: 'application/swe+json',
+      });
       expect(result.data).toEqual(sweCommand);
       expect(result.data.parameters).toBeDefined();
     });
@@ -1108,7 +1287,9 @@ describe('Resource Parsers', () => {
         timestamp: '2024-01-01T00:00:00Z',
       };
 
-      const result = parser.parse(jsonCommand, { contentType: 'application/json' });
+      const result = parser.parse(jsonCommand, {
+        contentType: 'application/json',
+      });
       expect(result.data).toEqual(jsonCommand);
       expect(result.data.action).toBe('setPower');
     });
@@ -1132,7 +1313,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(complexCommand, { contentType: 'application/swe+json' });
+      const result = parser.parse(complexCommand, {
+        contentType: 'application/swe+json',
+      });
       expect((result.data.parameters as any).type).toBe('DataRecord');
       expect((result.data.parameters as any).fields.length).toBe(3);
     });
@@ -1153,7 +1336,9 @@ describe('Resource Parsers', () => {
           },
         };
 
-        const result = parser.parse(feature, { contentType: 'application/geo+json' });
+        const result = parser.parse(feature, {
+          contentType: 'application/geo+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(1);
         expect(result.data[0].id).toBe('dep-1');
@@ -1187,7 +1372,9 @@ describe('Resource Parsers', () => {
           ],
         };
 
-        const result = parser.parse(featureCollection, { contentType: 'application/geo+json' });
+        const result = parser.parse(featureCollection, {
+          contentType: 'application/geo+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(2);
         expect(result.data[0].id).toBe('dep-1');
@@ -1201,7 +1388,9 @@ describe('Resource Parsers', () => {
           features: [],
         };
 
-        const result = parser.parse(featureCollection, { contentType: 'application/geo+json' });
+        const result = parser.parse(featureCollection, {
+          contentType: 'application/geo+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(0);
       });
@@ -1223,7 +1412,9 @@ describe('Resource Parsers', () => {
           },
         ];
 
-        const result = parser.parse(sensormlArray, { contentType: 'application/sml+json' });
+        const result = parser.parse(sensormlArray, {
+          contentType: 'application/sml+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(2);
         expect(result.data[0].id).toBe('proc-1');
@@ -1238,7 +1429,9 @@ describe('Resource Parsers', () => {
           uniqueId: 'urn:test:proc-1',
         };
 
-        const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
+        const result = parser.parse(sensorml, {
+          contentType: 'application/sml+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(1);
         expect(result.data[0].id).toBe('proc-1');
@@ -1246,7 +1439,9 @@ describe('Resource Parsers', () => {
 
       it('should parse empty SensorML array', () => {
         const parser = new CollectionParser(new ProcedureParser());
-        const result = parser.parse([], { contentType: 'application/sml+json' });
+        const result = parser.parse([], {
+          contentType: 'application/sml+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(0);
       });
@@ -1261,7 +1456,9 @@ describe('Resource Parsers', () => {
           { phenomenonTime: '2024-01-01T00:02:00Z', result: 24.5 },
         ];
 
-        const result = parser.parse(sweArray, { contentType: 'application/swe+json' });
+        const result = parser.parse(sweArray, {
+          contentType: 'application/swe+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(3);
         expect(result.data[0].result).toBe(23.5);
@@ -1270,9 +1467,14 @@ describe('Resource Parsers', () => {
 
       it('should parse single SWE object as array', () => {
         const parser = new CollectionParser(new ObservationParser());
-        const sweData = { phenomenonTime: '2024-01-01T00:00:00Z', result: 23.5 };
+        const sweData = {
+          phenomenonTime: '2024-01-01T00:00:00Z',
+          result: 23.5,
+        };
 
-        const result = parser.parse(sweData, { contentType: 'application/swe+json' });
+        const result = parser.parse(sweData, {
+          contentType: 'application/swe+json',
+        });
         expect(Array.isArray(result.data)).toBe(true);
         expect(result.data.length).toBe(1);
         expect(result.data[0].result).toBe(23.5);
@@ -1343,9 +1545,9 @@ describe('Resource Parsers', () => {
         deployedSystems: [],
       };
 
-      const result = parser.parse(sensorml, { 
+      const result = parser.parse(sensorml, {
         contentType: 'application/sml+json',
-        validate: true 
+        validate: true,
       });
       expect(result.warnings).toBeUndefined();
       expect(result.errors).toBeUndefined();
@@ -1358,9 +1560,9 @@ describe('Resource Parsers', () => {
         id: 'proc-1',
       };
 
-      const result = parser.parse(sensorml, { 
+      const result = parser.parse(sensorml, {
         contentType: 'application/sml+json',
-        validate: true 
+        validate: true,
       });
       expect(result.warnings).toBeUndefined();
       expect(result.errors).toBeUndefined();
@@ -1374,9 +1576,9 @@ describe('Resource Parsers', () => {
         properties: { featureType: 'SamplingFeature' },
       };
 
-      const result = parser.parse(feature, { 
+      const result = parser.parse(feature, {
         contentType: 'application/json',
-        validate: true 
+        validate: true,
       });
       expect(result.warnings).toBeUndefined();
     });
@@ -1389,9 +1591,9 @@ describe('Resource Parsers', () => {
         properties: { featureType: 'Property' },
       };
 
-      const result = parser.parse(feature, { 
+      const result = parser.parse(feature, {
         contentType: 'application/json',
-        validate: true 
+        validate: true,
       });
       expect(result.warnings).toBeUndefined();
     });
@@ -1404,9 +1606,9 @@ describe('Resource Parsers', () => {
         properties: { featureType: 'Datastream' },
       };
 
-      const result = parser.parse(feature, { 
+      const result = parser.parse(feature, {
         contentType: 'application/json',
-        validate: true 
+        validate: true,
       });
       expect(result.warnings).toBeUndefined();
     });
@@ -1419,9 +1621,9 @@ describe('Resource Parsers', () => {
         properties: { featureType: 'ControlStream' },
       };
 
-      const result = parser.parse(feature, { 
+      const result = parser.parse(feature, {
         contentType: 'application/json',
-        validate: true 
+        validate: true,
       });
       expect(result.warnings).toBeUndefined();
     });
@@ -1439,9 +1641,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(invalid, { 
+      const result = parser.parse(invalid, {
         contentType: 'application/geo+json',
-        validate: true 
+        validate: true,
       });
       expect(result.errors).toBeDefined();
       expect(result.errors!.length).toBeGreaterThan(0);
@@ -1458,9 +1660,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(invalid, { 
+      const result = parser.parse(invalid, {
         contentType: 'application/geo+json',
-        validate: true 
+        validate: true,
       });
       expect(result.errors).toBeDefined();
       expect(result.errors!.length).toBeGreaterThan(0);
@@ -1477,9 +1679,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(invalid, { 
+      const result = parser.parse(invalid, {
         contentType: 'application/geo+json',
-        validate: true 
+        validate: true,
       });
       expect(result.errors).toBeDefined();
       expect(result.errors!.length).toBeGreaterThan(0);
@@ -1496,9 +1698,9 @@ describe('Resource Parsers', () => {
         },
       };
 
-      const result = parser.parse(invalid, { 
+      const result = parser.parse(invalid, {
         contentType: 'application/geo+json',
-        validate: true 
+        validate: true,
       });
       expect(result.errors).toBeDefined();
       expect(result.errors!.length).toBeGreaterThan(0);

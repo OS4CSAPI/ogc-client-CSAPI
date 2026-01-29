@@ -89,8 +89,10 @@ describe('SWE Common Constraint Validation', () => {
 
     it('should validate significant figures constraint', () => {
       const component = {
-        type: 'Quantity' as const,        definition: 'http://example.com/distance',
-        label: 'Distance',        uom: { code: 'm' },
+        type: 'Quantity' as const,
+        definition: 'http://example.com/distance',
+        label: 'Distance',
+        uom: { code: 'm' },
         constraint: {
           significantFigures: 3,
         },
@@ -209,7 +211,9 @@ describe('SWE Common Constraint Validation', () => {
 
       const result = validateTextConstraint(component, 'abc1234');
       expect(result.valid).toBe(false);
-      expect(result.errors![0].message).toContain('does not match required pattern');
+      expect(result.errors![0].message).toContain(
+        'does not match required pattern'
+      );
     });
 
     it('should pass validation when value is in allowed tokens', () => {

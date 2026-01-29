@@ -1,18 +1,18 @@
 /**
  * SensorML 3.0 Types
- * 
+ *
  * Complete type definitions for SensorML 3.0 JSON encoding.
- * 
+ *
  * SensorML provides models for describing all types of sensors, actuators,
  * and processes. This implementation follows OGC SensorML 3.0 (OGC 23-000).
- * 
+ *
  * Key concepts:
  * - **Processes**: Can be simple or aggregate, physical or non-physical
  * - **Physical Components**: Single devices with known location
  * - **Physical Systems**: Complex systems composed of multiple components
  * - **Deployments**: How systems are deployed in space and time
  * - **Derived Properties**: Properties derived from base properties with context
- * 
+ *
  * @module sensorml
  */
 

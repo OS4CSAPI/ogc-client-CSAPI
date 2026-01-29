@@ -1,12 +1,12 @@
 /**
  * Constraint validation for SWE Common components
- * 
+ *
  * This module provides deep validation of SWE Common constraints including:
  * - AllowedValues intervals and discrete values
  * - AllowedTimes intervals and discrete times
  * - AllowedTokens patterns and token lists
  * - Significant figures validation
- * 
+ *
  * @see https://docs.ogc.org/is/24-014/24-014.html Section 8
  */
 
@@ -30,11 +30,11 @@ import type { ValidationResult, ValidationError } from './swe-validator.js';
 function getSignificantFigures(value: number): number {
   if (value === 0) return 1;
   if (!isFinite(value)) return Infinity;
-  
+
   // Convert to string and remove leading zeros and decimal point
   const str = Math.abs(value).toString();
   const normalized = str.replace(/^0+\.?0*/, '').replace('.', '');
-  
+
   return normalized.length;
 }
 
@@ -50,25 +50,33 @@ export function validateQuantityConstraint(
   }
 
   const errors: ValidationError[] = [];
-  const { intervals, values: allowedValues, significantFigures } = component.constraint;
+  const {
+    intervals,
+    values: allowedValues,
+    significantFigures,
+  } = component.constraint;
 
   // Check interval constraints
   if (intervals && intervals.length > 0) {
-    const inAnyInterval = intervals.some(([min, max]) => 
-      value >= min && value <= max
+    const inAnyInterval = intervals.some(
+      ([min, max]) => value >= min && value <= max
     );
-    
+
     if (!inAnyInterval) {
       errors.push({
         path: 'value',
-        message: `Value ${value} is outside allowed intervals: ${JSON.stringify(intervals)}`,
+        message: `Value ${value} is outside allowed intervals: ${JSON.stringify(
+          intervals
+        )}`,
       });
     }
   }
 
   // Check discrete allowed values
   if (allowedValues && allowedValues.length > 0) {
-    const numericValues = allowedValues.map(v => typeof v === 'number' ? v : parseFloat(v as string));
+    const numericValues = allowedValues.map((v) =>
+      typeof v === 'number' ? v : parseFloat(v as string)
+    );
     if (!numericValues.includes(value)) {
       errors.push({
         path: 'value',
@@ -88,9 +96,7 @@ export function validateQuantityConstraint(
     }
   }
 
-  return errors.length > 0 
-    ? { valid: false, errors } 
-    : { valid: true };
+  return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
 
 /**
@@ -119,21 +125,25 @@ export function validateCountConstraint(
 
   // Check interval constraints
   if (intervals && intervals.length > 0) {
-    const inAnyInterval = intervals.some(([min, max]) => 
-      value >= min && value <= max
+    const inAnyInterval = intervals.some(
+      ([min, max]) => value >= min && value <= max
     );
-    
+
     if (!inAnyInterval) {
       errors.push({
         path: 'value',
-        message: `Value ${value} is outside allowed intervals: ${JSON.stringify(intervals)}`,
+        message: `Value ${value} is outside allowed intervals: ${JSON.stringify(
+          intervals
+        )}`,
       });
     }
   }
 
   // Check discrete allowed values
   if (allowedValues && allowedValues.length > 0) {
-    const numericValues = allowedValues.map(v => typeof v === 'number' ? v : parseInt(v as string, 10));
+    const numericValues = allowedValues.map((v) =>
+      typeof v === 'number' ? v : parseInt(v as string, 10)
+    );
     if (!numericValues.includes(value)) {
       errors.push({
         path: 'value',
@@ -142,9 +152,7 @@ export function validateCountConstraint(
     }
   }
 
-  return errors.length > 0 
-    ? { valid: false, errors } 
-    : { valid: true };
+  return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
 
 /**
@@ -162,11 +170,17 @@ export function validateTextConstraint(
   const { values: allowedTokens, pattern } = component.constraint;
 
   // Check allowed tokens
-  if (allowedTokens && Array.isArray(allowedTokens) && allowedTokens.length > 0) {
+  if (
+    allowedTokens &&
+    Array.isArray(allowedTokens) &&
+    allowedTokens.length > 0
+  ) {
     if (!allowedTokens.includes(value)) {
       errors.push({
         path: 'value',
-        message: `Text value '${value}' is not in allowed tokens: ${allowedTokens.join(', ')}`,
+        message: `Text value '${value}' is not in allowed tokens: ${allowedTokens.join(
+          ', '
+        )}`,
       });
     }
   }
@@ -189,9 +203,7 @@ export function validateTextConstraint(
     }
   }
 
-  return errors.length > 0 
-    ? { valid: false, errors } 
-    : { valid: true };
+  return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
 
 /**
@@ -209,18 +221,22 @@ export function validateCategoryConstraint(
   const { values: allowedTokens } = component.constraint;
 
   // Check allowed tokens
-  if (allowedTokens && Array.isArray(allowedTokens) && allowedTokens.length > 0) {
+  if (
+    allowedTokens &&
+    Array.isArray(allowedTokens) &&
+    allowedTokens.length > 0
+  ) {
     if (!allowedTokens.includes(value)) {
       errors.push({
         path: 'value',
-        message: `Category value '${value}' is not in allowed tokens: ${allowedTokens.join(', ')}`,
+        message: `Category value '${value}' is not in allowed tokens: ${allowedTokens.join(
+          ', '
+        )}`,
       });
     }
   }
 
-  return errors.length > 0 
-    ? { valid: false, errors } 
-    : { valid: true };
+  return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
 
 /**
@@ -235,7 +251,11 @@ export function validateTimeConstraint(
   }
 
   const errors: ValidationError[] = [];
-  const { intervals, values: allowedValues, significantFigures } = component.constraint;
+  const {
+    intervals,
+    values: allowedValues,
+    significantFigures,
+  } = component.constraint;
 
   // Convert value to comparable format (timestamp)
   let timestamp: number;
@@ -263,35 +283,39 @@ export function validateTimeConstraint(
   // Check interval constraints
   if (intervals && intervals.length > 0) {
     const inAnyInterval = intervals.some(([min, max]) => {
-      const minTimestamp = typeof min === 'number' ? min : new Date(min).getTime();
-      const maxTimestamp = typeof max === 'number' ? max : new Date(max).getTime();
+      const minTimestamp =
+        typeof min === 'number' ? min : new Date(min).getTime();
+      const maxTimestamp =
+        typeof max === 'number' ? max : new Date(max).getTime();
       return timestamp >= minTimestamp && timestamp <= maxTimestamp;
     });
-    
+
     if (!inAnyInterval) {
       errors.push({
         path: 'value',
-        message: `Time value ${value} is outside allowed intervals: ${JSON.stringify(intervals)}`,
+        message: `Time value ${value} is outside allowed intervals: ${JSON.stringify(
+          intervals
+        )}`,
       });
     }
   }
 
   // Check discrete allowed values
   if (allowedValues && allowedValues.length > 0) {
-    const allowedTimestamps = allowedValues.map(v => 
+    const allowedTimestamps = allowedValues.map((v) =>
       typeof v === 'number' ? v : new Date(v as string).getTime()
     );
     if (!allowedTimestamps.includes(timestamp)) {
       errors.push({
         path: 'value',
-        message: `Time value ${value} is not in allowed values: ${allowedValues.join(', ')}`,
+        message: `Time value ${value} is not in allowed values: ${allowedValues.join(
+          ', '
+        )}`,
       });
     }
   }
 
-  return errors.length > 0 
-    ? { valid: false, errors } 
-    : { valid: true };
+  return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
 
 /**
@@ -304,10 +328,12 @@ export function validateRangeConstraint(
   if (!value || !Array.isArray(value) || value.length !== 2) {
     return {
       valid: false,
-      errors: [{
-        path: 'value',
-        message: 'Range value must be a [min, max] array',
-      }],
+      errors: [
+        {
+          path: 'value',
+          message: 'Range value must be a [min, max] array',
+        },
+      ],
     };
   }
 
@@ -316,61 +342,91 @@ export function validateRangeConstraint(
 
   // Validate each endpoint against the component's constraint
   if (component.type === 'QuantityRange') {
-    const minResult = validateQuantityConstraint(component as QuantityRangeComponent, min);
-    const maxResult = validateQuantityConstraint(component as QuantityRangeComponent, max);
-    
+    const minResult = validateQuantityConstraint(
+      component as QuantityRangeComponent,
+      min
+    );
+    const maxResult = validateQuantityConstraint(
+      component as QuantityRangeComponent,
+      max
+    );
+
     if (!minResult.valid && minResult.errors) {
-      errors.push(...minResult.errors.map(e => ({
-        ...e,
-        path: `value[0]`,
-        message: `Min ${e.message}`,
-      })));
+      errors.push(
+        ...minResult.errors.map((e) => ({
+          ...e,
+          path: `value[0]`,
+          message: `Min ${e.message}`,
+        }))
+      );
     }
-    
+
     if (!maxResult.valid && maxResult.errors) {
-      errors.push(...maxResult.errors.map(e => ({
-        ...e,
-        path: `value[1]`,
-        message: `Max ${e.message}`,
-      })));
+      errors.push(
+        ...maxResult.errors.map((e) => ({
+          ...e,
+          path: `value[1]`,
+          message: `Max ${e.message}`,
+        }))
+      );
     }
   } else if (component.type === 'CountRange') {
-    const minResult = validateCountConstraint(component as CountRangeComponent, min);
-    const maxResult = validateCountConstraint(component as CountRangeComponent, max);
-    
+    const minResult = validateCountConstraint(
+      component as CountRangeComponent,
+      min
+    );
+    const maxResult = validateCountConstraint(
+      component as CountRangeComponent,
+      max
+    );
+
     if (!minResult.valid && minResult.errors) {
-      errors.push(...minResult.errors.map(e => ({
-        ...e,
-        path: `value[0]`,
-        message: `Min ${e.message}`,
-      })));
+      errors.push(
+        ...minResult.errors.map((e) => ({
+          ...e,
+          path: `value[0]`,
+          message: `Min ${e.message}`,
+        }))
+      );
     }
-    
+
     if (!maxResult.valid && maxResult.errors) {
-      errors.push(...maxResult.errors.map(e => ({
-        ...e,
-        path: `value[1]`,
-        message: `Max ${e.message}`,
-      })));
+      errors.push(
+        ...maxResult.errors.map((e) => ({
+          ...e,
+          path: `value[1]`,
+          message: `Max ${e.message}`,
+        }))
+      );
     }
   } else if (component.type === 'TimeRange') {
-    const minResult = validateTimeConstraint(component as TimeRangeComponent, min);
-    const maxResult = validateTimeConstraint(component as TimeRangeComponent, max);
-    
+    const minResult = validateTimeConstraint(
+      component as TimeRangeComponent,
+      min
+    );
+    const maxResult = validateTimeConstraint(
+      component as TimeRangeComponent,
+      max
+    );
+
     if (!minResult.valid && minResult.errors) {
-      errors.push(...minResult.errors.map(e => ({
-        ...e,
-        path: `value[0]`,
-        message: `Min ${e.message}`,
-      })));
+      errors.push(
+        ...minResult.errors.map((e) => ({
+          ...e,
+          path: `value[0]`,
+          message: `Min ${e.message}`,
+        }))
+      );
     }
-    
+
     if (!maxResult.valid && maxResult.errors) {
-      errors.push(...maxResult.errors.map(e => ({
-        ...e,
-        path: `value[1]`,
-        message: `Max ${e.message}`,
-      })));
+      errors.push(
+        ...maxResult.errors.map((e) => ({
+          ...e,
+          path: `value[1]`,
+          message: `Max ${e.message}`,
+        }))
+      );
     }
   }
 
@@ -382,8 +438,5 @@ export function validateRangeConstraint(
     });
   }
 
-  return errors.length > 0 
-    ? { valid: false, errors } 
-    : { valid: true };
+  return errors.length > 0 ? { valid: false, errors } : { valid: true };
 }
-

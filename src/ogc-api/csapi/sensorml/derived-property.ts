@@ -1,18 +1,18 @@
 /**
  * SensorML 3.0 Derived Property
- * 
+ *
  * Describes properties derived from base properties (e.g., "hourly average temperature").
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
  */
 
 /**
  * Derived property definition
- * 
+ *
  * Used to define observable/controllable properties that are
  * derived from base properties with additional context:
  * - Object type (what is being measured)
  * - Statistic (how it's computed)
- * 
+ *
  * Example: "Hourly Average CPU Temperature"
  * - baseProperty: http://qudt.org/vocab/quantitykind/Temperature
  * - objectType: http://dbpedia.org/resource/Central_processing_unit

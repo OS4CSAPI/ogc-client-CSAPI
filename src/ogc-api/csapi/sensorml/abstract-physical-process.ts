@@ -1,6 +1,6 @@
 /**
  * SensorML 3.0 Physical Process Types
- * 
+ *
  * Base types for physical processes (components and systems).
  * Based on OGC SensorML 3.0 Standard (OGC 23-000).
  */
@@ -9,7 +9,10 @@ import type { Point } from 'geojson';
 import type { AbstractProcess } from './abstract-process';
 import type { XLink } from './base-types';
 import type { TextComponent } from '../swe-common/types/simple-components';
-import type { VectorComponent, DataRecordComponent } from '../swe-common/types/aggregate-components';
+import type {
+  VectorComponent,
+  DataRecordComponent,
+} from '../swe-common/types/aggregate-components';
 import type { DataArrayComponent } from '../swe-common/types/block-components';
 
 /**

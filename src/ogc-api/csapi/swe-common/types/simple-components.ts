@@ -1,9 +1,9 @@
 /**
  * Simple (scalar) component types for SWE Common
- * 
+ *
  * Simple components represent single scalar values with specific datatypes.
  * They include Boolean, Text, Category, Count, Quantity, and Time.
- * 
+ *
  * @see https://docs.ogc.org/is/24-014/24-014.html Section 9.1
  */
 
@@ -19,7 +19,7 @@ import type {
 
 /**
  * Boolean component for true/false values
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Boolean.json
  */
 export interface BooleanComponent extends AbstractSimpleComponent {
@@ -27,7 +27,7 @@ export interface BooleanComponent extends AbstractSimpleComponent {
    * Always 'Boolean' for boolean components
    */
   type: 'Boolean';
-  
+
   /**
    * Current value
    */
@@ -36,7 +36,7 @@ export interface BooleanComponent extends AbstractSimpleComponent {
 
 /**
  * Text component for string values
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Text.json
  */
 export interface TextComponent extends AbstractSimpleComponent {
@@ -44,12 +44,12 @@ export interface TextComponent extends AbstractSimpleComponent {
    * Always 'Text' for text components
    */
   type: 'Text';
-  
+
   /**
    * Constraint on allowed token values
    */
   constraint?: AllowedTokens;
-  
+
   /**
    * Current value
    */
@@ -58,10 +58,10 @@ export interface TextComponent extends AbstractSimpleComponent {
 
 /**
  * Category component for categorical values
- * 
+ *
  * Categories are discrete values from a controlled vocabulary,
  * identified by a definition URI and optional code value.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Category.json
  */
 export interface CategoryComponent extends AbstractSimpleComponent {
@@ -69,19 +69,19 @@ export interface CategoryComponent extends AbstractSimpleComponent {
    * Always 'Category' for category components
    */
   type: 'Category';
-  
+
   /**
    * URI reference to the code space/vocabulary
    */
   codeSpace?: {
     href: string;
   };
-  
+
   /**
    * Constraint on allowed values
    */
   constraint?: AllowedValues;
-  
+
   /**
    * Current value (code from vocabulary)
    */
@@ -90,9 +90,9 @@ export interface CategoryComponent extends AbstractSimpleComponent {
 
 /**
  * Count component for integer values
- * 
+ *
  * Counts represent discrete integer quantities without units.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Count.json
  */
 export interface CountComponent extends AbstractSimpleComponent {
@@ -100,12 +100,12 @@ export interface CountComponent extends AbstractSimpleComponent {
    * Always 'Count' for count components
    */
   type: 'Count';
-  
+
   /**
    * Constraint on allowed values
    */
   constraint?: AllowedValues;
-  
+
   /**
    * Current value
    */
@@ -114,9 +114,9 @@ export interface CountComponent extends AbstractSimpleComponent {
 
 /**
  * Quantity component for continuous numeric values with units
- * 
+ *
  * Quantities represent continuous scalar values expressed with a unit of measure.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Quantity.json
  */
 export interface QuantityComponent extends AbstractSimpleComponent {
@@ -124,17 +124,17 @@ export interface QuantityComponent extends AbstractSimpleComponent {
    * Always 'Quantity' for quantity components
    */
   type: 'Quantity';
-  
+
   /**
    * Unit of measure (required)
    */
   uom: UnitReference;
-  
+
   /**
    * Constraint on allowed values
    */
   constraint?: AllowedValues;
-  
+
   /**
    * Current value
    */
@@ -143,9 +143,9 @@ export interface QuantityComponent extends AbstractSimpleComponent {
 
 /**
  * Time component for temporal values
- * 
+ *
  * Time components represent instants or durations in time, with various reference systems.
- * 
+ *
  * @see https://schemas.opengis.net/sweCommon/3.0/json/Time.json
  */
 export interface TimeComponent extends AbstractSimpleComponent {
@@ -153,28 +153,28 @@ export interface TimeComponent extends AbstractSimpleComponent {
    * Always 'Time' for time components
    */
   type: 'Time';
-  
+
   /**
    * Unit of measure for time (required if not using ISO string)
    */
   uom?: UnitReference;
-  
+
   /**
    * Constraint on allowed time values
    */
   constraint?: AllowedTimes;
-  
+
   /**
    * Time reference system
    * Common values: GPS, UTC, TAI, or ISO 8601 reference
    */
   referenceTime?: string;
-  
+
   /**
    * Local frame for time reference
    */
   localFrame?: string;
-  
+
   /**
    * Current value
    * Can be ISO 8601 string or numeric value with uom
@@ -196,7 +196,9 @@ export type SimpleComponent =
 /**
  * Type guard for Boolean component
  */
-export function isBooleanComponent(component: unknown): component is BooleanComponent {
+export function isBooleanComponent(
+  component: unknown
+): component is BooleanComponent {
   return (
     typeof component === 'object' &&
     component !== null &&
@@ -208,7 +210,9 @@ export function isBooleanComponent(component: unknown): component is BooleanComp
 /**
  * Type guard for Text component
  */
-export function isTextComponent(component: unknown): component is TextComponent {
+export function isTextComponent(
+  component: unknown
+): component is TextComponent {
   return (
     typeof component === 'object' &&
     component !== null &&
@@ -220,7 +224,9 @@ export function isTextComponent(component: unknown): component is TextComponent 
 /**
  * Type guard for Category component
  */
-export function isCategoryComponent(component: unknown): component is CategoryComponent {
+export function isCategoryComponent(
+  component: unknown
+): component is CategoryComponent {
   return (
     typeof component === 'object' &&
     component !== null &&
@@ -232,7 +238,9 @@ export function isCategoryComponent(component: unknown): component is CategoryCo
 /**
  * Type guard for Count component
  */
-export function isCountComponent(component: unknown): component is CountComponent {
+export function isCountComponent(
+  component: unknown
+): component is CountComponent {
   return (
     typeof component === 'object' &&
     component !== null &&
@@ -244,7 +252,9 @@ export function isCountComponent(component: unknown): component is CountComponen
 /**
  * Type guard for Quantity component
  */
-export function isQuantityComponent(component: unknown): component is QuantityComponent {
+export function isQuantityComponent(
+  component: unknown
+): component is QuantityComponent {
   return (
     typeof component === 'object' &&
     component !== null &&
@@ -256,7 +266,9 @@ export function isQuantityComponent(component: unknown): component is QuantityCo
 /**
  * Type guard for Time component
  */
-export function isTimeComponent(component: unknown): component is TimeComponent {
+export function isTimeComponent(
+  component: unknown
+): component is TimeComponent {
   return (
     typeof component === 'object' &&
     component !== null &&
@@ -268,7 +280,9 @@ export function isTimeComponent(component: unknown): component is TimeComponent 
 /**
  * Type guard for any simple component
  */
-export function isSimpleComponent(component: unknown): component is SimpleComponent {
+export function isSimpleComponent(
+  component: unknown
+): component is SimpleComponent {
   return (
     isBooleanComponent(component) ||
     isTextComponent(component) ||

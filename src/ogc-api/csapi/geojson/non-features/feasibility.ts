@@ -2,34 +2,28 @@ import type { Link } from '../base-types.js';
 
 /**
  * Feasibility resource (NOT a GeoJSON Feature)
- * 
+ *
  * Feasibility requests allow clients to check whether a system can execute
  * a specific command or task before actually issuing it. This is useful for
  * validating command parameters, checking resource availability, and
  * determining scheduling constraints.
- * 
+ *
  * @see https://docs.ogc.org/is/23-002/23-002.html#_feasibility
  */
 
 /**
  * Feasibility request status
  */
-export type FeasibilityStatus =
-  | 'pending'
-  | 'completed'
-  | 'failed';
+export type FeasibilityStatus = 'pending' | 'completed' | 'failed';
 
 /**
  * Feasibility result enumeration
  */
-export type FeasibilityResult =
-  | 'feasible'
-  | 'not-feasible'
-  | 'unknown';
+export type FeasibilityResult = 'feasible' | 'not-feasible' | 'unknown';
 
 /**
  * Feasibility Request
- * 
+ *
  * A request to check if a system can execute a specific task or command.
  */
 export interface FeasibilityRequest {
@@ -68,7 +62,7 @@ export interface FeasibilityRequest {
 
 /**
  * Feasibility Response
- * 
+ *
  * The result of a feasibility check, indicating whether the system
  * can execute the requested task.
  */
