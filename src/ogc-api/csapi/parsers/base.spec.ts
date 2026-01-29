@@ -312,9 +312,9 @@ describe('CSAPIParser', () => {
       it('should throw CSAPIParseError on parseJSON fallback failure', () => {
         // Create a parser that fails all format parsers
         class FailingParser extends SystemParser {
-          parseGeoJSON() { throw new Error('GeoJSON failed'); }
-          parseSensorML() { throw new Error('SensorML failed'); }
-          parseSWE() { throw new Error('SWE failed'); }
+          parseGeoJSON(): SystemFeature { throw new Error('GeoJSON failed'); }
+          parseSensorML(): SystemFeature { throw new Error('SensorML failed'); }
+          parseSWE(): SystemFeature { throw new Error('SWE failed'); }
         }
 
         const failingParser = new FailingParser();
@@ -323,7 +323,7 @@ describe('CSAPIParser', () => {
 
       it('should re-throw CSAPIParseError without wrapping', () => {
         class ErrorThrowingParser extends SystemParser {
-          parseGeoJSON() {
+          parseGeoJSON(): SystemFeature {
             throw new CSAPIParseError('Custom parse error', 'geojson');
           }
         }
@@ -368,7 +368,7 @@ describe('CSAPIParser', () => {
         // In strict mode, validation errors should propagate
         expect(() => {
           const result = parser.parse(invalidData);
-          if (result && result.length > 0 && 'errors' in (result as any)) {
+          if (result && result.data.length > 0 && 'errors' in (result as any)) {
             throw new Error('Validation failed');
           }
         }).not.toThrow();
@@ -384,7 +384,7 @@ describe('CSAPIParser', () => {
           geometry: null,
         };
         
-        const result = parser.parse(data, { format: 'json' });
+        const result = parser.parse(data);
         expect(result).toBeDefined();
       });
 
