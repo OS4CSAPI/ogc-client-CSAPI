@@ -8,3 +8,5 @@ app/node_modules
 coverage
 temp-coverage-map.json
 jest-results.json
+
+spec/**/*.yaml
