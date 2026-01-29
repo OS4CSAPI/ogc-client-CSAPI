@@ -349,12 +349,12 @@ describe('Resource Parsers', () => {
         expect(result.data.properties.name).toBe('Temperature and Humidity');
         expect(result.data.properties.schema).toBeDefined();
         expect(result.data.properties.schema.type).toBe('DataStream');
-        expect(result.data.properties.schema.elementType.type).toBe('DataRecord');
-        expect(result.data.properties.schema.elementType.fields).toHaveLength(2);
-        expect(result.data.properties.schema.elementType.fields[0].name).toBe('timestamp');
-        expect(result.data.properties.schema.elementType.fields[0].type).toBe('Time');
-        expect(result.data.properties.schema.elementType.fields[1].name).toBe('temperature');
-        expect(result.data.properties.schema.elementType.fields[1].type).toBe('Quantity');
+        expect((result.data.properties.schema.elementType as any).type).toBe('DataRecord');
+        expect((result.data.properties.schema.elementType as any).fields).toHaveLength(2);
+        expect((result.data.properties.schema.elementType as any).fields[0].name).toBe('timestamp');
+        expect((result.data.properties.schema.elementType as any).fields[0].type).toBe('Time');
+        expect((result.data.properties.schema.elementType as any).fields[1].name).toBe('temperature');
+        expect((result.data.properties.schema.elementType as any).fields[1].type).toBe('Quantity');
         expect(result.data.properties.encoding).toEqual({ type: 'JSONEncoding' });
         expect(result.format.format).toBe('swe');
       });
@@ -383,9 +383,9 @@ describe('Resource Parsers', () => {
         expect(result.data.type).toBe('Feature');
         expect(result.data.properties.schema.type).toBe('DataRecord');
         expect(result.data.properties.schema.fields).toHaveLength(1);
-        expect(result.data.properties.schema.fields[0].name).toBe('value');
-        expect(result.data.properties.schema.fields[0].type).toBe('Quantity');
-        expect(result.data.properties.schema.fields[0].uom).toEqual({ code: 'm' });
+        expect((result.data.properties.schema.fields as any)[0].name).toBe('value');
+        expect((result.data.properties.schema.fields as any)[0].type).toBe('Quantity');
+        expect((result.data.properties.schema.fields as any)[0].uom).toEqual({ code: 'm' });
       });
 
       it('should handle nested DataRecord in DataStream', () => {
@@ -424,8 +424,8 @@ describe('Resource Parsers', () => {
 
         const result = parser.parse(nestedSchema, { contentType: 'application/swe+json' });
 
-        expect(result.data.properties.schema.elementType.fields[0].name).toBe('metadata');
-        expect(result.data.properties.schema.elementType.fields[0].type).toBe('DataRecord');
+        expect((result.data.properties.schema.elementType as any).fields[0].name).toBe('metadata');
+        expect((result.data.properties.schema.elementType as any).fields[0].type).toBe('DataRecord');
       });
 
       it('should handle DataArray elementType', () => {
@@ -464,9 +464,9 @@ describe('Resource Parsers', () => {
 
         const result = parser.parse(dataArraySchema, { contentType: 'application/swe+json' });
 
-        expect(result.data.properties.schema.elementType.type).toBe('DataArray');
-        expect(result.data.properties.schema.elementType.elementCount).toBe(100);
-        expect(result.data.properties.schema.elementType.elementType.type).toBe('Vector');
+        expect((result.data.properties.schema.elementType as any).type).toBe('DataArray');
+        expect((result.data.properties.schema.elementType as any).elementCount).toBe(100);
+        expect((result.data.properties.schema.elementType as any).elementType.type).toBe('Vector');
       });
 
       it('should preserve constraints in schema', () => {
@@ -493,7 +493,7 @@ describe('Resource Parsers', () => {
 
         const result = parser.parse(constrainedSchema, { contentType: 'application/swe+json' });
 
-        expect(result.data.properties.schema.fields[0].constraint).toEqual({
+        expect((result.data.properties.schema.fields as any)[0].constraint).toEqual({
           intervals: [[-40, 60]],
           significantFigures: 2
         });
@@ -576,11 +576,11 @@ describe('Resource Parsers', () => {
 
         const result = parser.parse(vectorSchema, { contentType: 'application/swe+json' });
 
-        expect(result.data.properties.schema.elementType.type).toBe('Vector');
-        expect(result.data.properties.schema.elementType.referenceFrame).toBe('http://www.opengis.net/def/crs/EPSG/0/4326');
-        expect(result.data.properties.schema.elementType.coordinates).toHaveLength(2);
-        expect(result.data.properties.schema.elementType.coordinates[0].name).toBe('lon');
-        expect(result.data.properties.schema.elementType.coordinates[1].name).toBe('lat');
+        expect((result.data.properties.schema.elementType as any).type).toBe('Vector');
+        expect((result.data.properties.schema.elementType as any).referenceFrame).toBe('http://www.opengis.net/def/crs/EPSG/0/4326');
+        expect((result.data.properties.schema.elementType as any).coordinates).toHaveLength(2);
+        expect((result.data.properties.schema.elementType as any).coordinates[0].name).toBe('lon');
+        expect((result.data.properties.schema.elementType as any).coordinates[1].name).toBe('lat');
       });
     });
   });
@@ -716,7 +716,7 @@ describe('Resource Parsers', () => {
 
       const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
       expect(result.data.geometry?.type).toBe('Point');
-      expect(result.data.geometry?.coordinates).toEqual([10.5, 45.2, 100]);
+      expect((result.data.geometry as any)?.coordinates).toEqual([10.5, 45.2, 100]);
     });
 
     it('should handle GeoJSON LineString geometry', () => {
@@ -810,7 +810,7 @@ describe('Resource Parsers', () => {
 
       const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
       expect(result.data.geometry?.type).toBe('Point');
-      expect(result.data.geometry?.coordinates).toEqual([10.2, 45.5, 150]);
+      expect((result.data.geometry as any)?.coordinates).toEqual([10.2, 45.5, 150]);
     });
 
     it('should convert Pose without height to Point with 0 elevation', () => {
@@ -828,7 +828,7 @@ describe('Resource Parsers', () => {
 
       const result = parser.parse(sensorml, { contentType: 'application/sml+json' });
       expect(result.data.geometry?.type).toBe('Point');
-      expect(result.data.geometry?.coordinates).toEqual([10.2, 45.5, 0]);
+      expect((result.data.geometry as any)?.coordinates).toEqual([10.2, 45.5, 0]);
     });
 
     it('should return undefined for Pose missing lat or lon', () => {
@@ -1052,8 +1052,8 @@ describe('Resource Parsers', () => {
       };
 
       const result = parser.parse(complexSWE, { contentType: 'application/swe+json' });
-      expect(result.data.result.type).toBe('DataArray');
-      expect(result.data.result.elementCount).toBe(3);
+      expect((result.data.result as any).type).toBe('DataArray');
+      expect((result.data.result as any).elementCount).toBe(3);
     });
   });
 
@@ -1133,8 +1133,8 @@ describe('Resource Parsers', () => {
       };
 
       const result = parser.parse(complexCommand, { contentType: 'application/swe+json' });
-      expect(result.data.parameters.type).toBe('DataRecord');
-      expect(result.data.parameters.fields.length).toBe(3);
+      expect((result.data.parameters as any).type).toBe('DataRecord');
+      expect((result.data.parameters as any).fields.length).toBe(3);
     });
   });
 
