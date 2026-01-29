@@ -1428,6 +1428,495 @@ describe('GeoJSON Validators', () => {
       expect(result.valid).toBe(true);
     });
   });
+
+  // ========== GEOMETRY VALIDATION TESTS ==========
+
+  describe('Geometry Validation', () => {
+    describe('Point geometry', () => {
+      it('should accept valid Point with 2D coordinates', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [5.0, 45.0]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid Point with 3D coordinates', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [5.0, 45.0, 100.0]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject Point with latitude > 90', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [5.0, 95.0]  // Invalid latitude
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Latitude must be between -90 and 90'))).toBe(true);
+      });
+
+      it('should reject Point with latitude < -90', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [5.0, -95.0]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Latitude must be between -90 and 90'))).toBe(true);
+      });
+
+      it('should reject Point with longitude > 180', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [190.0, 45.0]  // Invalid longitude
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Longitude must be between -180 and 180'))).toBe(true);
+      });
+
+      it('should reject Point with longitude < -180', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [-190.0, 45.0]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Longitude must be between -180 and 180'))).toBe(true);
+      });
+
+      it('should reject Point with insufficient coordinates', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [5.0]  // Only 1 coordinate
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('must have 2 or 3 coordinates'))).toBe(true);
+      });
+
+      it('should accept Point at latitude boundaries (-90, 90)', () => {
+        const featureMin = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [0, -90]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const featureMax = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [0, 90]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:2' }
+        };
+        
+        expect(validateSystemFeature(featureMin).valid).toBe(true);
+        expect(validateSystemFeature(featureMax).valid).toBe(true);
+      });
+
+      it('should accept Point at longitude boundaries (-180, 180)', () => {
+        const featureMin = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [-180, 0]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const featureMax = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [180, 0]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:2' }
+        };
+        
+        expect(validateSystemFeature(featureMin).valid).toBe(true);
+        expect(validateSystemFeature(featureMax).valid).toBe(true);
+      });
+    });
+
+    describe('LineString geometry', () => {
+      it('should accept valid LineString with 2 positions', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [[5.0, 45.0], [5.1, 45.1]]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should accept valid LineString with multiple positions', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [[5.0, 45.0], [5.1, 45.1], [5.2, 45.2]]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject LineString with < 2 positions', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [[5.0, 45.0]]  // Only 1 position
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('at least 2 positions'))).toBe(true);
+      });
+
+      it('should reject LineString with invalid coordinate in position', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [[5.0, 45.0], [5.1, 95.0]]  // Second position has invalid latitude
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Position 1:') && e.includes('Latitude'))).toBe(true);
+      });
+    });
+
+    describe('Polygon geometry', () => {
+      it('should accept valid Polygon with closed ring', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]]  // Closed ring
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject Polygon with unclosed ring', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[[0, 0], [0, 1], [1, 1], [1, 0]]]  // Not closed
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('not closed'))).toBe(true);
+      });
+
+      it('should reject Polygon with < 4 positions', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[[0, 0], [0, 1], [0, 0]]]  // Only 3 positions
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('at least 4 positions'))).toBe(true);
+      });
+
+      it('should accept Polygon with hole (multiple rings)', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [[0, 0], [0, 10], [10, 10], [10, 0], [0, 0]],  // Outer ring
+              [[2, 2], [2, 8], [8, 8], [8, 2], [2, 2]]  // Inner ring (hole)
+            ]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject Polygon with invalid coordinate in ring', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[[0, 0], [0, 95], [1, 1], [1, 0], [0, 0]]]  // Invalid latitude
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Latitude must be between -90 and 90'))).toBe(true);
+      });
+    });
+
+    describe('MultiPoint geometry', () => {
+      it('should accept valid MultiPoint', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'MultiPoint',
+            coordinates: [[5.0, 45.0], [5.1, 45.1]]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject MultiPoint with invalid position', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'MultiPoint',
+            coordinates: [[5.0, 45.0], [5.1, 95.0]]  // Second position invalid
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Position 1:') && e.includes('Latitude'))).toBe(true);
+      });
+    });
+
+    describe('MultiLineString geometry', () => {
+      it('should accept valid MultiLineString', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'MultiLineString',
+            coordinates: [
+              [[5.0, 45.0], [5.1, 45.1]],
+              [[6.0, 46.0], [6.1, 46.1]]
+            ]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject MultiLineString with LineString having < 2 positions', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'MultiLineString',
+            coordinates: [
+              [[5.0, 45.0], [5.1, 45.1]],
+              [[6.0, 46.0]]  // Only 1 position
+            ]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('LineString 1') && e.includes('at least 2 positions'))).toBe(true);
+      });
+    });
+
+    describe('MultiPolygon geometry', () => {
+      it('should accept valid MultiPolygon', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'MultiPolygon',
+            coordinates: [
+              [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]],
+              [[[2, 2], [2, 3], [3, 3], [3, 2], [2, 2]]]
+            ]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject MultiPolygon with unclosed ring', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'MultiPolygon',
+            coordinates: [
+              [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]],
+              [[[2, 2], [2, 3], [3, 3], [3, 2]]]  // Not closed
+            ]
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Polygon 1') && e.includes('not closed'))).toBe(true);
+      });
+    });
+
+    describe('Unknown geometry types', () => {
+      it('should reject unknown geometry type', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Circle',  // Not a valid GeoJSON type
+            coordinates: [5.0, 45.0],
+            radius: 1000
+          },
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Unknown geometry type'))).toBe(true);
+      });
+    });
+
+    describe('Null geometry', () => {
+      it('should accept null geometry', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: null,
+          properties: { featureType: 'System', uid: 'urn:test:1' }
+        };
+        
+        const result = validateSystemFeature(feature);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    describe('Integration with all feature types', () => {
+      it('should validate geometry for Deployment features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [5.0, 95.0]  // Invalid latitude
+          },
+          properties: {
+            featureType: 'Deployment',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.com/systems/1' }
+          }
+        };
+        
+        const result = validateDeploymentFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Latitude'))).toBe(true);
+      });
+
+      it('should validate geometry for Datastream features', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [190.0, 45.0]  // Invalid longitude
+          },
+          properties: {
+            featureType: 'Datastream',
+            uid: 'urn:test:1',
+            system: { href: 'http://example.com/systems/1' },
+            observedProperty: { href: 'http://example.com/props/temp' }
+          }
+        };
+        
+        const result = validateDatastreamFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('Longitude'))).toBe(true);
+      });
+
+      it('should validate geometry for SamplingFeature', () => {
+        const feature = {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[[0, 0], [0, 1], [1, 1], [1, 0]]]  // Unclosed
+          },
+          properties: {
+            featureType: 'SamplingFeature',
+            uid: 'urn:test:1'
+          }
+        };
+        
+        const result = validateSamplingFeature(feature);
+        expect(result.valid).toBe(false);
+        expect(result.errors?.some(e => e.includes('not closed'))).toBe(true);
+      });
+    });
+  });
 });
+
 
 
