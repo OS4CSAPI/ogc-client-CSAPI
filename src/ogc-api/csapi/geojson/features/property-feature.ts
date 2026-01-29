@@ -46,6 +46,16 @@ export interface PropertyFeatureProperties extends CSAPIFeatureProperties {
    * IDs of control streams controlling this property
    */
   controlledBy?: UniqueID[];
+
+  /**
+   * Base property URI (for derived properties)
+   */
+  baseProperty?: string;
+
+  /**
+   * Statistic type (e.g., 'mean', 'sum', 'max', 'min') for derived properties
+   */
+  statistic?: string;
 }
 
 /**

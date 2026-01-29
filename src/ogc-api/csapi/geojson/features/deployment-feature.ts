@@ -71,6 +71,51 @@ export interface DeploymentFeatureProperties extends CSAPIFeatureProperties {
    * IDs of control streams active during this deployment
    */
   controlStreams?: UniqueID[];
+
+  /**
+   * Deployment ID (from SensorML)
+   */
+  id?: string;
+
+  /**
+   * Unique identifier (from SensorML uniqueId)
+   */
+  uniqueId?: string;
+
+  /**
+   * Keywords for discovery (from SensorML)
+   */
+  keywords?: string[];
+
+  /**
+   * Alternative identifiers (from SensorML)
+   */
+  identifiers?: unknown[];
+
+  /**
+   * Classifiers (from SensorML)
+   */
+  classifiers?: unknown[];
+
+  /**
+   * Contact information (from SensorML)
+   */
+  contacts?: unknown[];
+
+  /**
+   * Documentation references (from SensorML)
+   */
+  documents?: unknown[];
+
+  /**
+   * Security constraints (from SensorML)
+   */
+  securityConstraints?: unknown[];
+
+  /**
+   * Legal constraints (from SensorML)
+   */
+  legalConstraints?: unknown[];
 }
 
 /**

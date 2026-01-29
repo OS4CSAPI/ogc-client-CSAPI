@@ -46,6 +46,26 @@ export interface DatastreamSchema {
    * Inline encoding specification
    */
   resultEncodingObject?: unknown;
+
+  /**
+   * SWE Common component type (e.g., 'DataRecord', 'DataArray', 'DataStream')
+   */
+  type?: string;
+
+  /**
+   * Element type for arrays/streams (SWE Common component)
+   */
+  elementType?: unknown;
+
+  /**
+   * Field definitions for DataRecord (array of SWE Common components)
+   */
+  fields?: unknown[];
+
+  /**
+   * Element count for DataArray
+   */
+  elementCount?: number;
 }
 
 /**
@@ -108,6 +128,11 @@ export interface DatastreamFeatureProperties extends CSAPIFeatureProperties {
    * Number of observations in this datastream
    */
   observationCount?: number;
+
+  /**
+   * Encoding specification for observations
+   */
+  encoding?: unknown;
 }
 
 /**

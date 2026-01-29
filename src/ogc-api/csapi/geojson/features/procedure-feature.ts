@@ -59,6 +59,36 @@ export interface ProcedureFeatureProperties extends CSAPIFeatureProperties {
    * IDs of control streams that use this procedure
    */
   controlStreams?: UniqueID[];
+
+  /**
+   * Input definitions (from SensorML)
+   */
+  inputs?: unknown;
+
+  /**
+   * Output definitions (from SensorML)
+   */
+  outputs?: unknown;
+
+  /**
+   * Parameter definitions (from SensorML)
+   */
+  parameters?: unknown;
+
+  /**
+   * Method description (from SensorML)
+   */
+  method?: unknown;
+
+  /**
+   * Component list (from SensorML)
+   */
+  components?: unknown[];
+
+  /**
+   * Connection definitions (from SensorML)
+   */
+  connections?: unknown[];
 }
 
 /**
